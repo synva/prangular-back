@@ -1,0 +1,38 @@
+{
+  "port": 3000,
+  "endpoint": "http://52.192.185.252:3000/",
+  "cors": [
+  ],
+  "logger": {
+    "appenders": {"system": {"type": "file", "filename": "system.log"}},
+    "categories": {"default": {"appenders": ["system"], "level": "all"}}
+  },
+  "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
+  "socketPath": "/socket.io",
+  "mongo": {
+    "server": "127.0.0.1",
+    "port": 27017,
+    "db": "budousan",
+    "limit": 50
+  },
+  "session": {
+    "mode": "mongo",
+    "redisHost": "any-server",
+    "redisPort": 6379,
+    "redisdb": 0,
+    "cookiePath": "/session/",
+    "cookieMaxAge": 1209600000,
+    "key": "xiefan",
+    "secret": "xiefan-secret"
+  },
+  "authentication": {
+    "mode": "basic"
+  },
+  "storagy": {
+    "mode": "local",
+    "bucket": "any-bucket",
+    "key": "key-string",
+    "secret": "secret-string",
+    "upload": "upload"
+  }
+}

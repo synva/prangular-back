@@ -1,0 +1,18 @@
+{
+  "editor.tabSize": 2,
+  "editor.minimap.showSlider": "always",
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "explorer.confirmDragAndDrop": false,
+  "javascript.validate.enable": false,
+  "eslint.autoFixOnSave": true,
+  "eslint.options": {
+    "extensions": [
+      ".js"
+    ]
+  },
+  "eslint.validate": [
+    "javascript"
+  ],
+  "workbench.colorTheme": "Visual Studio Dark"
+}
