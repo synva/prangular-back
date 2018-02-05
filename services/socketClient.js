@@ -8,7 +8,7 @@ class Client {
     this.room = null
   }
   equal(client) {
-    return client && client.socket && client.socket.id == this.socket.id
+    return client && client.socket && client.socket.id === this.socket.id
   }
   changeRoom(room) {
     this.room = room

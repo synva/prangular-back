@@ -1,17 +1,15 @@
 import logger from './logger.js'
 import conf from 'config'
-import mongo from './mongo.js'
 import utils from './utils.js'
 import fs from 'fs'
 import path from 'path'
-import moment from 'moment'
 import uuid from 'uuid'
 import formidable from 'formidable'
 import AWS from 'aws-sdk'
 let s3 = new AWS.S3({ signatureVersion: 'v2' })
 import os from 'os'
 let sharp = null
-if (os.arch() == 'x64') {
+if (os.arch() === 'x64') {
   sharp = require('sharp')
 }
 
@@ -21,7 +19,6 @@ class DataService {
   uploadFiles(req, next) {
     let self = this
     let localFileList = []
-    let movedFileList = []
     let form = new formidable.IncomingForm()
     let params = {}
     form.multiples = false
@@ -45,7 +42,7 @@ class DataService {
 
     form.on('file', (field, file) => {
       for (let i = 0; i < localFileList.length; i++) {
-        if (localFileList[i].fullname == file.path) {
+        if (localFileList[i].fullname === file.path) {
           localFileList[i].size = file.size
           break
         }
@@ -86,13 +83,13 @@ class DataService {
     }
     let needThumbnail = false
     for (let i = 0; i < conf.image.length; i++) {
-      if (conf.image[i] == localFileList[idx].extname) {
+      if (conf.image[i] === localFileList[idx].extname) {
         needThumbnail = true
         break
       }
     }
     if (needThumbnail) {
-      if (os.arch() == 'x64') {
+      if (os.arch() === 'x64') {
         let thumbnailName = path.basename(localFileList[idx].name, path.extname(localFileList[idx].name)) + '_thumbnail' + '.jpg'
         let thumbnailFullname = path.join(__dirname, '..', 'upload', localFileList[idx].folder, thumbnailName)
         sharp(localFileList[idx].fullname)
@@ -142,7 +139,7 @@ class DataService {
     }
   }
   putToS3(fileList, next) {
-    if (conf.storagy.mode == 'local') {
+    if (conf.storagy.mode === 'local') {
       next(null)
       return
     }
@@ -169,7 +166,7 @@ class DataService {
             else {
               fs.rmdir(path.join(__dirname, '..', 'upload', fileList[idx].folder), (del_error) => {
                 if (del_error) {
-                  logger.error(fileList[idx].folder, "|", JSON.stringify(del_error))
+                  logger.error(fileList[idx].folder, '|', JSON.stringify(del_error))
                 }
               })
               self.putOneSetToS3(fileList, idx + 1, next)
@@ -179,7 +176,7 @@ class DataService {
         else {
           fs.rmdir(path.join(__dirname, '..', 'upload', fileList[idx].folder), (del_error) => {
             if (del_error) {
-              logger.error(fileList[idx].folder, "|", JSON.stringify(del_error))
+              logger.error(fileList[idx].folder, '|', JSON.stringify(del_error))
             }
           })
           self.putOneSetToS3(fileList, idx + 1, next)
@@ -202,7 +199,7 @@ class DataService {
     }).promise().then((data) => {
       utils.deleteFile(sourceFile, (del_error) => {
         if (del_error) {
-          logger.error(sourceFile, "|", JSON.stringify(del_error))
+          logger.error(sourceFile, '|', JSON.stringify(del_error))
         }
       })
       next(null, data)

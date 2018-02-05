@@ -14,5 +14,6 @@
   "eslint.validate": [
     "javascript"
   ],
-  "workbench.colorTheme": "Visual Studio Dark"
+  "workbench.colorTheme": "Visual Studio Dark",
+  "files.eol": "\n"
 }

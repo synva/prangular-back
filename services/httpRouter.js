@@ -1,12 +1,6 @@
 import express from 'express'
-import fs from 'fs'
-import path from 'path'
 import url from 'url'
 import logger from './logger.js'
-import conf from 'config'
-import mongo from './mongo.js'
-import {ObjectId} from 'mongodb'
-import userService from './userService.js'
 
 let router = express.Router()
 

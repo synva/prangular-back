@@ -107,7 +107,7 @@ class Utils {
       return
     }
     else {
-      if (!ext || (ext && path.extname(files[idx]) == ('.' + ext))) {
+      if (!ext || (ext && path.extname(files[idx]) === ('.' + ext))) {
         let filename = path.join(filepath, path.basename(files[idx]))
         let filestat = fs.statSync(filename)
         let name = path.basename(files[idx], path.extname(files[idx]))
@@ -128,7 +128,7 @@ class Utils {
     let exec = require('child_process').exec
     exec(cmd, (error, stdout, stderr) => {
       if (!error) {
-        let pyresult = stdout.replace(/\\n/g, "\n")
+        let pyresult = stdout.replace(/\\n/g, '\n')
         next(null, pyresult)
       } else {
         logger.error(error)

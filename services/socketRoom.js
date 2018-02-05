@@ -10,7 +10,7 @@ class Room {
     this.clients = []
   }
   equal(room) {
-    return room.id == this.id
+    return room.id === this.id
   }
   enter(client) {
     if (client.room) {
@@ -37,7 +37,7 @@ class Room {
   }
   recovery(client, params) {
     for (let i = 0; i < this.clients.length; i ++) {
-      if (params && this.clients[i].socket.id == params.oldsocket) {
+      if (params && this.clients[i].socket.id === params.oldsocket) {
         client.recovery(this.clients[i], params)
         this.clients.splice(i, 1)
         break

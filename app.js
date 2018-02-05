@@ -3,12 +3,8 @@ import path from 'path'
 import bodyParser from 'body-parser'
 import conf from 'config'
 import http from 'http'
-import fs from 'fs'
-import url from 'url'
-import cookieParser from 'cookie-parser'
 import logger from './services/logger.js'
 import mongo from './services/mongo.js'
-import utils from './services/utils.js'
 import compression from 'compression'
 import httpRouter from './services/httpRouter.js'
 // import socketRouter from './services/socketRouter.js'
@@ -26,7 +22,7 @@ app.use(
   compression({
     filter: (req, res) => {
       const contentType = res.get('Content-Type')
-      if (contentType && contentType.indexOf("application/json") === -1) {
+      if (contentType && contentType.indexOf('application/json') === -1) {
         return false
       }
       return compression.filter(req, res)
@@ -46,7 +42,7 @@ let allowCrossDomain = (req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
 
   // intercept OPTIONS method
-  if ('OPTIONS' == req.method) {
+  if ('OPTIONS' === req.method) {
     res.sendStatus(200)
   }
   else {
@@ -64,7 +60,7 @@ let expressMongoStore = require('connect-mongo')(expressSession)
 
 let store = null
 let session = null
-if (conf.session.mode == 'mongo') {
+if (conf.session.mode === 'mongo') {
   store = new expressMongoStore({
     url: 'mongodb://' + conf.mongo.server + ':' + conf.mongo.port + '/' + conf.mongo.db,
     clear_interval: 60 * 60
@@ -111,7 +107,7 @@ import passport from 'passport'
 import flash from 'connect-flash'
 let LocalStrategy = require('passport-local').Strategy
 let strategy = null
-if (conf.authentication.mode == 'basic') {
+if (conf.authentication.mode === 'basic') {
   strategy = new LocalStrategy(
     (username, password, next) => {
       userService.authenticate(username, password, (error, user) => {
@@ -139,7 +135,7 @@ app.use(passport.session())
 
 
 
-if (conf.authentication.mode == 'basic') {
+if (conf.authentication.mode === 'basic') {
   app.post('/authenticate',
     passport.authenticate('local'),
     (req, res) => {
@@ -169,14 +165,12 @@ app.use('/api', checkAuth, httpRouter)
 
 
 
-import AWS from 'aws-sdk'
-let s3 = new AWS.S3({ signatureVersion: 'v2' })
 let inspect = require('eyespect').inspector()
 import knox from 'knox'
 
 app.get('/static/*', (req, res) => {
   let url = decodeURI(req.url)
-  if (url.indexOf('/static/s3') == 0) {
+  if (url.indexOf('/static/s3') === 0) {
     let client = knox.createClient({
       key: conf.storagy.key,
       secret: conf.storagy.secret,
@@ -201,7 +195,7 @@ app.get('/static/*', (req, res) => {
       })
     })
   }
-  else if (url.indexOf('/static/upload') == 0) {
+  else if (url.indexOf('/static/upload') === 0) {
     url = url.replace('/static/', '/')
     res.sendFile(path.join(__dirname, url))
   }
@@ -213,7 +207,7 @@ app.get('/static/*', (req, res) => {
 
 
 
-app.post('/uploadFiles', (req, res, next) => {
+app.post('/uploadFiles', (req, res) => {
   logger.info('uploadFiles')
   dataService.uploadFiles(req, (error, list, params) => {
     if (!error) {
@@ -221,7 +215,7 @@ app.post('/uploadFiles', (req, res, next) => {
       logger.info('params: ' + JSON.stringify(params))
       let files = []
       for (let i = 0; i < list.length; i++) {
-        if (conf.storagy.mode == 'local') {
+        if (conf.storagy.mode === 'local') {
           files.push({
             file: conf.endpoint + '/static/upload/' + list[i].folder + '/' + list[i].name,
             thumbnail: list[i].thumbnail ? (conf.endpoint + '/static/upload/' + list[i].folder + '/' + list[i].thumbnail) : null,
