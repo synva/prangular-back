@@ -1,8 +1,7 @@
 {
   "port": 3000,
   "endpoint": "http://52.192.185.252:3000/",
-  "cors": [
-  ],
+  "cors": "",
   "logger": {
     "appenders": {"system": {"type": "file", "filename": "system.log"}},
     "categories": {"default": {"appenders": ["system"], "level": "all"}}
