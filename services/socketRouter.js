@@ -1,4 +1,3 @@
-import conf from 'config'
 import logger from './logger.js'
 import socketService from './socketService.js'
 
@@ -17,22 +16,22 @@ class SocketRouter {
     })
 
     self.io.on('connection', (socket) => {
-      logger.info('connected: ' + socket.id)
+      logger.info('connected:', socket.id)
       if (socket.request && socket.request.session && socket.request.session.passport && socket.request.session.passport.user) {
-        logger.info('socket session: ' + JSON.stringify(socket.request.session.passport.user))
+        logger.debug('socket session:', socket.request.session.passport.user._id)
       }
       let client = socketService.login(socket)
       socketService.spy()
 
       socket.on('reinit', (params) => {
-        logger.info(socket.id + ' reinit: ' + JSON.stringify(params))
+        logger.info(socket.id, 'reinit:', JSON.stringify(params))
         socketService.recovery(client, params)
         socket.emit('reinited', {})
         socketService.spy()
       })
 
       socket.on('enterLobby', (params) => {
-        logger.info('enterLobby: ' + socket.id)
+        logger.info('enterLobby:', socket.id, '|', JSON.stringify(params))
         self.checkAuth(socket, () => {
           if (socketService.enterLobby(client)) {
             socketService.spy()
@@ -41,7 +40,7 @@ class SocketRouter {
       })
 
       socket.on('enterChatRoom', (params) => {
-        logger.info('enterChatRoom: ' + socket.id + '|' + JSON.stringify(params))
+        logger.info('enterChatRoom:', socket.id, '|', JSON.stringify(params))
         self.checkAuth(socket, () => {
           if (socketService.enterChatRoom(client)) {
             // chatService.getChats((error, chats, count) => {

@@ -6,7 +6,7 @@ import path from 'path'
 import uuid from 'uuid'
 import formidable from 'formidable'
 import AWS from 'aws-sdk'
-let s3 = new AWS.S3({ signatureVersion: 'v2' })
+let s3 = new AWS.S3({signatureVersion: 'v2'})
 import os from 'os'
 let sharp = null
 if (os.arch() === 'x64') {
@@ -98,7 +98,7 @@ class DataService {
           .limitInputPixels(0)
           // .max()
           .toFile(thumbnailFullname)
-          .then((data) => {
+          .then((data) => { // eslint-disable-line no-unused-vars
             fileList.push({
               extname: localFileList[idx].extname,
               type: localFileList[idx].type,

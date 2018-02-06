@@ -36,7 +36,7 @@ class Room {
   recovery(client, params) {
     for (let i = 0; i < this.clients.length; i ++) {
       if (params && this.clients[i].socket.id === params.oldSocketID) {
-        client.recovery(this.clients[i], params)
+        client.recovery(this.clients[i])
         this.clients.splice(i, 1)
         break
       }

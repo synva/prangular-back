@@ -11,7 +11,7 @@ class Client {
   changeRoom(room) {
     this.room = room
   }
-  recovery(oldclient, params) {
+  recovery(oldclient) {
     oldclient.room.enter(this)
     oldclient.destroy()
     oldclient = null
@@ -22,7 +22,6 @@ class Client {
       this.room.exit(this)
       this.room = null
     }
-    // this.socket.destroy()
     this.socket = null
   }
   spy() {

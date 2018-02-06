@@ -29,8 +29,8 @@ app.use(
     }
   })
 )
-app.use(bodyParser.json({ limit: '2gb' }))
-app.use(bodyParser.urlencoded({ limit: '2gb', extended: true }))
+app.use(bodyParser.json({limit: '2gb'}))
+app.use(bodyParser.urlencoded({limit: '2gb', extended: true}))
 
 
 
@@ -44,8 +44,7 @@ let allowCrossDomain = (req, res, next) => {
   // intercept OPTIONS method
   if ('OPTIONS' === req.method) {
     res.sendStatus(200)
-  }
-  else {
+  } else {
     next()
   }
 }
@@ -143,7 +142,7 @@ if (conf.authentication.mode === 'basic') {
         res.redirect('login')
       }
       else {
-        res.json({ error: { code: 'S002' }, data: null })
+        res.json({error: {code: 'S002'}, data: null})
       }
     }
   )
@@ -154,10 +153,11 @@ if (conf.authentication.mode === 'basic') {
 
 let checkAuth = (req, res, next) => {
   if (req.session && req.session.passport && req.session.passport.user) {
+    logger.debug('http session:', req.request.session.passport.user._id)
     next()
   } else {
     logger.error('miss session.')
-    res.json({ error: { code: 'B002' }, data: null })
+    res.json({error: {code: 'B002'}, data: null})
   }
 }
 app.use('/api', checkAuth, httpRouter)
@@ -236,10 +236,10 @@ app.post('/uploadFiles', (req, res) => {
           })
         }
       }
-      res.json({ error: null, data: files })
+      res.json({error: null, data: files})
     }
     else {
-      res.json({ error: error, data: null })
+      res.json({error: error, data: null})
     }
   })
 })
@@ -250,16 +250,16 @@ app.post('/uploadFiles', (req, res) => {
 app.get('/login', (req, res) => {
   logger.info('login')
   if (!req.session || !req.session.passport || !req.session.passport.user) {
-    res.json({ error: null, data: { user: null } })
-  }
-  else {
-    logger.info('user:', JSON.stringify(req.session.passport.user))
+    logger.info('need authenticate')
+    res.json({error: null, data: {user: null}})
+  } else {
+    logger.info('user:', JSON.stringify(req.session.passport.user._id))
     userService.recordLogin(req.session.passport.user, (error, user) => {
       if (error) {
-        res.json({ error: error, data: null })
+        res.json({error: error, data: null})
       }
       else {
-        res.json({ error: null, data: { user: user } })
+        res.json({error: null, data: {user: user}})
       }
     })
   }
@@ -268,10 +268,10 @@ app.post('/register', (req, res) => {
   logger.info('register:' + JSON.stringify(req.body))
   userService.insertUser(req.body, (error, user) => {
     if (error) {
-      res.json({ error: error, data: null })
+      res.json({error: error, data: null})
     }
     else {
-      res.json({ error: null, data: { user: user } })
+      res.json({error: null, data: {user: user }})
     }
   })
 })
@@ -286,7 +286,7 @@ app.get('/logout', (req, res) => {
     })
   }
   req.logout()
-  res.json({ error: null, data: {} })
+  res.json({error: null, data: {}})
 })
 
 

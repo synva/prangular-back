@@ -1,6 +1,4 @@
-import path from 'path'
 import logger from './logger.js'
-import conf from 'config'
 import mongo from './mongo.js'
 
 class UserService {
@@ -27,6 +25,7 @@ class UserService {
     )
   }
   insertUser(user, next) {
+    logger.info('new user:', user._id)
     mongo.find(
       'users',
       {_id: user._id},
