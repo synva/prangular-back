@@ -1,6 +1,6 @@
-import path from 'path'
-import logger from './logger.js'
-import conf from 'config'
+import path from 'path' // eslint-disable-line no-unused-vars
+import logger from './logger.js' // eslint-disable-line no-unused-vars
+import conf from 'config' // eslint-disable-line no-unused-vars
 import mongo from './mongo.js'
 
 class UserService {
@@ -14,7 +14,7 @@ class UserService {
       {_id: user._id},
       {$set: {udate: now.valueOf()}},
       {multi: false},
-      (error, result) => {
+      (error, result) => { // eslint-disable-line no-unused-vars
         if (error) {
           next(error)
         }
@@ -100,7 +100,6 @@ class UserService {
     )
   }
   selectHouse(user, selectedHouse, next) {
-    let self = this
     user.selectedHouse = selectedHouse
     let now = new Date()
     mongo.update(
@@ -108,7 +107,7 @@ class UserService {
       {_id: user._id},
       {$set: {selectedHouse: selectedHouse, udate: now.valueOf()}},
       {multi: false},
-      (error, result) => {
+      (error, result) => { // eslint-disable-line no-unused-vars
         if (error) {
           next(error)
         }

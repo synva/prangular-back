@@ -1,6 +1,6 @@
 import logger from './logger.js'
-import conf from 'config'
-import mongo from './mongo.js'
+import conf from 'config' // eslint-disable-line no-unused-vars
+import mongo from './mongo.js' // eslint-disable-line no-unused-vars
 import uuid from 'uuid'
 
 class Room {

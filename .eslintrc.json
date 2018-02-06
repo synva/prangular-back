@@ -20,6 +20,12 @@
     "semi": [
       "error",
       "never"
-    ]
+    ],
+    "no-trailing-spaces": ["error", { "skipBlankLines": true }]
+  },
+  "globals": {
+    "module": true,
+    "require": true,
+    "__dirname": true
   }
 }

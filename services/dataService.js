@@ -98,7 +98,7 @@ class DataService {
           .limitInputPixels(0)
           // .max()
           .toFile(thumbnailFullname)
-          .then((data) => {
+          .then((data) => { // eslint-disable-line no-unused-vars
             fileList.push({
               extname: localFileList[idx].extname,
               type: localFileList[idx].type,

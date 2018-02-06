@@ -1,8 +1,8 @@
-import conf from 'config'
+import conf from 'config' // eslint-disable-line no-unused-vars
 import fs from 'fs'
 import path from 'path'
 import mkdirp from 'mkdirp'
-import moment from 'moment'
+import moment from 'moment' // eslint-disable-line no-unused-vars
 import logger from './logger.js'
 
 class Utils {

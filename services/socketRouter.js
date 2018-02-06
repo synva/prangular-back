@@ -31,7 +31,7 @@ class SocketRouter {
         socketService.spy()
       })
 
-      socket.on('enterLobby', (params) => {
+      socket.on('enterLobby', (params) => { // eslint-disable-line no-unused-vars
         logger.info('enterLobby: ' + socket.id)
         self.checkAuth(socket, () => {
           if (socketService.enterLobby(client)) {

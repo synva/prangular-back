@@ -1,6 +1,6 @@
 import logger from './logger.js'
-import conf from 'config'
-import mongo from './mongo.js'
+import conf from 'config' // eslint-disable-line no-unused-vars
+import mongo from './mongo.js' // eslint-disable-line no-unused-vars
 
 class Client {
   constructor(socket) {
@@ -13,7 +13,7 @@ class Client {
   changeRoom(room) {
     this.room = room
   }
-  recovery(oldclient, params) {
+  recovery(oldclient, params) { // eslint-disable-line no-unused-vars
     oldclient.room.enter(this)
     oldclient.destroy()
     oldclient = null
