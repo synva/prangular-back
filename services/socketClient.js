@@ -1,6 +1,4 @@
 import logger from './logger.js'
-import conf from 'config'
-import mongo from './mongo.js'
 
 class Client {
   constructor(socket) {

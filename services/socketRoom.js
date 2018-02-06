@@ -1,6 +1,4 @@
 import logger from './logger.js'
-import conf from 'config'
-import mongo from './mongo.js'
 import uuid from 'uuid'
 
 class Room {
@@ -37,7 +35,7 @@ class Room {
   }
   recovery(client, params) {
     for (let i = 0; i < this.clients.length; i ++) {
-      if (params && this.clients[i].socket.id === params.oldsocket) {
+      if (params && this.clients[i].socket.id === params.oldSocketID) {
         client.recovery(this.clients[i], params)
         this.clients.splice(i, 1)
         break

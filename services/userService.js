@@ -14,7 +14,7 @@ class UserService {
       {_id: user._id},
       {$set: {udate: now.valueOf()}},
       {multi: false},
-      (error, result) => {
+      (error) => {
         if (error) {
           next(error)
         }
@@ -95,25 +95,6 @@ class UserService {
         }
         else {
           next(null, result[0])
-        }
-      }
-    )
-  }
-  selectHouse(user, selectedHouse, next) {
-    let self = this
-    user.selectedHouse = selectedHouse
-    let now = new Date()
-    mongo.update(
-      'users',
-      {_id: user._id},
-      {$set: {selectedHouse: selectedHouse, udate: now.valueOf()}},
-      {multi: false},
-      (error, result) => {
-        if (error) {
-          next(error)
-        }
-        else {
-          next(null)
         }
       }
     )

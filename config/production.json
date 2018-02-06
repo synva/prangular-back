@@ -7,7 +7,6 @@
     "categories": {"default": {"appenders": ["system"], "level": "all"}}
   },
   "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
-  "socketPath": "/socket.io",
   "mongo": {
     "server": "127.0.0.1",
     "port": 27017,

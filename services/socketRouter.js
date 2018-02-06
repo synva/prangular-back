@@ -8,7 +8,7 @@ class SocketRouter {
   }
   init(server, session) {
     let self = this
-    self.io = require('socket.io')(server, {path: conf.socketPath})
+    self.io = require('socket.io')(server)
     // self.io.set('heartbeat interval', 1000)
     // self.io.set('heartbeat timeout', 5000)
 
@@ -16,7 +16,7 @@ class SocketRouter {
       session(socket.request, socket.request.res, next)
     })
 
-    self.io.sockets.on('connection', (socket) => {
+    self.io.on('connection', (socket) => {
       logger.info('connected: ' + socket.id)
       if (socket.request && socket.request.session && socket.request.session.passport && socket.request.session.passport.user) {
         logger.info('socket session: ' + JSON.stringify(socket.request.session.passport.user))

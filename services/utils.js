@@ -1,8 +1,6 @@
-import conf from 'config'
 import fs from 'fs'
 import path from 'path'
 import mkdirp from 'mkdirp'
-import moment from 'moment'
 import logger from './logger.js'
 
 class Utils {
@@ -126,13 +124,13 @@ class Utils {
   }
   execute(cmd, next) {
     let exec = require('child_process').exec
-    exec(cmd, (error, stdout, stderr) => {
+    exec(cmd, (error, stdout) => {
       if (!error) {
         let pyresult = stdout.replace(/\\n/g, '\n')
         next(null, pyresult)
       } else {
         logger.error(error)
-        next({code: 'S002', detail: JSON.stringify(err)})
+        next({code: 'S002', detail: JSON.stringify(error)})
       }
     })
   }
