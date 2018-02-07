@@ -4,107 +4,97 @@ import mkdirp from 'mkdirp'
 import logger from './logger.js'
 
 class Utils {
-  constructor() {
+  constructor () {
   }
-  isFileExist(filename) {
+  isFileExist (filename) {
     try {
       fs.statSync(filename)
-    }
-    catch(err) {
+    } catch(err) {
       if (err.code === 'ENOENT') {
         return false
       }
     }
     return true
   }
-  writeFile(filename, contents, next) {
+  writeFile (filename, contents, next) {
     mkdirp(path.dirname(filename), (err) => {
       if (err) {
         logger.error(JSON.stringify(err))
         next({code: 'S002', detail: JSON.stringify(err)})
-      }
-      else {
+      } else {
         fs.writeFile(filename, contents, 'binary', (err) => {
           if (err) {
             logger.error(JSON.stringify(err))
             next({code: 'S002', detail: JSON.stringify(err)})
-          }
-          else {
+          } else {
             next(null)
           }
         })
       }
     })
   }
-  appendFile(filename, contents, next) {
+  appendFile (filename, contents, next) {
     mkdirp(path.dirname(filename), (err) => {
       if (err) {
         logger.error(JSON.stringify(err))
         next({code: 'S002', detail: JSON.stringify(err)})
-      }
-      else {
+      } else {
         fs.appendFile(filename, contents, (err) => {
           if (err) {
             logger.error(JSON.stringify(err))
             next({code: 'S002', detail: JSON.stringify(err)})
-          }
-          else {
+          } else {
             next(null)
           }
         })
       }
     })
   }
-  deleteFile(filename, next) {
+  deleteFile (filename, next) {
     fs.unlink(filename, (err) => {
       if (err) {
         logger.error(JSON.stringify(err))
         next({code: 'S002', detail: JSON.stringify(err)})
-      }
-      else {
+      } else {
         next(null)
       }
     })
   }
-  readFile(filename, next) {
+  readFile (filename, next) {
     fs.readFile(filename, 'utf8', (err, text) => {
       if (err) {
         logger.error(JSON.stringify(err))
         next({code: 'S002', detail: JSON.stringify(err)})
-      }
-      else {
+      } else {
         next(null, text)
       }
     })
   }
-  getFileList(filepath, ext, next) {
+  getFileList (filepath, ext, next) {
     let self = this
     fs.readdir(filepath, (err, files) => {
       if (err) {
         logger.error(JSON.stringify(err))
         next({code: 'S002', detail: JSON.stringify(err)})
-      }
-      else {
+      } else {
         let fileList = []
         let idx = 0
         self.filterFile(filepath, files, idx, ext, fileList, (err) => {
           if (err) {
             next(err, null)
-          }
-          else {
+          } else {
             next(null, fileList)
           }
         })
       }
     })
   }
-  filterFile(filepath, files, idx, ext, fileList, next) {
+  filterFile (filepath, files, idx, ext, fileList, next) {
     let self = this
     if (idx >= files.length) {
       next(null)
       return
-    }
-    else {
+    } else {
       if (!ext || (ext && path.extname(files[idx]) === ('.' + ext))) {
         let filename = path.join(filepath, path.basename(files[idx]))
         let filestat = fs.statSync(filename)
@@ -116,13 +106,12 @@ class Utils {
           date: udate
         })
         self.filterFile(filepath, files, idx + 1, ext, fileList, next)
-      }
-      else {
+      } else {
         self.filterFile(filepath, files, idx + 1, ext, fileList, next)
       }
     }
   }
-  execute(cmd, next) {
+  execute (cmd, next) {
     let exec = require('child_process').exec
     exec(cmd, (error, stdout) => {
       if (!error) {

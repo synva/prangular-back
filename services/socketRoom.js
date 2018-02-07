@@ -2,15 +2,15 @@ import logger from './logger.js'
 import uuid from 'uuid'
 
 class Room {
-  constructor(name) {
+  constructor (name) {
     this.id = uuid.v4()
     this.name = name || 'room'
     this.clients = []
   }
-  equal(room) {
+  equal (room) {
     return room.id === this.id
   }
-  enter(client) {
+  enter (client) {
     if (client.room) {
       if (client.room.equal(this)) {
         return false
@@ -22,7 +22,7 @@ class Room {
     client.changeRoom(this)
     return true
   }
-  exit(client) {
+  exit (client) {
     for (let i = 0; i < this.clients.length; i ++) {
       if (this.clients[i].equal(client)) {
         logger.debug(client.socket.id + ' exit room: ' + this.name)
@@ -33,7 +33,7 @@ class Room {
       }
     }
   }
-  recovery(client, params) {
+  recovery (client, params) {
     for (let i = 0; i < this.clients.length; i ++) {
       if (params && this.clients[i].socket.id === params.oldSocketID) {
         client.recovery(this.clients[i])
@@ -42,7 +42,7 @@ class Room {
       }
     }
   }
-  spy() {
+  spy () {
     logger.debug(this.name + ': ' + this.id + ' | ' + this.clients.length)
     for (let idx = 0; idx < this.clients.length; idx ++) {
       this.clients[idx].spy()

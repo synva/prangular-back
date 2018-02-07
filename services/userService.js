@@ -2,9 +2,9 @@ import logger from './logger.js'
 import mongo from './mongo.js'
 
 class UserService {
-  constructor() {
+  constructor () {
   }
-  recordLogin(user, next) {
+  recordLogin (user, next) {
     let self = this
     let now = new Date()
     mongo.update(
@@ -15,8 +15,7 @@ class UserService {
       (error) => {
         if (error) {
           next(error)
-        }
-        else {
+        } else {
           self.getUser(user, (error, user) => {
             next(error, user)
           })
@@ -24,7 +23,7 @@ class UserService {
       }
     )
   }
-  insertUser(user, next) {
+  insertUser (user, next) {
     logger.info('new user:', user._id)
     mongo.find(
       'users',
@@ -33,8 +32,7 @@ class UserService {
       (error, result) => {
         if (error) {
           next(error)
-        }
-        else {
+        } else {
           if (result.length <= 0) {
             user.cuser = user._id
             user.uuser = user._id
@@ -48,21 +46,19 @@ class UserService {
               (error, inserted) => {
                 if (error) {
                   next(error)
-                }
-                else {
+                } else {
                   next(null, inserted.ops[0])
                 }
               }
             )
-          }
-          else {
+          } else {
             next({code: 'B003'})
           }
         }
       }
     )
   }
-  getUser(user, next) {
+  getUser (user, next) {
     mongo.find(
       'users',
       {_id: user._id, password: user.password},
@@ -70,17 +66,15 @@ class UserService {
       (error, result) => {
         if (error) {
           next(error)
-        }
-        else if (result.length <= 0) {
+        } else if (result.length <= 0) {
           next({code: 'S002'})
-        }
-        else {
+        } else {
           next(null, result[0])
         }
       }
     )
   }
-  authenticate(_id, password, next) {
+  authenticate (_id, password, next) {
     mongo.find(
       'users',
       {_id: _id, password: password},
@@ -88,11 +82,9 @@ class UserService {
       (error, result) => {
         if (error) {
           next(error)
-        }
-        else if (result.length <= 0) {
+        } else if (result.length <= 0) {
           next('authenticate error!')
-        }
-        else {
+        } else {
           next(null, result[0])
         }
       }

@@ -2,14 +2,12 @@ import logger from './logger.js'
 import socketService from './socketService.js'
 
 class SocketRouter {
-  constructor() {
+  constructor () {
     this.io = null
   }
-  init(server, session) {
+  init (server, session) {
     let self = this
     self.io = require('socket.io')(server)
-    // self.io.set('heartbeat interval', 1000)
-    // self.io.set('heartbeat timeout', 5000)
 
     self.io.use((socket, next) => {
       session(socket.request, socket.request.res, next)
@@ -63,11 +61,10 @@ class SocketRouter {
     })
     logger.debug('socket init ok!')
   }
-  checkAuth(socket, next) {
+  checkAuth (socket, next) {
     if (socket.request && socket.request.session && socket.request.session.passport && socket.request.session.passport.user) {
       next()
-    }
-    else {
+    } else {
       socket.emit('authenticateError', {})
     }
   }

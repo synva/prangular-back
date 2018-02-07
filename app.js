@@ -76,8 +76,7 @@ if (conf.session.mode === 'mongo') {
     resave: false,
     saveUninitialized: false
   })
-}
-else {
+} else {
   store = new expressRedisStore({
     host: conf.session.redisHost,
     port: conf.session.redisPort,
@@ -112,8 +111,7 @@ if (conf.authentication.mode === 'basic') {
       userService.authenticate(username, password, (error, user) => {
         if (error) {
           next(error, null)
-        }
-        else {
+        } else {
           next(null, user)
         }
       })
@@ -140,8 +138,7 @@ if (conf.authentication.mode === 'basic') {
     (req, res) => {
       if (req.session && req.session.passport && req.session.passport.user && req.session.passport.user._id) {
         res.redirect('login')
-      }
-      else {
+      } else {
         res.json({error: {code: 'S002'}, data: null})
       }
     }
@@ -194,12 +191,10 @@ app.get('/static/*', (req, res) => {
         inspect(s3path, '')
       })
     })
-  }
-  else if (url.indexOf('/static/upload') === 0) {
+  } else if (url.indexOf('/static/upload') === 0) {
     url = url.replace('/static/', '/')
     res.sendFile(path.join(__dirname, url))
-  }
-  else {
+  } else {
     res.sendFile(path.join(__dirname, '..', 'dist', url))
   }
 })
@@ -224,8 +219,7 @@ app.post('/uploadFiles', (req, res) => {
             type: list[i].type,
             size: list[i].size
           })
-        }
-        else {
+        } else {
           files.push({
             file: '/static/s3/upload/' + list[i].folder + '/' + list[i].name,
             thumbnail: list[i].thumbnail ? ('/static/s3/upload/' + list[i].folder + '/' + list[i].thumbnail) : null,
@@ -237,8 +231,7 @@ app.post('/uploadFiles', (req, res) => {
         }
       }
       res.json({error: null, data: files})
-    }
-    else {
+    } else {
       res.json({error: error, data: null})
     }
   })
@@ -257,8 +250,7 @@ app.get('/login', (req, res) => {
     userService.recordLogin(req.session.passport.user, (error, user) => {
       if (error) {
         res.json({error: error, data: null})
-      }
-      else {
+      } else {
         res.json({error: null, data: {user: user}})
       }
     })
@@ -269,9 +261,8 @@ app.post('/register', (req, res) => {
   userService.insertUser(req.body, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
-    }
-    else {
-      res.json({error: null, data: {user: user }})
+    } else {
+      res.json({error: null, data: {user: user}})
     }
   })
 })
@@ -307,7 +298,6 @@ let onListening = () => {
     : 'port ' + addr.port
   logger.info('Listening on ' + bind)
 }
-
 mongo.init((error) => {
   if (!error) {
     logger.debug('Begin listen...')

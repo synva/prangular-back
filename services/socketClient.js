@@ -1,22 +1,22 @@
 import logger from './logger.js'
 
 class Client {
-  constructor(socket) {
+  constructor (socket) {
     this.socket = socket
     this.room = null
   }
-  equal(client) {
+  equal (client) {
     return client && client.socket && client.socket.id === this.socket.id
   }
-  changeRoom(room) {
+  changeRoom (room) {
     this.room = room
   }
-  recovery(oldclient) {
+  recovery (oldclient) {
     oldclient.room.enter(this)
     oldclient.destroy()
     oldclient = null
   }
-  destroy() {
+  destroy () {
     if (this.room) {
       this.socket.leave(this.room.id)
       this.room.exit(this)
@@ -24,7 +24,7 @@ class Client {
     }
     this.socket = null
   }
-  spy() {
+  spy () {
     logger.debug('  ' + this.socket.id)
   }
 }

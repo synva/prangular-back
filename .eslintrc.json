@@ -9,19 +9,21 @@
     "ecmaVersion": 2017
   },
   "rules": {
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "never"
-    ],
-    "no-trailing-spaces": ["error", {"skipBlankLines": true}]
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "never"],
+    "no-trailing-spaces": ["error", {"skipBlankLines": true}],
+    "object-curly-spacing": "error",
+    "comma-dangle": "error",
+    "eol-last": "error",
+    "space-before-function-paren": "error",
+    "space-in-parens": "error",
+    "spaced-comment": "error",
+    "arrow-spacing": "error",
+    "no-var": "error",
+    "comma-spacing": "error",
+    "brace-style": "error",
+    "no-unused-vars": [1, {"vars": "all", "args": "after-used"}]
   },
   "globals": {
     "process": true,
