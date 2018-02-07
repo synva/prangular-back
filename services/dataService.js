@@ -108,7 +108,7 @@ class DataService {
             self.thumbnail(localFileList, idx + 1, fileList, next)
           })
           .catch((error) => {
-            logger.error('sharp error: ' + JSON.stringify(error))
+            logger.error('sharp error:', JSON.stringify(error))
             next({code: 'S006', detail: JSON.stringify(error)})
           })
       } else {
@@ -197,7 +197,7 @@ class DataService {
       })
       next(null, data)
     }).catch((error) => {
-      logger.error('s3.putObject error: ' + JSON.stringify(error))
+      logger.error('s3.putObject error:', JSON.stringify(error))
       next({code: 'S004', detail: JSON.stringify(error)})
     })
   }

@@ -25,7 +25,7 @@ class Room {
   exit (client) {
     for (let i = 0; i < this.clients.length; i ++) {
       if (this.clients[i].equal(client)) {
-        logger.debug(client.socket.id + ' exit room: ' + this.name)
+        logger.debug(client.socket.id, 'exit room:', this.name)
         client.socket.leave(this.id)
         client.changeRoom(null)
         this.clients.splice(i, 1)
@@ -43,7 +43,7 @@ class Room {
     }
   }
   spy () {
-    logger.debug(this.name + ': ' + this.id + ' | ' + this.clients.length)
+    logger.debug(this.name, ':', this.id, '|', this.clients.length)
     for (let idx = 0; idx < this.clients.length; idx ++) {
       this.clients[idx].spy()
     }

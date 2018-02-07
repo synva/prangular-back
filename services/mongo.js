@@ -28,18 +28,18 @@ class Mongo {
     }
     this.db.collection(collection_name, (outer_error, collection) => {
       if (outer_error) {
-        logger.error('find connect error:' + JSON.stringify(outer_error))
+        logger.error('find connect error:', JSON.stringify(outer_error))
         next({code: 'S003', detail: JSON.stringify(outer_error)})
       } else {
         let mongoFind = collection.find(criteria, projection)
         mongoFind.count((count_error, count) => {
           if (count_error) {
-            logger.error('count error:' + JSON.stringify(count_error))
+            logger.error('count error:', JSON.stringify(count_error))
             next({code: 'S003', detail: JSON.stringify(count_error)})
           } else {
             mongoFind.skip(skip).limit(conf.mongo.limit).toArray((inner_error, list) => {
               if (inner_error) {
-                logger.error('find error:' + JSON.stringify(inner_error))
+                logger.error('find error:', JSON.stringify(inner_error))
                 next({code: 'S003', detail: JSON.stringify(inner_error)})
               } else {
                 next(null, list, count)
@@ -66,7 +66,7 @@ class Mongo {
     }
     this.db.collection(collection_name, (outer_error, collection) => {
       if (outer_error) {
-        logger.error('findAll connect error:' + JSON.stringify(outer_error))
+        logger.error('findAll connect error:', JSON.stringify(outer_error))
         next({code: 'S003', detail: JSON.stringify(outer_error)})
       } else {
         let cursor = collection.find(criteria)
@@ -78,7 +78,7 @@ class Mongo {
         }
         cursor.toArray((inner_error, result) => {
           if (inner_error) {
-            logger.error('findAll error:' + JSON.stringify(inner_error))
+            logger.error('findAll error:', JSON.stringify(inner_error))
             next({code: 'S003', detail: JSON.stringify(inner_error)})
           } else {
             next(null, result)
@@ -90,12 +90,12 @@ class Mongo {
   insert (collection_name, document, options, next) {
     this.db.collection(collection_name, (outer_error, collection) => {
       if (outer_error) {
-        logger.error('insert connect error:' + JSON.stringify(outer_error))
+        logger.error('insert connect error:', JSON.stringify(outer_error))
         next({code: 'S003', detail: JSON.stringify(outer_error)})
       } else {
         collection.insert(document, options, (inner_error, result) => {
           if (inner_error) {
-            logger.error('insert error:' + JSON.stringify(inner_error))
+            logger.error('insert error:', JSON.stringify(inner_error))
             next({code: 'S003', detail: JSON.stringify(inner_error)})
           } else {
             next(null, result)
@@ -107,12 +107,12 @@ class Mongo {
   update (collection_name, query, update, options, next) {
     this.db.collection(collection_name, (outer_error, collection) => {
       if (outer_error) {
-        logger.error('update connect error:' + JSON.stringify(outer_error))
+        logger.error('update connect error:', JSON.stringify(outer_error))
         next({code: 'S003', detail: JSON.stringify(outer_error)})
       } else {
         collection.update(query, update, options, (inner_error, result) => {
           if (inner_error) {
-            logger.error('update error:' + JSON.stringify(inner_error))
+            logger.error('update error:', JSON.stringify(inner_error))
             next({code: 'S003', detail: JSON.stringify(inner_error)})
           } else {
             next(null, result)
@@ -124,12 +124,12 @@ class Mongo {
   remove (collection_name, query, options, next) {
     this.db.collection(collection_name, (outer_error, collection) => {
       if (outer_error) {
-        logger.error('remove connect error:' + JSON.stringify(outer_error))
+        logger.error('remove connect error:', JSON.stringify(outer_error))
         next({code: 'S003', detail: JSON.stringify(outer_error)})
       } else {
         collection.remove(query, options, (inner_error, result) => {
           if (inner_error) {
-            logger.error('remove error:' + JSON.stringify(inner_error))
+            logger.error('remove error:', JSON.stringify(inner_error))
             next({code: 'S003', detail: JSON.stringify(inner_error)})
           } else {
             next(null, result)

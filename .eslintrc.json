@@ -23,7 +23,8 @@
     "no-var": "error",
     "comma-spacing": "error",
     "brace-style": "error",
-    "no-unused-vars": [1, {"vars": "all", "args": "after-used"}]
+    "no-unused-vars": [1, {"vars": "all", "args": "after-used"}],
+    "no-multi-spaces": "error"
   },
   "globals": {
     "process": true,

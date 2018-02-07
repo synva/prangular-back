@@ -4,7 +4,7 @@
   "cors": "",
   "logger": {
     "appenders": {"system": {"type": "file", "filename": "system.log"}},
-    "categories": {"default": {"appenders": ["system"], "level": "all"}}
+    "categories": {"default": {"appenders": ["system"], "level": "info"}}
   },
   "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
   "mongo": {

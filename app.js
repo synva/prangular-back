@@ -17,7 +17,7 @@ logger.info('authentication mode:', conf.authentication.mode)
 logger.info('storagy mode:', conf.storagy.mode)
 
 let app = express()
-app.set('views', path.join(__dirname, '..', 'dist'))
+app.set('views', path.join(__dirname, 'dist'))
 app.use(
   compression({
     filter: (req, res) => {
@@ -150,7 +150,7 @@ if (conf.authentication.mode === 'basic') {
 
 let checkAuth = (req, res, next) => {
   if (req.session && req.session.passport && req.session.passport.user) {
-    logger.debug('http session:', req.request.session.passport.user._id)
+    logger.debug('http session:', req.session.passport.user._id)
     next()
   } else {
     logger.error('miss session.')
@@ -195,7 +195,7 @@ app.get('/static/*', (req, res) => {
     url = url.replace('/static/', '/')
     res.sendFile(path.join(__dirname, url))
   } else {
-    res.sendFile(path.join(__dirname, '..', 'dist', url))
+    res.sendFile(path.join(__dirname, 'dist', url))
   }
 })
 
@@ -206,8 +206,8 @@ app.post('/uploadFiles', (req, res) => {
   logger.info('uploadFiles')
   dataService.uploadFiles(req, (error, list, params) => {
     if (!error) {
-      logger.info('upload end: ' + JSON.stringify(list))
-      logger.info('params: ' + JSON.stringify(params))
+      logger.info('upload end:', JSON.stringify(list))
+      logger.info('params:', JSON.stringify(params))
       let files = []
       for (let i = 0; i < list.length; i++) {
         if (conf.storagy.mode === 'local') {
@@ -257,7 +257,7 @@ app.get('/login', (req, res) => {
   }
 })
 app.post('/register', (req, res) => {
-  logger.info('register:' + JSON.stringify(req.body))
+  logger.info('register:', JSON.stringify(req.body))
   userService.insertUser(req.body, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
@@ -284,7 +284,7 @@ app.get('/logout', (req, res) => {
 
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'))
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 })
 
 
@@ -296,7 +296,7 @@ let onListening = () => {
   let bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port
-  logger.info('Listening on ' + bind)
+  logger.info('Listening on', bind)
 }
 mongo.init((error) => {
   if (!error) {
