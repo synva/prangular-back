@@ -54,6 +54,13 @@ class SocketRouter {
         })
       })
 
+      socket.on('sendChat', (params) => {
+        logger.info('sendChat:', JSON.stringify(params))
+        self.checkAuth(socket, () => {
+          self.io.emit('receiveChat', params)
+        })
+      })
+
       socket.on('disconnect', () => {
         socketService.logout(client)
         socketService.spy()
