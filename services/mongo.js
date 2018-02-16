@@ -27,11 +27,11 @@ class Mongo {
         criteria = {_id: {$lt: ObjectId(paging._id)}}
       }
       if (projection && projection.sort) {
-        projection.sort._id = -1
+        projection.sort._id = paging.order ? paging.order : -1
       } else if (projection && !projection.sort) {
-        projection.sort = {_id: -1}
+        projection.sort = {_id: paging.order ? paging.order : -1}
       } else if (!projection) {
-        projection = {sort: {_id: -1}}
+        projection = {sort: {_id: paging.order ? paging.order : -1}}
       }
     }
     this.db.collection(collection_name, (outer_error, collection) => {
