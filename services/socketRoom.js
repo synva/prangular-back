@@ -44,9 +44,9 @@ class Room {
   }
   spy () {
     logger.debug(this.name, ':', this.id, '|', this.clients.length)
-    for (let idx = 0; idx < this.clients.length; idx ++) {
-      this.clients[idx].spy()
-    }
+    this.clients.forEach(client => {
+      client.spy()
+    })
     logger.debug('======================================================================')
   }
 }

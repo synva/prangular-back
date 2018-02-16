@@ -174,9 +174,9 @@ app.get('/static/*', (req, res) => {
       bucket: conf.storagy.bucket
     })
     let s3path = url.substring(11, url.length)
-    client.getFile(s3path, (err, s3res) => {
-      if (err) {
-        logger.error(err)
+    client.getFile(s3path, (error, s3res) => {
+      if (error) {
+        logger.error(error)
         res.send(404, 'Not found')
         return
       }

@@ -9,23 +9,23 @@ class Utils {
   isFileExist (filename) {
     try {
       fs.statSync(filename)
-    } catch(err) {
-      if (err.code === 'ENOENT') {
+    } catch(error) {
+      if (error.code === 'ENOENT') {
         return false
       }
     }
     return true
   }
   writeFile (filename, contents, next) {
-    mkdirp(path.dirname(filename), (err) => {
-      if (err) {
-        logger.error(JSON.stringify(err))
-        next({code: 'S002', detail: JSON.stringify(err)})
+    mkdirp(path.dirname(filename), (error) => {
+      if (error) {
+        logger.error(JSON.stringify(error))
+        next({code: 'S002', detail: JSON.stringify(error)})
       } else {
-        fs.writeFile(filename, contents, 'binary', (err) => {
-          if (err) {
-            logger.error(JSON.stringify(err))
-            next({code: 'S002', detail: JSON.stringify(err)})
+        fs.writeFile(filename, contents, 'binary', (error) => {
+          if (error) {
+            logger.error(JSON.stringify(error))
+            next({code: 'S002', detail: JSON.stringify(error)})
           } else {
             next(null)
           }
@@ -34,15 +34,15 @@ class Utils {
     })
   }
   appendFile (filename, contents, next) {
-    mkdirp(path.dirname(filename), (err) => {
-      if (err) {
-        logger.error(JSON.stringify(err))
-        next({code: 'S002', detail: JSON.stringify(err)})
+    mkdirp(path.dirname(filename), (error) => {
+      if (error) {
+        logger.error(JSON.stringify(error))
+        next({code: 'S002', detail: JSON.stringify(error)})
       } else {
-        fs.appendFile(filename, contents, (err) => {
-          if (err) {
-            logger.error(JSON.stringify(err))
-            next({code: 'S002', detail: JSON.stringify(err)})
+        fs.appendFile(filename, contents, (error) => {
+          if (error) {
+            logger.error(JSON.stringify(error))
+            next({code: 'S002', detail: JSON.stringify(error)})
           } else {
             next(null)
           }
@@ -51,65 +51,24 @@ class Utils {
     })
   }
   deleteFile (filename, next) {
-    fs.unlink(filename, (err) => {
-      if (err) {
-        logger.error(JSON.stringify(err))
-        next({code: 'S002', detail: JSON.stringify(err)})
+    fs.unlink(filename, (error) => {
+      if (error) {
+        logger.error(JSON.stringify(error))
+        next({code: 'S002', detail: JSON.stringify(error)})
       } else {
         next(null)
       }
     })
   }
   readFile (filename, next) {
-    fs.readFile(filename, 'utf8', (err, text) => {
-      if (err) {
-        logger.error(JSON.stringify(err))
-        next({code: 'S002', detail: JSON.stringify(err)})
+    fs.readFile(filename, 'utf8', (error, text) => {
+      if (error) {
+        logger.error(JSON.stringify(error))
+        next({code: 'S002', detail: JSON.stringify(error)})
       } else {
         next(null, text)
       }
     })
-  }
-  getFileList (filepath, ext, next) {
-    let self = this
-    fs.readdir(filepath, (err, files) => {
-      if (err) {
-        logger.error(JSON.stringify(err))
-        next({code: 'S002', detail: JSON.stringify(err)})
-      } else {
-        let fileList = []
-        let idx = 0
-        self.filterFile(filepath, files, idx, ext, fileList, (err) => {
-          if (err) {
-            next(err, null)
-          } else {
-            next(null, fileList)
-          }
-        })
-      }
-    })
-  }
-  filterFile (filepath, files, idx, ext, fileList, next) {
-    let self = this
-    if (idx >= files.length) {
-      next(null)
-      return
-    } else {
-      if (!ext || (ext && path.extname(files[idx]) === ('.' + ext))) {
-        let filename = path.join(filepath, path.basename(files[idx]))
-        let filestat = fs.statSync(filename)
-        let name = path.basename(files[idx], path.extname(files[idx]))
-        let udate = filestat.mtime.getTime()
-        fileList.push({
-          file: filename,
-          name: name,
-          date: udate
-        })
-        self.filterFile(filepath, files, idx + 1, ext, fileList, next)
-      } else {
-        self.filterFile(filepath, files, idx + 1, ext, fileList, next)
-      }
-    }
   }
   execute (cmd, next) {
     let exec = require('child_process').exec
