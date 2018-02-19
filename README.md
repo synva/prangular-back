@@ -42,7 +42,9 @@ git clone https://your-git-account@github.com/mrm-xiefan/budousan-back.git
 
 ## 3. install dependencies
 
-**![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `make sure your os is 64bit architecture. if not, remove sharp in package.json!`**
+``` diff
+- make sure your os is 64bit architecture. if not, remove sharp in package.json!
+```
 
 ``` bash
 cd /your/path/like/desktop/budousan-back
