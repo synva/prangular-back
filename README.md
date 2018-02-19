@@ -12,6 +12,19 @@
 
 - install mongodb(make sure that mongodb service is on)
 
+``` bash
+brew install mongodb
+brew services start mongodb
+mongo
+# make sure mongo is working. then exit mongo.
+exit
+# config file is here
+vim /usr/local/etc/mongod.conf
+
+# if you installed without brew, you may use this command to serve mongodb
+sudo mongod --fork --dbpath /var/lib/mongodb --logpath /var/log/mongodb.log
+```
+
 - i recommend to use this mongo IDE: https://studio3t.com/
 
 - install yarn
@@ -29,7 +42,7 @@ git clone https://your-git-account@github.com/mrm-xiefan/budousan-back.git
 
 ## 3. install dependencies
 
-**make sure your os is 64bit architecture. if not, remove sharp in package.json!**
+**{color: red}make sure your os is 64bit architecture. if not, remove sharp in package.json!{color}**
 
 ``` bash
 cd /your/path/like/desktop/budousan-back
