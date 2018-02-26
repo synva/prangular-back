@@ -136,8 +136,16 @@ if (conf.authentication.mode === 'basic') {
   app.post('/authenticate',
     passport.authenticate('local'),
     (req, res) => {
+      // authenticate failed will not comes here. so here is only normal case and system error.
       if (req.session && req.session.passport && req.session.passport.user && req.session.passport.user._id) {
-        res.redirect('login')
+        logger.debug('auth success:', JSON.stringify(req.session.passport.user._id))
+        userService.recordLogin(req.session.passport.user, (error, user) => {
+          if (error) {
+            res.json({error: error, data: null})
+          } else {
+            res.json({error: null, data: {user: user}})
+          }
+        })
       } else {
         res.json({error: {code: 'S002'}, data: null})
       }
@@ -246,7 +254,7 @@ app.get('/login', (req, res) => {
     logger.info('need authenticate')
     res.json({error: null, data: {user: null}})
   } else {
-    logger.info('user:', JSON.stringify(req.session.passport.user._id))
+    logger.info('login success:', JSON.stringify(req.session.passport.user._id))
     userService.recordLogin(req.session.passport.user, (error, user) => {
       if (error) {
         res.json({error: error, data: null})

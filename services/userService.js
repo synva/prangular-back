@@ -81,7 +81,7 @@ class UserService {
       {},
       (error, result) => {
         if (error) {
-          next(error)
+          next('authenticate error!')
         } else if (result.length <= 0) {
           next('authenticate error!')
         } else {
