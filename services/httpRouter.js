@@ -30,6 +30,29 @@ router.get('/initMySell', (req, res) => {
     }
   })
 })
+router.get('/findSellPieces', (req, res) => {
+  const params = url.parse(req.url, true).query
+  logger.info('findSellPieces:', params)
+  sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {sellPieces: sellPieces, count: count}})
+    }
+  })
+})
+router.post('/updateSellPiece', (req, res) => {
+  logger.info('updateSellPiece:', req.body)
+  sellPieceService.updateSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {sellPiece: sellPiece}})
+    }
+  })
+  // res.json({error: null, data: {posted: 'data'}})
+})
+
 router.get('/moreBuyRequests', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('moreBuyRequests:', params)

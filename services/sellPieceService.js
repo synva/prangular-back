@@ -1,10 +1,15 @@
 import logger from './logger.js'
 import mongo from './mongo.js'
+import {ObjectId} from 'mongodb'
 
 class SellPieceService {
   constructor () {
   }
   findSellPieces (filter, next, paging) {
+    if(filter._id){
+      filter._id = ObjectId(filter._id)
+    }
+
     filter.deleted = {$ne: true}
     mongo.find(
       'sellPieces',
@@ -37,6 +42,27 @@ class SellPieceService {
         } else {
           let inserted = result.ops[0]
           next(null, inserted)
+        }
+      }
+    )
+  }
+  updateSellPiece (user, sellPiece, next) {
+    let id = sellPiece._id
+    delete sellPiece._id
+    sellPiece.uuser = user._id
+    let now = new Date()
+    sellPiece.udate = now.valueOf()
+    mongo.update(
+      'sellPieces',
+      {_id: ObjectId(id)},
+      {$set: sellPiece},
+      {multi: false},
+      (error, result) => {
+        if (error) {
+          next(error)
+        } else {
+          sellPiece._id = id
+          next(null, sellPiece)
         }
       }
     )
