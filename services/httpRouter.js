@@ -3,6 +3,8 @@ import url from 'url'
 import logger from './logger.js'
 
 import buyRequestService from './buyRequestService.js'
+import sellPieceService from './sellPieceService.js'
+
 
 let router = express.Router()
 
@@ -14,6 +16,17 @@ router.get('/initEstateSell', (req, res) => {
       res.json({error: error, data: null})
     } else {
       res.json({error: null, data: {buyRequests: buyRequests, count: count}})
+    }
+  })
+})
+router.get('/initMySell', (req, res) => {
+  const params = url.parse(req.url, true).query
+  logger.info('initMySell:', params)
+  sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {sellPieces: sellPieces, count: count}})
     }
   })
 })
@@ -39,6 +52,16 @@ router.put('/insertBuyRequest', (req, res) => {
       res.json({error: error, data: null})
     } else {
       res.json({error: null, data: buyRequest})
+    }
+  })
+})
+router.put('/insertSellPiece', (req, res) => {
+  logger.info('insertSellPiece:', req.body)
+  sellPieceService.insertSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: sellPiece})
     }
   })
 })

@@ -8,7 +8,7 @@
   },
   "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
   "mongo": {
-    "server": "127.0.0.1",
+    "server": "52.192.185.252",
     "port": 27017,
     "db": "budousan",
     "limit": 10
