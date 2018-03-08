@@ -5,9 +5,35 @@ import {ObjectId} from 'mongodb'
 class SellPieceService {
   constructor () {
   }
-  findSellPieces (filter, next, paging) {
-    if(filter._id){
-      filter._id = ObjectId(filter._id)
+  findSellPieces (params, next, paging) {
+    let filter = {}
+    if(params.sellPiece){
+      filter._id = ObjectId(params.sellPiece)
+    }
+
+    if(params.agent){
+      filter.agent = params.agent
+    }
+
+    filter.deleted = {$ne: true}
+    mongo.find(
+      'sellPieces',
+      filter,
+      {sort: {_id: -1}},
+      (error, result, count) => {
+        if (error) {
+          next(error, null)
+        } else {
+          next(null, result, count)
+        }
+      },
+      paging
+    )
+  }
+  findSellPieceDetail (params, next, paging) {
+    let filter = {}
+    if(params.sellPiece){
+      filter._id = ObjectId(params.sellPiece)
     }
 
     filter.deleted = {$ne: true}
@@ -30,6 +56,7 @@ class SellPieceService {
     now = now.valueOf()
     sellPiece.cdate = now
     sellPiece.cuser = user._id
+    sellPiece.agent = user._id
     sellPiece.udate = now
     sellPiece.uuser = user._id
     mongo.insert(
