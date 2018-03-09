@@ -1,5 +1,6 @@
 import logger from './logger.js'
 import mongo from './mongo.js'
+import {ObjectId} from 'mongodb'
 
 class UserService {
   constructor () {
@@ -86,6 +87,27 @@ class UserService {
           next('authenticate error!')
         } else {
           next(null, result[0])
+        }
+      }
+    )
+  }
+  updateUser (user, userInfo, next) {
+    let id = userInfo._id
+    // delete userInfo._id
+    userInfo.uuser = user._id
+    let now = new Date()
+    userInfo.udate = now.valueOf()
+    mongo.update(
+      'users',
+      {_id: id},
+      {$set: userInfo},
+      {multi: false},
+      (error, result) => {
+        if (error) {
+          next(error)
+        } else {
+          userInfo._id = id
+          next(null, userInfo)
         }
       }
     )

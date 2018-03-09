@@ -4,6 +4,7 @@ import logger from './logger.js'
 
 import buyRequestService from './buyRequestService.js'
 import sellPieceService from './sellPieceService.js'
+import userService from './userService.js'
 
 
 let router = express.Router()
@@ -124,6 +125,18 @@ router.delete('/deleteData', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('deleteData:', params)
   res.json({error: null, data: {deleted: 'data'}})
+})
+
+router.post('/updateUserInfo', (req, res) => {
+  logger.info('updateUserInfo:', req.body)
+  userService.updateUser(req.session.passport.user, req.body, (error, userInfo) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {sellPiece: userInfo}})
+    }
+  })
+  // res.json({error: null, data: {posted: 'data'}})
 })
 
 module.exports = router
