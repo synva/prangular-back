@@ -6,14 +6,14 @@ class SocketRouter {
     this.io = null
   }
   init (server, session) {
-    let self = this
-    self.io = require('socket.io')(server)
+    let that = this
+    that.io = require('socket.io')(server)
 
-    self.io.use((socket, next) => {
+    that.io.use((socket, next) => {
       session(socket.request, socket.request.res, next)
     })
 
-    self.io.on('connection', (socket) => {
+    that.io.on('connection', (socket) => {
       logger.info('connected:', socket.id)
       if (socket.request && socket.request.session && socket.request.session.passport && socket.request.session.passport.user) {
         logger.debug('socket session:', socket.request.session.passport.user._id)
@@ -30,7 +30,7 @@ class SocketRouter {
 
       socket.on('enterLobby', (params) => {
         logger.info('enterLobby:', socket.id, '|', JSON.stringify(params))
-        self.checkAuth(socket, () => {
+        that.checkAuth(socket, () => {
           if (socketService.enterLobby(client)) {
             socketService.spy()
           }
@@ -39,7 +39,7 @@ class SocketRouter {
 
       socket.on('enterChatRoom', (params) => {
         logger.info('enterChatRoom:', socket.id, '|', JSON.stringify(params))
-        self.checkAuth(socket, () => {
+        that.checkAuth(socket, () => {
           if (socketService.enterChatRoom(client)) {
             // chatService.getChats((error, chats, count) => {
             //   if (error) {
@@ -56,8 +56,8 @@ class SocketRouter {
 
       socket.on('sendChat', (params) => {
         logger.info('sendChat:', JSON.stringify(params))
-        self.checkAuth(socket, () => {
-          self.io.emit('receiveChat', params)
+        that.checkAuth(socket, () => {
+          that.io.emit('receiveChat', params)
         })
       })
 

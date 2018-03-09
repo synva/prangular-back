@@ -167,7 +167,7 @@ let checkAuth = (req, res, next) => {
   }
 }
 app.use('/private', checkAuth, privateHttpRouter)
-app.use('/public', privateHttpRouter)
+app.use('/public', publicHttpRouter)
 
 
 

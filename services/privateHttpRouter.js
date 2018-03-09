@@ -9,28 +9,6 @@ import userService from './userService.js'
 
 let router = express.Router()
 
-router.get('/initEstateSell', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('moreBuyRequests:', params)
-  buyRequestService.findBuyRequests(params, (error, buyRequests, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {buyRequests: buyRequests, count: count}})
-    }
-  })
-})
-router.get('/initEstateBuy', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('initEstateBuy:', params)
-  sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {sellPieces: sellPieces, count: count}})
-    }
-  })
-})
 router.get('/initMySell', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('initMySell:', params)
@@ -53,17 +31,6 @@ router.get('/findSellPieces', (req, res) => {
     }
   })
 })
-router.get('/findSellPieceDetail', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('findSellPieceDetail:', params)
-  sellPieceService.findSellPieceDetail(params, (error, sellPieces, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {sellPieces: sellPieces, count: count}})
-    }
-  })
-})
 router.post('/updateSellPiece', (req, res) => {
   logger.info('updateSellPiece:', req.body)
   sellPieceService.updateSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
@@ -73,29 +40,6 @@ router.post('/updateSellPiece', (req, res) => {
       res.json({error: null, data: {sellPiece: sellPiece}})
     }
   })
-  // res.json({error: null, data: {posted: 'data'}})
-})
-router.get('/moreSellPieces', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('moreSellPieces:', params)
-  sellPieceService.findSellPieces(JSON.parse(params.filter), (error, sellPieces, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {sellPieces: sellPieces, count: count}})
-    }
-  }, JSON.parse(params.paging))
-})
-router.get('/moreBuyRequests', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('moreBuyRequests:', params)
-  buyRequestService.findBuyRequests(JSON.parse(params.filter), (error, buyRequests, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {buyRequests: buyRequests, count: count}})
-    }
-  }, JSON.parse(params.paging))
 })
 router.post('/postData', (req, res) => {
   logger.info('postData:', req.body)
@@ -126,7 +70,6 @@ router.delete('/deleteData', (req, res) => {
   logger.info('deleteData:', params)
   res.json({error: null, data: {deleted: 'data'}})
 })
-
 router.post('/updateUserInfo', (req, res) => {
   logger.info('updateUserInfo:', req.body)
   userService.updateUser(req.session.passport.user, req.body, (error, userInfo) => {
@@ -136,7 +79,6 @@ router.post('/updateUserInfo', (req, res) => {
       res.json({error: null, data: {sellPiece: userInfo}})
     }
   })
-  // res.json({error: null, data: {posted: 'data'}})
 })
 
 module.exports = router

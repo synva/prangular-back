@@ -6,7 +6,7 @@ class UserService {
   constructor () {
   }
   recordLogin (user, next) {
-    let self = this
+    let that = this
     let now = new Date()
     mongo.update(
       'users',
@@ -17,7 +17,7 @@ class UserService {
         if (error) {
           next(error)
         } else {
-          self.getUser(user, (error, user) => {
+          that.getUser(user, (error, user) => {
             next(error, user)
           })
         }

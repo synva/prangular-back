@@ -17,7 +17,7 @@ class DataService {
   constructor () {
   }
   uploadFiles (req, next) {
-    let self = this
+    let that = this
     let localFileList = []
     let form = new formidable.IncomingForm()
     let params = {}
@@ -51,11 +51,11 @@ class DataService {
 
     form.on('end', () => {
       let fileList = []
-      self.thumbnail(localFileList, 0, fileList, (error) => {
+      that.thumbnail(localFileList, 0, fileList, (error) => {
         if (error) {
           next(error)
         } else {
-          self.putToS3(fileList, (error) => {
+          that.putToS3(fileList, (error) => {
             if (error) {
               next(error)
             } else {
@@ -74,7 +74,7 @@ class DataService {
     form.parse(req)
   }
   thumbnail (localFileList, idx, fileList, next) {
-    let self = this
+    let that = this
     if (idx > localFileList.length - 1) {
       next(null)
       return
@@ -105,7 +105,7 @@ class DataService {
               name: localFileList[idx].name,
               thumbnail: thumbnailName
             })
-            self.thumbnail(localFileList, idx + 1, fileList, next)
+            that.thumbnail(localFileList, idx + 1, fileList, next)
           })
           .catch((error) => {
             logger.error('sharp error:', JSON.stringify(error))
@@ -120,7 +120,7 @@ class DataService {
           name: localFileList[idx].name,
           thumbnail: localFileList[idx].name
         })
-        self.thumbnail(localFileList, idx + 1, fileList, next)
+        that.thumbnail(localFileList, idx + 1, fileList, next)
       }
     } else {
       fileList.push({
@@ -131,7 +131,7 @@ class DataService {
         name: localFileList[idx].name,
         thumbnail: null
       })
-      self.thumbnail(localFileList, idx + 1, fileList, next)
+      that.thumbnail(localFileList, idx + 1, fileList, next)
     }
   }
   putToS3 (fileList, next) {
@@ -142,18 +142,18 @@ class DataService {
     this.putOneSetToS3(fileList, 0, next)
   }
   putOneSetToS3 (fileList, idx, next) {
-    let self = this
+    let that = this
     if (idx > fileList.length - 1) {
       next(null)
       return
     }
-    self.putOneFileToS3(fileList[idx].folder, fileList[idx].name, fileList[idx].type, (error) => {
+    that.putOneFileToS3(fileList[idx].folder, fileList[idx].name, fileList[idx].type, (error) => {
       if (error) {
         next(error)
         return
       } else {
         if (fileList[idx].thumbnail && fileList[idx].name != fileList[idx].thumbnail) {
-          self.putOneFileToS3(fileList[idx].folder, fileList[idx].thumbnail, fileList[idx].type, (error) => {
+          that.putOneFileToS3(fileList[idx].folder, fileList[idx].thumbnail, fileList[idx].type, (error) => {
             if (error) {
               next(error)
               return
@@ -163,7 +163,7 @@ class DataService {
                   logger.error(fileList[idx].folder, '|', JSON.stringify(del_error))
                 }
               })
-              self.putOneSetToS3(fileList, idx + 1, next)
+              that.putOneSetToS3(fileList, idx + 1, next)
             }
           })
         } else {
@@ -172,7 +172,7 @@ class DataService {
               logger.error(fileList[idx].folder, '|', JSON.stringify(del_error))
             }
           })
-          self.putOneSetToS3(fileList, idx + 1, next)
+          that.putOneSetToS3(fileList, idx + 1, next)
         }
       }
     })

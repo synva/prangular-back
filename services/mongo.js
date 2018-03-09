@@ -8,11 +8,11 @@ class Mongo {
   constructor () {
   }
   init (next) {
-    let self = this
+    let that = this
     this.db = null
 
     MongoClient.connect('mongodb://' + conf.mongo.server + ':' + conf.mongo.port).then(client => {
-      self.db = client.db(conf.mongo.db)
+      that.db = client.db(conf.mongo.db)
       next(null)
     }).catch(error => {
       logger.error('mongodb error:', JSON.stringify(error))
