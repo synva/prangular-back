@@ -35,6 +35,7 @@ class UserService {
           next(error)
         } else {
           if (result.length <= 0) {
+            user.role = '1'
             user.cuser = user._id
             user.uuser = user._id
             let now = new Date()
