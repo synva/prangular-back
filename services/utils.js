@@ -9,7 +9,7 @@ class Utils {
   isFileExist (filename) {
     try {
       fs.statSync(filename)
-    } catch(error) {
+    } catch (error) {
       if (error.code === 'ENOENT') {
         return false
       }

@@ -6,7 +6,8 @@ import http from 'http'
 import logger from './services/logger.js'
 import mongo from './services/mongo.js'
 import compression from 'compression'
-import httpRouter from './services/httpRouter.js'
+import privateHttpRouter from './services/privateHttpRouter.js'
+import publicHttpRouter from './services/publicHttpRouter.js'
 import socketRouter from './services/socketRouter.js'
 import userService from './services/userService.js'
 import dataService from './services/dataService.js'
@@ -17,7 +18,7 @@ logger.info('authentication mode:', conf.authentication.mode)
 logger.info('storagy mode:', conf.storagy.mode)
 
 let app = express()
-app.set('views', path.join(__dirname, 'dist'))
+// app.set('views', path.join(__dirname, 'dist'))
 app.use(
   compression({
     filter: (req, res) => {
@@ -96,7 +97,7 @@ if (conf.session.mode === 'mongo') {
   })
 }
 app.use(session)
-httpRouter.use(session)
+privateHttpRouter.use(session)
 
 
 
@@ -165,7 +166,8 @@ let checkAuth = (req, res, next) => {
     res.json({error: {code: 'B002'}, data: null})
   }
 }
-app.use('/api', checkAuth, httpRouter)
+app.use('/private', checkAuth, privateHttpRouter)
+app.use('/public', privateHttpRouter)
 
 
 

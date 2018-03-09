@@ -7,11 +7,11 @@ class SellPieceService {
   }
   findSellPieces (params, next, paging) {
     let filter = {}
-    if(params.sellPiece){
+    if (params.sellPiece) {
       filter._id = ObjectId(params.sellPiece)
     }
 
-    if(params.agent){
+    if (params.agent) {
       filter.agent = params.agent
     }
 
@@ -32,7 +32,7 @@ class SellPieceService {
   }
   findSellPieceDetail (params, next, paging) {
     let filter = {}
-    if(params.sellPiece){
+    if (params.sellPiece) {
       filter._id = ObjectId(params.sellPiece)
     }
 
