@@ -214,10 +214,9 @@ app.get('/static/*', (req, res) => {
 
 app.post('/uploadFiles', (req, res) => {
   logger.info('uploadFiles')
-  dataService.uploadFiles(req, (error, list, params) => {
+  dataService.uploadFiles(req, (error, list) => {
     if (!error) {
       logger.info('upload end:', JSON.stringify(list))
-      logger.info('params:', JSON.stringify(params))
       let files = []
       for (let i = 0; i < list.length; i++) {
         if (conf.storagy.mode === 'local') {

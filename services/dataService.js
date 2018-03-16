@@ -29,15 +29,36 @@ class DataService {
 
     form.on('fileBegin', (field, file) => {
       let folder = uuid.v4()
-      file.path = path.join(__dirname, '..', 'upload', folder, file.name)
-      fs.mkdirSync(path.join(__dirname, '..', 'upload', folder))
-      localFileList.push({
-        fullname: file.path,
-        folder: folder,
-        name: file.name,
-        extname: path.extname(file.path).toUpperCase().replace('.', ''),
-        type: file.type
-      })
+      if (params.subFolder) {
+        file.path = path.join(__dirname, '..', 'upload', params.subFolder, folder, file.name)
+        try {
+          fs.mkdirSync(path.join(__dirname, '..', 'upload', params.subFolder))
+        } catch (error) {
+          if (error.code !== 'EEXIST') {
+            logger.error(JSON.stringify(error))
+            next({code: 'S002', detail: JSON.stringify(error)})
+            return
+          }
+        }
+        fs.mkdirSync(path.join(__dirname, '..', 'upload', params.subFolder, folder))
+        localFileList.push({
+          fullname: file.path,
+          folder: path.join(params.subFolder, folder),
+          name: file.name,
+          extname: path.extname(file.path).toUpperCase().replace('.', ''),
+          type: file.type
+        })
+      } else {
+        file.path = path.join(__dirname, '..', 'upload', folder, file.name)
+        fs.mkdirSync(path.join(__dirname, '..', 'upload', folder))
+        localFileList.push({
+          fullname: file.path,
+          folder: folder,
+          name: file.name,
+          extname: path.extname(file.path).toUpperCase().replace('.', ''),
+          type: file.type
+        })
+      }
     })
 
     form.on('file', (field, file) => {
@@ -50,8 +71,9 @@ class DataService {
     })
 
     form.on('end', () => {
+      logger.info('params:', JSON.stringify(params))
       let fileList = []
-      that.thumbnail(localFileList, 0, fileList, (error) => {
+      that.thumbnail(localFileList, 0, fileList, params.withoutThumbnail, (error) => {
         if (error) {
           next(error)
         } else {
@@ -59,7 +81,7 @@ class DataService {
             if (error) {
               next(error)
             } else {
-              next(null, fileList, params)
+              next(null, fileList)
             }
           })
         }
@@ -73,7 +95,7 @@ class DataService {
 
     form.parse(req)
   }
-  thumbnail (localFileList, idx, fileList, next) {
+  thumbnail (localFileList, idx, fileList, withoutThumbnail, next) {
     let that = this
     if (idx > localFileList.length - 1) {
       next(null)
@@ -86,6 +108,7 @@ class DataService {
         break
       }
     }
+    if (withoutThumbnail) needThumbnail = false
     if (needThumbnail) {
       if (os.arch() === 'x64') {
         let thumbnailName = path.basename(localFileList[idx].name, path.extname(localFileList[idx].name)) + '_thumbnail' + '.jpg'
@@ -96,7 +119,7 @@ class DataService {
           .limitInputPixels(0)
           // .max()
           .toFile(thumbnailFullname)
-          .then((data) => { // eslint-disable-line no-unused-vars
+          .then((data) => {
             fileList.push({
               extname: localFileList[idx].extname,
               type: localFileList[idx].type,
@@ -105,7 +128,7 @@ class DataService {
               name: localFileList[idx].name,
               thumbnail: thumbnailName
             })
-            that.thumbnail(localFileList, idx + 1, fileList, next)
+            that.thumbnail(localFileList, idx + 1, fileList, withoutThumbnail, next)
           })
           .catch((error) => {
             logger.error('sharp error:', JSON.stringify(error))
@@ -120,7 +143,7 @@ class DataService {
           name: localFileList[idx].name,
           thumbnail: localFileList[idx].name
         })
-        that.thumbnail(localFileList, idx + 1, fileList, next)
+        that.thumbnail(localFileList, idx + 1, fileList, withoutThumbnail, next)
       }
     } else {
       fileList.push({
@@ -131,7 +154,7 @@ class DataService {
         name: localFileList[idx].name,
         thumbnail: null
       })
-      that.thumbnail(localFileList, idx + 1, fileList, next)
+      that.thumbnail(localFileList, idx + 1, fileList, withoutThumbnail, next)
     }
   }
   putToS3 (fileList, next) {
