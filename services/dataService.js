@@ -111,7 +111,7 @@ class DataService {
     if (withoutThumbnail) needThumbnail = false
     if (needThumbnail) {
       if (os.arch() === 'x64') {
-        let thumbnailName = path.basename(localFileList[idx].name, path.extname(localFileList[idx].name)) + '_thumbnail' + '.jpg'
+        let thumbnailName = path.basename(localFileList[idx].name, path.extname(localFileList[idx].name)) + '_thumbnail' + '.png'
         let thumbnailFullname = path.join(__dirname, '..', 'upload', localFileList[idx].folder, thumbnailName)
         sharp(localFileList[idx].fullname)
           .rotate()
