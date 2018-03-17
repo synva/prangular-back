@@ -16,20 +16,39 @@ router.get('/initMySell', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {sellPieces: sellPieces, count: count}})
+      res.json({error: null, data: {datas: sellPieces, count: count}})
     }
   })
 })
 router.get('/findSellPieces', (req, res) => {
   const params = url.parse(req.url, true).query
+
+  let filter = {}
+  if (params.filter) {
+    if (typeof params.filter === 'string' || params.filter instanceof String) {
+      filter = JSON.parse(params.filter)
+    } else {
+      filter = params.filter
+    }
+  }
+
+  let paging = null
+  if (params.paging) {
+    if (typeof params.paging === 'string' || params.paging instanceof String) {
+      paging = JSON.parse(params.paging)
+    } else {
+      paging = params.paging
+    }
+  }
+
   logger.info('findSellPieces:', params)
   sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {sellPieces: sellPieces, count: count}})
+      res.json({error: null, data: {datas: sellPieces, count: count}})
     }
-  })
+  }, paging)
 })
 router.post('/updateSellPiece', (req, res) => {
   logger.info('updateSellPiece:', req.body)

@@ -7,8 +7,8 @@ class SellPieceService {
   }
   findSellPieces (params, next, paging) {
     let filter = {}
-    if (params.sellPiece) {
-      filter._id = ObjectId(params.sellPiece)
+    if (params._id) {
+      filter._id = ObjectId(params._id)
     }
 
     if (params.agent) {
