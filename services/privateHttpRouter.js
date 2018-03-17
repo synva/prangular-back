@@ -60,9 +60,15 @@ router.post('/updateSellPiece', (req, res) => {
     }
   })
 })
-router.post('/postData', (req, res) => {
-  logger.info('postData:', req.body)
-  res.json({error: null, data: {posted: 'data'}})
+router.post('/updateUser', (req, res) => {
+  logger.info('updateUser:', req.body)
+  userService.updateUser(req.session.passport.user, req.body, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: user})
+    }
+  })
 })
 router.put('/insertBuyRequest', (req, res) => {
   logger.info('insertBuyRequest:', req.body)
