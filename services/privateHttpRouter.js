@@ -90,20 +90,10 @@ router.put('/insertSellPiece', (req, res) => {
     }
   })
 })
-router.delete('/deleteData', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('deleteData:', params)
-  res.json({error: null, data: {deleted: 'data'}})
-})
-router.post('/updateUserInfo', (req, res) => {
-  logger.info('updateUserInfo:', req.body)
-  userService.updateUser(req.session.passport.user, req.body, (error, userInfo) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {sellPiece: userInfo}})
-    }
-  })
-})
+// router.delete('/deleteData', (req, res) => {
+//   const params = url.parse(req.url, true).query
+//   logger.info('deleteData:', params)
+//   res.json({error: null, data: {deleted: 'data'}})
+// })
 
 module.exports = router
