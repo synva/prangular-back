@@ -44,6 +44,10 @@ class BuyRequestService {
       filter.udate = {$gte: dateBeforeWeek.unix()}
     }
 
+    if (params.agent) {
+      filter.agent = {$eq: params.agent}
+    }
+
     filter.deleted = {$ne: true}
     console.log(filter)// eslint-disable-line
 
