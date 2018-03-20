@@ -9,8 +9,9 @@ import sellPieceService from './sellPieceService.js'
 let router = express.Router()
 
 router.get('/initEstateSell', (req, res) => {
+  logger.info('initEstateSell url:', req.url)
   const params = url.parse(req.url, true).query
-  logger.info('moreBuyRequests:', params)
+  logger.info('initEstateSell:', params)
   buyRequestService.findBuyRequests(params, (error, buyRequests, count) => {
     if (error) {
       res.json({error: error, data: null})

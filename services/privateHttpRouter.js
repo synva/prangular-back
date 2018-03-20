@@ -90,10 +90,45 @@ router.put('/insertSellPiece', (req, res) => {
     }
   })
 })
-// router.delete('/deleteData', (req, res) => {
-//   const params = url.parse(req.url, true).query
-//   logger.info('deleteData:', params)
-//   res.json({error: null, data: {deleted: 'data'}})
-// })
+router.get('/findBuyRequests', (req, res) => {
+  const params = url.parse(req.url, true).query
+
+  let filter = {}
+  if (params.filter) {
+    if (typeof params.filter === 'string' || params.filter instanceof String) {
+      filter = JSON.parse(params.filter)
+    } else {
+      filter = params.filter
+    }
+  }
+
+  let paging = null
+  if (params.paging) {
+    if (typeof params.paging === 'string' || params.paging instanceof String) {
+      paging = JSON.parse(params.paging)
+    } else {
+      paging = params.paging
+    }
+  }
+
+  logger.info('findBuyRequests:', params)
+  buyRequestService.findBuyRequests(params, (error, buyRequests, count) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {datas: buyRequests, count: count}})
+    }
+  }, paging)
+})
+router.post('/updateBuyRequest', (req, res) => {
+  logger.info('updateBuyRequest:', req.body)
+  buyRequestService.updateBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {buyRequest: buyRequest}})
+    }
+  })
+})
 
 module.exports = router
