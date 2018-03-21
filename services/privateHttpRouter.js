@@ -111,8 +111,8 @@ router.get('/findBuyRequests', (req, res) => {
     }
   }
 
-  logger.info('findBuyRequests:', params)
-  buyRequestService.findBuyRequests(params, (error, buyRequests, count) => {
+  logger.info('findBuyRequests:', filter)
+  buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
