@@ -122,13 +122,17 @@ router.get('/findBuyRequests', (req, res) => {
 })
 router.post('/updateBuyRequest', (req, res) => {
   logger.info('updateBuyRequest:', req.body)
-  buyRequestService.updateBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {buyRequest: buyRequest}})
-    }
+
+  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
+    buyRequestService.updateBuyRequest(userinfo, req.body, (error, buyRequest) => {
+      if (error) {
+        res.json({error: error, data: null})
+      } else {
+        res.json({error: null, data: {buyRequest: buyRequest}})
+      }
+    })
   })
+
 })
 
 module.exports = router

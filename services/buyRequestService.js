@@ -9,6 +9,7 @@ class BuyRequestService {
   findBuyRequests (params, next, paging) {
     let id = null
     let filter = {}
+
     if (params._id) {
       filter._id = ObjectId(params._id)
     }
@@ -54,7 +55,7 @@ class BuyRequestService {
     mongo.find(
       'buyRequests',
       filter,
-      {sort: {_id: -1}},
+      {sort: {ispublishing: -1, _id: -1}},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -88,22 +89,79 @@ class BuyRequestService {
     )
   }
   updateBuyRequest (user, buyRequest, next) {
-    let id = buyRequest._id
-    delete buyRequest._id
-    buyRequest.uuser = user._id
-    let now = new Date()
-    buyRequest.udate = now.valueOf()
-    mongo.update(
-      'buyRequests',
-      {_id: ObjectId(id)},
-      {$set: buyRequest},
-      {multi: false},
-      (error, result) => {
-        if (error) {
-          next(error)
+    let that = this
+
+    let getPublishingRequestPromise = new Promise((resolve, reject) => {
+      that.getPublishingRequest(user._id, (err, publishingRequests, count) => {
+        let hasSelf = false
+
+        if (count === 0) {
+          return
+        }
+
+        publishingRequests.forEach(one => {
+          if (buyRequest._id === one._id) {
+            hasSelf = true
+          }
+        })
+
+        // console.log('hasSelf:'+hasSelf)// eslint-disable-line
+        // console.log('user.maxPublish:'+user.maxPublish)// eslint-disable-line
+        // console.log('count:'+count)// eslint-disable-line
+        if (hasSelf && user.maxPublish > count
+          || !hasSelf && user.maxPublish >= count) {
+          reject({code:'I007', detail: 'max is ' + user.maxPublish})
         } else {
-          buyRequest._id = id
-          next(null, buyRequest)
+          resolve()
+        }
+      })
+    })
+
+    if (buyRequest.ispublishing) {
+      getPublishingRequestPromise.then(
+        () => {
+          let id = buyRequest._id
+          delete buyRequest._id
+          buyRequest.uuser = user._id
+          let now = new Date()
+          buyRequest.udate = now.valueOf()
+          mongo.update(
+            'buyRequests',
+            {_id: ObjectId(id)},
+            {$set: buyRequest},
+            {multi: false},
+            (error, result) => {
+              if (error) {
+                next(error)
+              } else {
+                buyRequest._id = id
+                next(null, buyRequest)
+              }
+            }
+          )
+        },
+        (errReason) => {
+          next(errReason)
+        }
+      )
+    }
+  }
+  getPublishingRequest (agentid, next) {
+    let filter = {
+      agent: {$eq: agentid},
+      ispublishing: {$eq: 1},
+      deleted: {$ne: true}
+    }
+
+    mongo.find(
+      'buyRequests',
+      filter,
+      {sort: {_id: -1}},
+      (error, result, count) => {
+        if (error) {
+          next(error, null)
+        } else {
+          next(null, result, count)
         }
       }
     )
