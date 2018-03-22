@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import mkdirp from 'mkdirp'
 import logger from './logger.js'
+import moment from 'moment'
 
 class Utils {
   constructor () {
@@ -81,6 +82,21 @@ class Utils {
         next({code: 'S002', detail: JSON.stringify(error)})
       }
     })
+  }
+  getDayBeforeYears (year) {
+    year = year * -1
+    let thisYear = (new Date()).getFullYear()
+    let start = new Date('1/1/' + thisYear)
+    let defaultStart = moment(start.valueOf())
+
+    return defaultStart.add(year, 'years')
+  }
+  getBeforeDay (days) {
+    let currentDate = new Date()
+    currentDate.setHours(0, 0, 0, 0)
+    let defaultStart = moment(currentDate.valueOf())
+    days = days * -1
+    return defaultStart().add(days, 'days')
   }
 }
 
