@@ -55,7 +55,7 @@ class BuyRequestService {
     mongo.find(
       'buyRequests',
       filter,
-      {sort: {ispublishing: -1, _id: -1}},
+      {sort: {isPublishing: -1, _id: -1}},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -117,7 +117,7 @@ class BuyRequestService {
       })
     })
 
-    if (buyRequest.ispublishing) {
+    if (buyRequest.isPublishing) {
       getPublishingRequestPromise.then(
         () => {
           let id = buyRequest._id
@@ -149,7 +149,7 @@ class BuyRequestService {
   getPublishingRequest (agentid, next) {
     let filter = {
       agent: {$eq: agentid},
-      ispublishing: {$eq: 1},
+      isPublishing: {$eq: 1},
       deleted: {$ne: true}
     }
 
