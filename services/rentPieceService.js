@@ -11,15 +11,15 @@ class RentPieceService {
       filter._id = ObjectId(params._id)
     }
 
-    if (params.agent) {
-      filter.agent = params.agent
+    if (params.contactID) {
+      filter.contactID = params.contactID
     }
 
     filter.deleted = {$ne: true}
     mongo.find(
       'rentPieces',
       filter,
-      {sort: {_id: -1}},
+      {sort: {_isPublishing:-1, id: -1}},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -56,7 +56,7 @@ class RentPieceService {
     now = now.valueOf()
     rentPiece.cdate = now
     rentPiece.cuser = user._id
-    rentPiece.agent = user._id
+    rentPiece.contactID = user._id
     rentPiece.udate = now
     rentPiece.uuser = user._id
     mongo.insert(

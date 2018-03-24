@@ -13,8 +13,8 @@ class SellPieceService {
       filterItem.push({_id: {$eq: ObjectId(params._id)}})
     }
 
-    if (params.agent) {
-      filterItem.push({agent: {$eq: params.agent}})
+    if (params.contactID) {
+      filterItem.push({contactID: {$eq: params.contactID}})
     }
 
     // TODO:
@@ -85,7 +85,7 @@ class SellPieceService {
     mongo.find(
       'sellPieces',
       filter,
-      {sort: {_id: -1}},
+      {sort: {isPublishing: -1, _id: -1}},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -96,33 +96,33 @@ class SellPieceService {
       paging
     )
   }
-  findSellPieceDetail (params, next, paging) {
-    let filter = {}
-    if (params.sellPiece) {
-      filter._id = ObjectId(params.sellPiece)
-    }
+  // findSellPieceDetail (params, next, paging) {
+  //   let filter = {}
+  //   if (params.sellPiece) {
+  //     filter._id = ObjectId(params.sellPiece)
+  //   }
 
-    filter.deleted = {$ne: true}
-    mongo.find(
-      'sellPieces',
-      filter,
-      {sort: {_id: -1}},
-      (error, result, count) => {
-        if (error) {
-          next(error, null)
-        } else {
-          next(null, result, count)
-        }
-      },
-      paging
-    )
-  }
+  //   filter.deleted = {$ne: true}
+  //   mongo.find(
+  //     'sellPieces',
+  //     filter,
+  //     {sort: {_id: -1}},
+  //     (error, result, count) => {
+  //       if (error) {
+  //         next(error, null)
+  //       } else {
+  //         next(null, result, count)
+  //       }
+  //     },
+  //     paging
+  //   )
+  // }
   insertSellPiece (user, sellPiece, next) {
     let now = new Date()
     now = now.valueOf()
     sellPiece.cdate = now
     sellPiece.cuser = user._id
-    sellPiece.agent = user._id
+    sellPiece.contactID = user._id
     sellPiece.udate = now
     sellPiece.uuser = user._id
     mongo.insert(
@@ -139,23 +139,99 @@ class SellPieceService {
       }
     )
   }
+  // updateSellPiece (user, sellPiece, next) {
+  //   let id = sellPiece._id
+  //   delete sellPiece._id
+  //   sellPiece.uuser = user._id
+  //   let now = new Date()
+  //   sellPiece.udate = now.valueOf()
+  //   mongo.update(
+  //     'sellPieces',
+  //     {_id: ObjectId(id)},
+  //     {$set: sellPiece},
+  //     {multi: false},
+  //     (error, result) => {
+  //       if (error) {
+  //         next(error)
+  //       } else {
+  //         sellPiece._id = id
+  //         next(null, sellPiece)
+  //       }
+  //     }
+  //   )
+  // }
   updateSellPiece (user, sellPiece, next) {
-    let id = sellPiece._id
-    delete sellPiece._id
-    sellPiece.uuser = user._id
-    let now = new Date()
-    sellPiece.udate = now.valueOf()
-    mongo.update(
-      'sellPieces',
-      {_id: ObjectId(id)},
-      {$set: sellPiece},
-      {multi: false},
-      (error, result) => {
-        if (error) {
-          next(error)
+    let that = this
+
+    let getPublishingPiecePromise = new Promise((resolve, reject) => {
+      that.getPublishingPiece(user._id, (err, publishingPieces, count) => {
+        let hasSelf = false
+
+        if (count === 0) {
+          resolve()
+          return
+        }
+
+        publishingPieces.forEach(one => {
+          if (sellPiece._id === one._id) {
+            hasSelf = true
+          }
+        })
+
+        if (hasSelf && user.maxPublish > count
+          || !hasSelf && user.maxPublish >= count) {
+          reject({code:'I007', detail: 'max is ' + user.maxPublish})
         } else {
-          sellPiece._id = id
-          next(null, sellPiece)
+          resolve()
+        }
+      })
+    })
+
+    if (sellPiece.isPublishing) {
+      getPublishingPiecePromise.then(
+        () => {
+          let id = sellPiece._id
+          delete sellPiece._id
+          sellPiece.uuser = user._id
+          let now = new Date()
+          sellPiece.udate = now.valueOf()
+          mongo.update(
+            'sellPieces',
+            {_id: ObjectId(id)},
+            {$set: sellPiece},
+            {multi: false},
+            (error, result) => {
+              if (error) {
+                next(error)
+              } else {
+                sellPiece._id = id
+                next(null, sellPiece)
+              }
+            }
+          )
+        },
+        (errReason) => {
+          next(errReason)
+        }
+      )
+    }
+  }
+  getPublishingPiece (contactID, next) {
+    let filter = {
+      contactID: {$eq: contactID},
+      isPublishing: {$eq: 1},
+      deleted: {$ne: true}
+    }
+
+    mongo.find(
+      'sellPieces',
+      filter,
+      {sort: {_id: -1}},
+      (error, result, count) => {
+        if (error) {
+          next(error, null)
+        } else {
+          next(null, result, count)
         }
       }
     )

@@ -45,8 +45,8 @@ class BuyRequestService {
       filter.udate = {$gte: dateBeforeWeek.unix()}
     }
 
-    if (params.agent) {
-      filter.agent = {$eq: params.agent}
+    if (params.contactID) {
+      filter.contactID = {$eq: params.contactID}
     }
 
     filter.deleted = {$ne: true}
@@ -71,7 +71,7 @@ class BuyRequestService {
     now = now.valueOf()
     buyRequest.cdate = now
     buyRequest.cuser = user._id
-    buyRequest.agent = user._id
+    buyRequest.contactID = user._id
     buyRequest.udate = now
     buyRequest.uuser = user._id
     mongo.insert(
@@ -96,6 +96,7 @@ class BuyRequestService {
         let hasSelf = false
 
         if (count === 0) {
+          resolve()
           return
         }
 
@@ -105,9 +106,6 @@ class BuyRequestService {
           }
         })
 
-        // console.log('hasSelf:'+hasSelf)// eslint-disable-line
-        // console.log('user.maxPublish:'+user.maxPublish)// eslint-disable-line
-        // console.log('count:'+count)// eslint-disable-line
         if (hasSelf && user.maxPublish > count
           || !hasSelf && user.maxPublish >= count) {
           reject({code:'I007', detail: 'max is ' + user.maxPublish})
@@ -146,9 +144,9 @@ class BuyRequestService {
       )
     }
   }
-  getPublishingRequest (agentid, next) {
+  getPublishingRequest (contactID, next) {
     let filter = {
-      agent: {$eq: agentid},
+      contactID: {$eq: contactID},
       isPublishing: {$eq: 1},
       deleted: {$ne: true}
     }
