@@ -76,9 +76,8 @@ router.get('/findBuyRequests', (req, res) => {
       paging = params.paging
     }
   }
-
+  logger.log('filter:', filter)
   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
-    logger.info('buyRequests:', buyRequests)
     buyRequests.reduce((p, _, i) =>
         p.then(_ => new Promise(resolve => {
           userService.getUserInfoByID(buyRequests[i].contactID, (err, userinfo) => {
@@ -90,7 +89,6 @@ router.get('/findBuyRequests', (req, res) => {
       if (error) {
         res.json({error: error, data: null})
       } else {
-        logger.info('buyRequests:', buyRequests)
         res.json({error: null, data: {datas: buyRequests, count: count}})
       }
     })

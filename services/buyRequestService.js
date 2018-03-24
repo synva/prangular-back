@@ -25,13 +25,9 @@ class BuyRequestService {
       filter.station = regexp
     }
 
-    // if (params.requiredTimeFrom) {
-    //   filter.requiredTimeFrom = {$gte: params.requiredTimeFrom}
-    // }
-
-    // if (params.requiredTimeTo) {
-    //   filter.requiredTimeFrom = {$gt: params.requiredTimeFrom}
-    // }
+    if (params.minute) {
+      filter.minute = {$lte: parseInt(params.minute)}
+    }
 
     if (params.isNew) {
       filter.isnew = {$eq: params.isNew}
