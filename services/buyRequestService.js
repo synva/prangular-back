@@ -41,9 +41,15 @@ class BuyRequestService {
       filter.type = {$eq: params.type}
     }
 
+<<<<<<< HEAD
     if (params.releday) {
       let dateBefore = utils.getDayBeforeYears(params.releday)
       filter.udate = {$gte: dateBefore.valueOf()}
+=======
+    if (params.isLatest === 'true') {
+      let dateBeforeWeek = moment().add(7, 'days')
+      filter.udate = {$gte: dateBeforeWeek.valueOf()}
+>>>>>>> 3ad33a22b063a86d66f5fe1ff7c825dc6b0629bc
     }
 
     if (params.contactID) {
