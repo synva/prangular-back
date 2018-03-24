@@ -83,17 +83,32 @@ router.get('/findSellPieces', (req, res) => {
 
 router.post('/updateSellPiece', (req, res) => {
   logger.info('updateSellPiece:', req.body)
-
-  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    sellPieceService.updateSellPiece(userinfo, req.body, (error, sellPiece) => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {sellPiece: sellPiece}})
-      }
-    })
+  sellPieceService.updateSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {sellPiece: sellPiece}})
+    }
   })
 })
+
+// router.post('/updateSellPiece', (req, res) => {
+//   logger.info('updateSellPiece:', req.body)
+
+//   userService.getUserInfoByID(req.session.passport.user._id, (error, userinfo) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       sellPieceService.updateSellPiece(userinfo, req.body, (error, sellPiece) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           res.json({error: null, data: {sellPiece: sellPiece}})
+//         }
+//       })
+//     }
+//   })
+// })
 
 /*
 * Buy

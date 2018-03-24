@@ -138,28 +138,28 @@ class SellPieceService {
       }
     )
   }
-  // updateSellPiece (user, sellPiece, next) {
-  //   let id = sellPiece._id
-  //   delete sellPiece._id
-  //   sellPiece.uuser = user._id
-  //   let now = new Date()
-  //   sellPiece.udate = now.valueOf()
-  //   mongo.update(
-  //     'sellPieces',
-  //     {_id: ObjectId(id)},
-  //     {$set: sellPiece},
-  //     {multi: false},
-  //     (error, result) => {
-  //       if (error) {
-  //         next(error)
-  //       } else {
-  //         sellPiece._id = id
-  //         next(null, sellPiece)
-  //       }
-  //     }
-  //   )
-  // }
   updateSellPiece (user, sellPiece, next) {
+    let id = sellPiece._id
+    delete sellPiece._id
+    sellPiece.uuser = user._id
+    let now = new Date()
+    sellPiece.udate = now.valueOf()
+    mongo.update(
+      'sellPieces',
+      {_id: ObjectId(id)},
+      {$set: sellPiece},
+      {multi: false},
+      (error, result) => {
+        if (error) {
+          next(error)
+        } else {
+          sellPiece._id = id
+          next(null, sellPiece)
+        }
+      }
+    )
+  }
+  updateSellPiece1 (user, sellPiece, next) {
     let that = this
 
     let getPublishingPiecePromise = new Promise((resolve, reject) => {
