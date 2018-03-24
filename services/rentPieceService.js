@@ -1,6 +1,7 @@
 import logger from './logger.js'
 import mongo from './mongo.js'
 import {ObjectId} from 'mongodb'
+import utils from './utils'
 
 class RentPieceService {
   constructor () {
@@ -11,6 +12,34 @@ class RentPieceService {
       filter._id = ObjectId(params._id)
     }
 
+    if (params.line) {
+      let regexp = new RegExp('.*' + params.line + '.*')
+      filter.line = regexp
+    }
+
+    if (params.station) {
+      let regexp = new RegExp('.*' + params.station + '.*')
+      filter.station = regexp
+    }
+
+    if (params.minute) {
+      filter.minute = {$lte: parseInt(params.minute)}
+    }
+
+    if (params.isNew) {
+      filter.isnew = {$eq: params.isNew}
+    }
+
+    if (params.type) {
+      filter.type = {$eq: params.type}
+    }
+
+    if (params.releday) {
+      let dateBefore = utils.getDayBeforeYears(params.releday)
+      logger.info('dateBefore:', dateBefore.valueOf())
+      filter.udate = {$gte: dateBefore.valueOf()}
+    }
+
     if (params.contactID) {
       filter.contactID = params.contactID
     }
@@ -19,7 +48,7 @@ class RentPieceService {
     mongo.find(
       'rentPieces',
       filter,
-      {sort: {_isPublishing:-1, id: -1}},
+      {sort: {isPublishing:-1, id: -1}},
       (error, result, count) => {
         if (error) {
           next(error, null)

@@ -17,9 +17,8 @@ class SellPieceService {
       filterItem.push({contactID: {$eq: params.contactID}})
     }
 
-    // TODO:
-    if (params['stations[]']) {
-      let stations = params['stations[]']
+    if (params.stations) {
+      let stations = params.stations
       if (!Array.isArray(stations)) {
         stations = [stations]
       }
@@ -40,7 +39,6 @@ class SellPieceService {
       filterItem.push({layout: {$in: layouts}})
     }
 
-    // TODO:
     if (params.area) {
       let oneItem = {$or: [
         {exclusiveArea: {$gte: parseInt(params.area)}},

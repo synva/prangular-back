@@ -35,7 +35,7 @@ router.get('/findSellPieces', (req, res) => {
   }
 
   logger.info('findSellPieces:', params)
-  sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
+  sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
     sellPieces.reduce((p, _, i) =>
         p.then(_ => new Promise(resolve => {
           userService.getUserInfoByID(sellPieces[i].contactID, (err, userinfo) => {
@@ -76,7 +76,7 @@ router.get('/findBuyRequests', (req, res) => {
       paging = params.paging
     }
   }
-
+  logger.log('filter:', filter)
   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
     buyRequests.reduce((p, _, i) =>
         p.then(_ => new Promise(resolve => {

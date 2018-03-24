@@ -2,6 +2,7 @@ import logger from './logger.js'
 import mongo from './mongo.js'
 import {ObjectId} from 'mongodb'
 import moment from 'moment'
+import utils from './utils'
 
 class BuyRequestService {
   constructor () {
@@ -24,13 +25,9 @@ class BuyRequestService {
       filter.station = regexp
     }
 
-    // if (params.requiredTimeFrom) {
-    //   filter.requiredTimeFrom = {$gte: params.requiredTimeFrom}
-    // }
-
-    // if (params.requiredTimeTo) {
-    //   filter.requiredTimeFrom = {$gt: params.requiredTimeFrom}
-    // }
+    if (params.minute) {
+      filter.minute = {$lte: parseInt(params.minute)}
+    }
 
     if (params.isNew) {
       filter.isnew = {$eq: params.isNew}
@@ -40,9 +37,9 @@ class BuyRequestService {
       filter.type = {$eq: params.type}
     }
 
-    if (params.isLatest === 'true') {
-      let dateBeforeWeek = moment().add(7, 'days')
-      filter.udate = {$gte: dateBeforeWeek.valueOf()}
+    if (params.releday) {
+      let dateBefore = utils.getDayBeforeYears(params.releday)
+      filter.udate = {$gte: dateBefore.valueOf()}
     }
 
     if (params.contactID) {
