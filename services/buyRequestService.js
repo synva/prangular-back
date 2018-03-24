@@ -2,6 +2,7 @@ import logger from './logger.js'
 import mongo from './mongo.js'
 import {ObjectId} from 'mongodb'
 import moment from 'moment'
+import utils from './utils'
 
 class BuyRequestService {
   constructor () {
@@ -40,9 +41,9 @@ class BuyRequestService {
       filter.type = {$eq: params.type}
     }
 
-    if (params.isLatest === 'true') {
-      let dateBeforeWeek = moment().add(7, 'days')
-      filter.udate = {$gte: dateBeforeWeek.unix()}
+    if (params.releday) {
+      let dateBefore = utils.getDayBeforeYears(params.releday)
+      filter.udate = {$gte: dateBefore.valueOf()}
     }
 
     if (params.contactID) {

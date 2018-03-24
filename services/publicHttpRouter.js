@@ -35,7 +35,7 @@ router.get('/findSellPieces', (req, res) => {
   }
 
   logger.info('findSellPieces:', params)
-  sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
+  sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
     sellPieces.reduce((p, _, i) =>
         p.then(_ => new Promise(resolve => {
           userService.getUserInfoByID(sellPieces[i].contactID, (err, userinfo) => {
@@ -78,6 +78,7 @@ router.get('/findBuyRequests', (req, res) => {
   }
 
   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
+    logger.info('buyRequests:', buyRequests)
     buyRequests.reduce((p, _, i) =>
         p.then(_ => new Promise(resolve => {
           userService.getUserInfoByID(buyRequests[i].contactID, (err, userinfo) => {
@@ -89,6 +90,7 @@ router.get('/findBuyRequests', (req, res) => {
       if (error) {
         res.json({error: error, data: null})
       } else {
+        logger.info('buyRequests:', buyRequests)
         res.json({error: null, data: {datas: buyRequests, count: count}})
       }
     })
