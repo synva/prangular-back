@@ -60,7 +60,7 @@ class SellPieceService {
 
     if (params.age) {
       let dateBeforeyear = utils.getDayBeforeYears(params.age)
-      filterItem.push({built: {$gte: dateBeforeyear.unix() * 1000}})
+      filterItem.push({built: {$gte: dateBeforeyear.valueOf()}})
     }
 
     if (params.min) {
@@ -73,8 +73,7 @@ class SellPieceService {
 
     if (params.releday) {
       let dateBefore = utils.getDayBeforeYears(params.releday)
-      console.log(dateBefore.unix())// eslint-disable-line
-      filterItem.push({udate: {$gte: dateBefore.unix() * 1000}})
+      filterItem.push({udate: {$gte: dateBefore.valueOf()}})
     }
 
     filterItem.push({deleted: {$ne: true}})

@@ -41,7 +41,7 @@ class BorrowRequestService {
 
     if (params.isLatest === 'true') {
       let dateBeforeWeek = moment().add(7, 'days')
-      filter.udate = {$gte: dateBeforeWeek.unix()}
+      filter.udate = {$gte: dateBeforeWeek.valueOf()}
     }
 
     if (params.contactID) {
