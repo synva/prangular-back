@@ -10,9 +10,9 @@ import userService from './userService.js'
 
 let router = express.Router()
 
-/*
-* User
-*/
+/**
+ * user
+ */
 router.post('/updateUser', (req, res) => {
   logger.info('updateUser:', req.body)
   userService.updateUser(req.session.passport.user, req.body, (error, user) => {
@@ -24,9 +24,9 @@ router.post('/updateUser', (req, res) => {
   })
 })
 
-/*
-* Sell
-*/
+/**
+ * sellPiece
+ */
 router.put('/insertSellPiece', (req, res) => {
   logger.info('insertSellPiece:', req.body)
   sellPieceService.insertSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
@@ -37,17 +37,6 @@ router.put('/insertSellPiece', (req, res) => {
     }
   })
 })
-// router.get('/initMySell', (req, res) => {
-//   const params = url.parse(req.url, true).query
-//   logger.info('initMySell:', params)
-//   sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {datas: sellPieces, count: count}})
-//     }
-//   })
-// })
 router.get('/findSellPieces', (req, res) => {
   const params = url.parse(req.url, true).query
 
@@ -80,7 +69,6 @@ router.get('/findSellPieces', (req, res) => {
     }
   }, paging)
 })
-
 router.post('/updateSellPiece', (req, res) => {
   logger.info('updateSellPiece:', req.body)
   sellPieceService.updateSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
@@ -110,9 +98,9 @@ router.post('/updateSellPiece', (req, res) => {
 //   })
 // })
 
-/*
-* Buy
-*/
+/**
+ * buyRequest
+ */
 router.put('/insertBuyRequest', (req, res) => {
   logger.info('insertBuyRequest:', req.body)
   buyRequestService.insertBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
@@ -200,9 +188,9 @@ router.post('/updateBuyRequest', (req, res) => {
   })
 })
 
-/*
-* Borrow
-*/
+/**
+ * borrowRequest
+ */
 router.put('/insertBorrowRequest', (req, res) => {
   logger.info('insertBorrowRequest:', req.body)
   borrowRequestService.insertBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
@@ -261,9 +249,9 @@ router.post('/updateBorrowRequest', (req, res) => {
   })
 })
 
-/*
-* Rent
-*/
+/**
+ * rentPiece
+ */
 router.put('/insertRentPiece', (req, res) => {
   logger.info('insertRentPiece:', req.body)
   rentPieceService.insertRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {

@@ -49,7 +49,7 @@ class BorrowRequestService {
     }
 
     filter.deleted = {$ne: true}
-    console.log(filter)// eslint-disable-line
+    logger.debug(filter)
 
     mongo.find(
       'borrowRequests',
@@ -114,7 +114,7 @@ class BorrowRequestService {
     let getPublishingRequestPromise = new Promise((resolve, reject) => {
       that.getPublishingRequest(user._id, (err, publishingRequests, count) => {
         let hasSelf = false
-        console.log('count:'+count)// eslint-disable-line
+        logger.debug('count:', count)
         if (count === 0) {
           resolve()
           return
@@ -126,9 +126,9 @@ class BorrowRequestService {
           }
         })
 
-        console.log('hasSelf:'+hasSelf)// eslint-disable-line
-        console.log('user.maxPublish:'+user.maxPublish)// eslint-disable-line
-        console.log('count:'+count)// eslint-disable-line
+        logger.debug('hasSelf:', hasSelf)
+        logger.debug('user.maxPublish:', user.maxPublish)
+        logger.debug('count:', count)
         if (hasSelf && user.maxPublish > count
           || !hasSelf && user.maxPublish >= count) {
           reject({code:'I007', detail: 'max is ' + user.maxPublish})
@@ -137,7 +137,7 @@ class BorrowRequestService {
         }
       })
     })
-    console.log('borrowRequest.isPublishing:'+borrowRequest.isPublishing)// eslint-disable-line
+    logger.debug('borrowRequest.isPublishing:', borrowRequest.isPublishing)
     if (borrowRequest.isPublishing) {
       getPublishingRequestPromise.then(
         () => {

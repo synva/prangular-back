@@ -6,15 +6,16 @@ import buyRequestService from './buyRequestService.js'
 import sellPieceService from './sellPieceService.js'
 import borrowRequestService from './borrowRequestService.js'
 import rentPieceService from './rentPieceService.js'
-import userService from './userService.js'
+import contactService from './contactService.js'
 
 let router = express.Router()
 
-/*
-* findSellPieces
-*/
+/**
+ * sellPiece
+ */
 router.get('/findSellPieces', (req, res) => {
   const params = url.parse(req.url, true).query
+  logger.info('findSellPieces:', params)
 
   let filter = {}
   if (params.filter) {
@@ -34,28 +35,24 @@ router.get('/findSellPieces', (req, res) => {
     }
   }
 
-  logger.info('findSellPieces:', params)
   sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
-    sellPieces.reduce((p, _, i) =>
-        p.then(_ => new Promise(resolve => {
-          userService.getUserInfoByID(sellPieces[i].contactID, (err, userinfo) => {
-            sellPieces[i].contact = userinfo
-            resolve()
-          })
-        }))
-    , Promise.resolve()).then(() => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {datas: sellPieces, count: count}})
-      }
-    })
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      contactService.assignContacts(sellPieces, (error) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {datas: sellPieces, count: count}})
+        }
+      })
+    }
   }, paging)
 })
 
-/*
-* findBuyRequests
-*/
+/**
+ * buyRequest
+ */
 router.get('/findBuyRequests', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('findBuyRequests:', params)
@@ -78,26 +75,23 @@ router.get('/findBuyRequests', (req, res) => {
   }
   logger.log('filter:', filter)
   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
-    buyRequests.reduce((p, _, i) =>
-        p.then(_ => new Promise(resolve => {
-          userService.getUserInfoByID(buyRequests[i].contactID, (err, userinfo) => {
-            buyRequests[i].contact = userinfo
-            resolve()
-          })
-        }))
-    , Promise.resolve()).then(() => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {datas: buyRequests, count: count}})
-      }
-    })
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      contactService.assignContacts(buyRequests, (error) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {datas: buyRequests, count: count}})
+        }
+      })
+    }
   }, paging)
 })
 
-/*
-* findRentPieceDetail
-*/
+/**
+ * rentPiece
+ */
 router.get('/findRentPieces', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('findRentPieceDetail:', params)
@@ -122,26 +116,23 @@ router.get('/findRentPieces', (req, res) => {
 
   logger.info('filter:', filter)
   rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
-    rentPieces.reduce((p, _, i) =>
-        p.then(_ => new Promise(resolve => {
-          userService.getUserInfoByID(rentPieces[i].contactID, (err, userinfo) => {
-            rentPieces[i].contact = userinfo
-            resolve()
-          })
-        }))
-    , Promise.resolve()).then(() => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {datas: rentPieces, count: count}})
-      }
-    })
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      contactService.assignContacts(rentPieces, (error) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {datas: rentPieces, count: count}})
+        }
+      })
+    }
   }, paging)
 })
 
-/*
-* findBorrowRequest
-*/
+/**
+ * borrowRequest
+ */
 router.get('/findBorrowRequests', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('findBorrowRequest:', params)
@@ -164,20 +155,17 @@ router.get('/findBorrowRequests', (req, res) => {
   }
 
   borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
-    borrowRequests.reduce((p, _, i) =>
-        p.then(_ => new Promise(resolve => {
-          userService.getUserInfoByID(borrowRequests[i].contactID, (err, userinfo) => {
-            borrowRequests[i].contact = userinfo
-            resolve()
-          })
-        }))
-    , Promise.resolve()).then(() => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {datas: borrowRequests, count: count}})
-      }
-    })
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      contactService.assignContacts(borrowRequests, (error) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {datas: borrowRequests, count: count}})
+        }
+      })
+    }
   }, paging)
 })
 

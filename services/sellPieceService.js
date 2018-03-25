@@ -77,8 +77,8 @@ class SellPieceService {
     filterItem.push({deleted: {$ne: true}})
 
     let filter = {$and : filterItem}
+    logger.debug(JSON.stringify(filter))
 
-    console.log(filter)// eslint-disable-line
     mongo.find(
       'sellPieces',
       filter,

@@ -47,7 +47,7 @@ class BuyRequestService {
     }
 
     filter.deleted = {$ne: true}
-    console.log(filter)// eslint-disable-line
+    logger.debug(filter)
 
     mongo.find(
       'buyRequests',
