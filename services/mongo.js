@@ -19,36 +19,26 @@ class Mongo {
       next({code: 'S003', detail: JSON.stringify(error)})
     })
   }
-  find (collection_name, criteria, projection, next, paging) {
-    if (paging && paging._id) {
-      if (criteria && !criteria._id) {
-        criteria._id = {$lt: ObjectId(paging._id)}
-      } else if (!criteria) {
-        criteria = {_id: {$lt: ObjectId(paging._id)}}
-      }
-      if (projection && projection.sort) {
-        projection.sort._id = paging.order ? paging.order : -1
-      } else if (projection && !projection.sort) {
-        projection.sort = {_id: paging.order ? paging.order : -1}
-      } else if (!projection) {
-        projection = {sort: {_id: paging.order ? paging.order : -1}}
-      }
+  find (collection_name, criteria, projection, next, page) {
+    let skip = 0
+    if (page && page > 0) {
+      skip = page * conf.mongo.limit
     }
     this.db.collection(collection_name, (outer_error, collection) => {
       if (outer_error) {
-        logger.error('find connect error:', JSON.stringify(outer_error))
-        next({code: 'S003', detail: JSON.stringify(outer_error)})
+        logger.error('find connect error:' + JSON.stringify(outer_error))
+        next('S003', null)
       } else {
         let mongoFind = collection.find(criteria, projection)
         mongoFind.count((count_error, count) => {
           if (count_error) {
-            logger.error('count error:', JSON.stringify(count_error))
-            next({code: 'S003', detail: JSON.stringify(count_error)})
+            logger.error('count error:' + JSON.stringify(count_error))
+            next('S003', null)
           } else {
-            mongoFind.limit(conf.mongo.limit).toArray((inner_error, list) => {
+            mongoFind.skip(skip).limit(conf.mongo.limit).toArray((inner_error, list) => {
               if (inner_error) {
-                logger.error('find error:', JSON.stringify(inner_error))
-                next({code: 'S003', detail: JSON.stringify(inner_error)})
+                logger.error('find error:' + JSON.stringify(inner_error))
+                next('S003', null)
               } else {
                 next(null, list, count)
               }
