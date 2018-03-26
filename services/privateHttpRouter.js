@@ -125,7 +125,7 @@ router.get('/findBuyRequests', (req, res) => {
     }
   }
 
-  let page = utils.parseInt(params.paging)
+  let page = utils.parseInt(params.page)
 
   filter.contactID = req.session.passport.user._id
   logger.info('findBuyRequests:', filter)
@@ -233,10 +233,11 @@ router.get('/findBorrowRequests', (req, res) => {
     }
   }
 
-  let page = utils.parseInt(params.paging)
+  let page = utils.parseInt(params.page)
 
   filter.contactID = req.session.passport.user._id
   logger.info('findBorrowRequests:', filter)
+  logger.info('page:', page)
 
   borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
     if (error) {
