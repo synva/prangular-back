@@ -233,14 +233,7 @@ router.get('/findBorrowRequests', (req, res) => {
     }
   }
 
-  let paging = null
-  if (params.paging) {
-    if (typeof params.paging === 'string' || params.paging instanceof String) {
-      paging = JSON.parse(params.paging)
-    } else {
-      paging = params.paging
-    }
-  }
+  let page = utils.parseInt(params.paging)
 
   filter.contactID = req.session.passport.user._id
   logger.info('findBorrowRequests:', filter)
@@ -251,7 +244,7 @@ router.get('/findBorrowRequests', (req, res) => {
     } else {
       res.json({error: null, data: {datas: borrowRequests, count: count}})
     }
-  }, paging)
+  }, page)
 })
 
 router.post('/updateBorrowRequest', (req, res) => {

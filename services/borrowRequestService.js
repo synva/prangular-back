@@ -6,7 +6,7 @@ import moment from 'moment'
 class BorrowRequestService {
   constructor () {
   }
-  findBorrowRequests (params, next, paging) {
+  findBorrowRequests (params, next, page) {
     let id = null
     let filter = {}
     if (params._id) {
@@ -62,7 +62,7 @@ class BorrowRequestService {
           next(null, result, count)
         }
       },
-      paging
+      page
     )
   }
   insertBorrowRequest (user, borrowRequest, next) {
@@ -87,90 +87,71 @@ class BorrowRequestService {
       }
     )
   }
-  // updateBorrowRequest (user, borrowRequest, next) {
-  //   let id = borrowRequest._id
-  //   delete borrowRequest._id
-  //   borrowRequest.uuser = user._id
-  //   let now = new Date()
-  //   borrowRequest.udate = now.valueOf()
-  //   mongo.update(
-  //     'borrowRequests',
-  //     {_id: ObjectId(id)},
-  //     {$set: borrowRequest},
-  //     {multi: false},
-  //     (error, result) => {
-  //       if (error) {
-  //         next(error)
-  //       } else {
-  //         borrowRequest._id = id
-  //         next(null, borrowRequest)
-  //       }
-  //     }
-  //   )
-  // }
   updateBorrowRequest (user, borrowRequest, next) {
+    let id = borrowRequest._id
+    delete borrowRequest._id
+    borrowRequest.uuser = user._id
+    let now = new Date()
+    borrowRequest.udate = now.valueOf()
+    mongo.update(
+      'borrowRequests',
+      {_id: ObjectId(id)},
+      {$set: borrowRequest},
+      {multi: false},
+      (error, result) => {
+        if (error) {
+          next(error)
+        } else {
+          borrowRequest._id = id
+          next(null, borrowRequest)
+        }
+      }
+    )
+  }
+  publishBorrowRequest (user, borrowRequest, next) {
     let that = this
 
-    let getPublishingRequestPromise = new Promise((resolve, reject) => {
-      that.getPublishingRequest(user._id, (err, publishingRequests, count) => {
-        let hasSelf = false
-        logger.debug('count:', count)
-        if (count === 0) {
-          resolve()
-          return
-        }
+    if (borrowRequest.isPublishing) {
+      let getPublishingRequestPromise = new Promise((resolve, reject) => {
+        that.getPublishingRequest(user._id, (err, publishingRequests, count) => {
+          let hasSelf = false
+          logger.debug('count:', count)
+          if (count === 0) {
+            resolve()
+            return
+          }
 
-        publishingRequests.forEach(one => {
-          if (borrowRequest._id === one._id) {
-            hasSelf = true
+          publishingRequests.forEach(one => {
+            if (borrowRequest._id === one._id) {
+              hasSelf = true
+            }
+          })
+
+          if (hasSelf && count > user.maxPublish
+            || !hasSelf && count >= user.maxPublish) {
+            reject({code:'I007', detail: 'max is ' + user.maxPublish})
+          } else {
+            resolve()
           }
         })
-
-        logger.debug('hasSelf:', hasSelf)
-        logger.debug('user.maxPublish:', user.maxPublish)
-        logger.debug('count:', count)
-        if (hasSelf && user.maxPublish > count
-          || !hasSelf && user.maxPublish >= count) {
-          reject({code:'I007', detail: 'max is ' + user.maxPublish})
-        } else {
-          resolve()
-        }
       })
-    })
-    logger.debug('borrowRequest.isPublishing:', borrowRequest.isPublishing)
-    if (borrowRequest.isPublishing) {
+
       getPublishingRequestPromise.then(
         () => {
-          let id = borrowRequest._id
-          delete borrowRequest._id
-          borrowRequest.uuser = user._id
-          let now = new Date()
-          borrowRequest.udate = now.valueOf()
-          mongo.update(
-            'borrowRequests',
-            {_id: ObjectId(id)},
-            {$set: borrowRequest},
-            {multi: false},
-            (error, result) => {
-              if (error) {
-                next(error)
-              } else {
-                borrowRequest._id = id
-                next(null, borrowRequest)
-              }
-            }
-          )
+          that.updateBuyRequest(user, borrowRequest, next)
         },
         (errReason) => {
           next(errReason)
         }
       )
+    } else {
+      that.updateBuyRequest(user, borrowRequest, next)
     }
   }
   getPublishingRequest (contactID, next) {
     let filter = {
       contactID: {$eq: contactID},
-      isPublishing: {$eq: 1},
+      isPublishing: {$eq: true},
       deleted: {$ne: true}
     }
 
@@ -186,6 +167,14 @@ class BorrowRequestService {
         }
       }
     )
+  }
+
+  deleteBorrowRequest (user, borrowRequestID, next) {
+    let borrowRequest = {
+      _id: borrowRequestID,
+      deleted: true
+    }
+    this.updateBorrowRequest(user, borrowRequest, next)
   }
 }
 

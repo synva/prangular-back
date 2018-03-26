@@ -140,7 +140,6 @@ class BuyRequestService {
           that.updateBuyRequest(user, buyRequest, next)
         },
         (errReason) => {
-          logger.debug('errReason:', errReason)
           next(errReason)
         }
       )
