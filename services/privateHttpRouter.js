@@ -49,14 +49,8 @@ router.get('/findSellPieces', (req, res) => {
     }
   }
 
-  let paging = null
-  if (params.paging) {
-    if (typeof params.paging === 'string' || params.paging instanceof String) {
-      paging = JSON.parse(params.paging)
-    } else {
-      paging = params.paging
-    }
-  }
+  let page = parseInt(params.page)
+  if (isNaN(page)) page = null
 
   filter.contactID = req.session.passport.user._id
   logger.info('findSellPieces:', params)
@@ -67,7 +61,7 @@ router.get('/findSellPieces', (req, res) => {
     } else {
       res.json({error: null, data: {datas: sellPieces, count: count}})
     }
-  }, paging)
+  }, page)
 })
 router.post('/updateSellPiece', (req, res) => {
   logger.info('updateSellPiece:', req.body)

@@ -7,7 +7,7 @@ import utils from './utils'
 class SellPieceService {
   constructor () {
   }
-  findSellPieces (params, next, paging) {
+  findSellPieces (params, next, page) {
     let filterItem = []
     if (params._id) {
       filterItem.push({_id: {$eq: ObjectId(params._id)}})
@@ -90,7 +90,7 @@ class SellPieceService {
           next(null, result, count)
         }
       },
-      paging
+      page
     )
   }
   // findSellPieceDetail (params, next, paging) {

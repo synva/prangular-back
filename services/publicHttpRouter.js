@@ -26,14 +26,8 @@ router.get('/findSellPieces', (req, res) => {
     }
   }
 
-  let paging = null
-  if (params.paging) {
-    if (typeof params.paging === 'string' || params.paging instanceof String) {
-      paging = JSON.parse(params.paging)
-    } else {
-      paging = params.paging
-    }
-  }
+  let page = parseInt(params.page)
+  if (isNaN(page)) page = null
 
   sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
     if (error) {
@@ -47,7 +41,7 @@ router.get('/findSellPieces', (req, res) => {
         }
       })
     }
-  }, paging)
+  }, page)
 })
 
 /**
