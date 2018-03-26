@@ -177,14 +177,39 @@ router.get('/findBuyRequests', (req, res) => {
 router.post('/updateBuyRequest', (req, res) => {
   logger.info('updateBuyRequest:', req.body)
 
+  buyRequestService.updateBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {buyRequest: buyRequest}})
+    }
+  })
+})
+
+router.post('/publishBuyRequest', (req, res) => {
+  logger.info('publishBuyRequest:', req.body)
+
+
   userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    buyRequestService.updateBuyRequest(userinfo, req.body, (error, buyRequest) => {
+    buyRequestService.publishBuyRequest(userinfo, req.body, (error, result) => {
       if (error) {
         res.json({error: error, data: null})
       } else {
-        res.json({error: null, data: {buyRequest: buyRequest}})
+        res.json({error: null, data: {result: result}})
       }
     })
+  })
+})
+
+router.post('/unPublishBuyRequest', (req, res) => {
+  logger.info('unPublishBuyRequest:', req.body)
+
+  buyRequestService.publishBuyRequest(req.session.passport.user, req.body, (error, result) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {result: result}})
+    }
   })
 })
 

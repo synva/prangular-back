@@ -85,66 +85,74 @@ class BuyRequestService {
       }
     )
   }
+
   updateBuyRequest (user, buyRequest, next) {
+    let id = buyRequest._id
+    delete buyRequest._id
+    buyRequest.uuser = user._id
+    let now = new Date()
+    buyRequest.udate = now.valueOf()
+    mongo.update(
+      'buyRequests',
+      {_id: ObjectId(id)},
+      {$set: buyRequest},
+      {multi: false},
+      (error, result) => {
+        if (error) {
+          next(error)
+        } else {
+          buyRequest._id = id
+          next(null, buyRequest)
+        }
+      }
+    )
+  }
+
+  publishBuyRequest (user, buyRequest, next) {
     let that = this
 
-    let getPublishingRequestPromise = new Promise((resolve, reject) => {
-      that.getPublishingRequest(user._id, (err, publishingRequests, count) => {
-        let hasSelf = false
+    if (buyRequest.isPublishing) {
+      let getPublishingRequestPromise = new Promise((resolve, reject) => {
+        that.getPublishingRequest(user._id, (err, publishingRequests, count) => {
+          let hasSelf = false
 
-        if (count === 0) {
-          resolve()
-          return
-        }
+          if (count === 0) {
+            resolve()
+            return
+          }
 
-        publishingRequests.forEach(one => {
-          if (buyRequest._id === one._id) {
-            hasSelf = true
+          publishingRequests.forEach(one => {
+            if (buyRequest._id === one._id) {
+              hasSelf = true
+            }
+          })
+
+          if (hasSelf && count > user.maxPublish
+            || !hasSelf && count >= user.maxPublish) {
+            reject({code:'I007', detail: 'max is ' + user.maxPublish})
+          } else {
+            resolve()
           }
         })
-
-        if (hasSelf && user.maxPublish > count
-          || !hasSelf && user.maxPublish >= count) {
-          reject({code:'I007', detail: 'max is ' + user.maxPublish})
-        } else {
-          resolve()
-        }
       })
-    })
-
-    if (buyRequest.isPublishing) {
       getPublishingRequestPromise.then(
         () => {
-          let id = buyRequest._id
-          delete buyRequest._id
-          buyRequest.uuser = user._id
-          let now = new Date()
-          buyRequest.udate = now.valueOf()
-          mongo.update(
-            'buyRequests',
-            {_id: ObjectId(id)},
-            {$set: buyRequest},
-            {multi: false},
-            (error, result) => {
-              if (error) {
-                next(error)
-              } else {
-                buyRequest._id = id
-                next(null, buyRequest)
-              }
-            }
-          )
+          that.updateBuyRequest(user, buyRequest, next)
         },
         (errReason) => {
+          logger.debug('errReason:', errReason)
           next(errReason)
         }
       )
+    } else {
+      that.updateBuyRequest(user, buyRequest, next)
     }
   }
+
   getPublishingRequest (contactID, next) {
     let filter = {
       contactID: {$eq: contactID},
-      isPublishing: {$eq: 1},
+      isPublishing: {$eq: true},
       deleted: {$ne: true}
     }
 
@@ -156,10 +164,19 @@ class BuyRequestService {
         if (error) {
           next(error, null)
         } else {
+          logger.debug('result:', result)
           next(null, result, count)
         }
       }
     )
+  }
+
+  deleteBuyRequest (user, buyRequestID, next) {
+    let buyRequest = {
+      _id: buyRequestID,
+      deleted: true
+    }
+    this.updateBuyRequest(user, buyRequest, next)
   }
 }
 
