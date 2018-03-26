@@ -98,6 +98,11 @@ class Utils {
     days = days * -1
     return defaultStart().add(days, 'days')
   }
+  parseInt (str) {
+    let i = parseInt(str)
+    if (isNaN(i)) return null
+    return i
+  }
 }
 
 export default new Utils()

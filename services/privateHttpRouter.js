@@ -1,6 +1,7 @@
 import express from 'express'
 import url from 'url'
 import logger from './logger.js'
+import utils from './utils.js'
 
 import buyRequestService from './buyRequestService.js'
 import sellPieceService from './sellPieceService.js'
@@ -124,14 +125,7 @@ router.get('/findBuyRequests', (req, res) => {
     }
   }
 
-  let paging = null
-  if (params.paging) {
-    if (typeof params.paging === 'string' || params.paging instanceof String) {
-      paging = JSON.parse(params.paging)
-    } else {
-      paging = params.paging
-    }
-  }
+  let page = utils.parseInt(params.paging)
 
   filter.contactID = req.session.passport.user._id
   logger.info('findBuyRequests:', filter)
@@ -171,7 +165,7 @@ router.get('/findBuyRequests', (req, res) => {
     } else {
       res.json({error: null, data: {datas: buyRequests, count: count}})
     }
-  }, paging)
+  }, page)
 })
 
 router.post('/updateBuyRequest', (req, res) => {

@@ -7,7 +7,7 @@ import utils from './utils'
 class BuyRequestService {
   constructor () {
   }
-  findBuyRequests (params, next, paging) {
+  findBuyRequests (params, next, page) {
     let id = null
     let filter = {}
 
@@ -60,7 +60,7 @@ class BuyRequestService {
           next(null, result, count)
         }
       },
-      paging
+      page
     )
   }
   insertBuyRequest (user, buyRequest, next) {
