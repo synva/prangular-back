@@ -2,6 +2,7 @@ import logger from './logger.js'
 import mongo from './mongo.js'
 import {ObjectId} from 'mongodb'
 import moment from 'moment'
+import utils from './utils'
 
 class BorrowRequestService {
   constructor () {
@@ -39,9 +40,9 @@ class BorrowRequestService {
       filter.type = {$eq: params.type}
     }
 
-    if (params.isLatest === 'true') {
-      let dateBeforeWeek = moment().add(7, 'days')
-      filter.udate = {$gte: dateBeforeWeek.valueOf()}
+    if (params.releday) {
+      let dateBefore = utils.getDayBeforeYears(params.releday)
+      filter.udate = {$gte: dateBefore.valueOf()}
     }
 
     if (params.contactID) {
@@ -49,7 +50,7 @@ class BorrowRequestService {
     }
 
     filter.deleted = {$ne: true}
-    logger.debug(filter)
+    logger.debug('find borrowRequests:', filter)
 
     mongo.find(
       'borrowRequests',
@@ -138,14 +139,14 @@ class BorrowRequestService {
 
       getPublishingRequestPromise.then(
         () => {
-          that.updateBuyRequest(user, borrowRequest, next)
+          that.updateBorrowRequest(user, borrowRequest, next)
         },
         (errReason) => {
           next(errReason)
         }
       )
     } else {
-      that.updateBuyRequest(user, borrowRequest, next)
+      that.updateBorrowRequest(user, borrowRequest, next)
     }
   }
   getPublishingRequest (contactID, next) {
@@ -169,9 +170,9 @@ class BorrowRequestService {
     )
   }
 
-  deleteBorrowRequest (user, borrowRequestID, next) {
+  deleteBorrowRequest (user, params, next) {
     let borrowRequest = {
-      _id: borrowRequestID,
+      _id: params._id,
       deleted: true
     }
     this.updateBorrowRequest(user, borrowRequest, next)

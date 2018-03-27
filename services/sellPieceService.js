@@ -136,6 +136,7 @@ class SellPieceService {
       }
     )
   }
+
   updateSellPiece (user, sellPiece, next) {
     let id = sellPiece._id
     delete sellPiece._id
@@ -157,66 +158,50 @@ class SellPieceService {
       }
     )
   }
-  updateSellPiece1 (user, sellPiece, next) {
+  publishSellPiece (user, sellPiece, next) {
     let that = this
 
-    let getPublishingPiecePromise = new Promise((resolve, reject) => {
-      that.getPublishingPiece(user._id, (err, publishingPieces, count) => {
-        let hasSelf = false
+    if (sellPiece.isPublishing) {
+      let getPublishingPiecePromise = new Promise((resolve, reject) => {
+        that.getPublishingPiece(user._id, (err, publishingPieces, count) => {
+          let hasSelf = false
+          logger.debug('count:', count)
+          if (count === 0) {
+            resolve()
+            return
+          }
 
-        if (count === 0) {
-          resolve()
-          return
-        }
+          publishingPieces.forEach(one => {
+            if (sellPiece._id === one._id) {
+              hasSelf = true
+            }
+          })
 
-        publishingPieces.forEach(one => {
-          if (sellPiece._id === one._id) {
-            hasSelf = true
+          if (hasSelf && count > user.maxPublish
+            || !hasSelf && count >= user.maxPublish) {
+            reject({code:'I007', detail: 'max is ' + user.maxPublish})
+          } else {
+            resolve()
           }
         })
-
-        if (hasSelf && user.maxPublish > count
-          || !hasSelf && user.maxPublish >= count) {
-          reject({code:'I007', detail: 'max is ' + user.maxPublish})
-        } else {
-          resolve()
-        }
       })
-    })
 
-    if (sellPiece.isPublishing) {
       getPublishingPiecePromise.then(
         () => {
-          let id = sellPiece._id
-          delete sellPiece._id
-          sellPiece.uuser = user._id
-          let now = new Date()
-          sellPiece.udate = now.valueOf()
-          mongo.update(
-            'sellPieces',
-            {_id: ObjectId(id)},
-            {$set: sellPiece},
-            {multi: false},
-            (error, result) => {
-              if (error) {
-                next(error)
-              } else {
-                sellPiece._id = id
-                next(null, sellPiece)
-              }
-            }
-          )
+          that.updateSellPiece(user, sellPiece, next)
         },
         (errReason) => {
           next(errReason)
         }
       )
+    } else {
+      that.updateSellPiece(user, sellPiece, next)
     }
   }
   getPublishingPiece (contactID, next) {
     let filter = {
       contactID: {$eq: contactID},
-      isPublishing: {$eq: 1},
+      isPublishing: {$eq: true},
       deleted: {$ne: true}
     }
 
@@ -232,6 +217,14 @@ class SellPieceService {
         }
       }
     )
+  }
+
+  deleteSellPiece (user, params, next) {
+    let sellPiece = {
+      _id: params._id,
+      deleted: true
+    }
+    this.updateSellPiece(user, sellPiece, next)
   }
 }
 

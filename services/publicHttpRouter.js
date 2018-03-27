@@ -1,6 +1,7 @@
 import express from 'express'
 import url from 'url'
 import logger from './logger.js'
+import utils from './utils.js'
 
 import buyRequestService from './buyRequestService.js'
 import sellPieceService from './sellPieceService.js'
@@ -26,8 +27,7 @@ router.get('/findSellPieces', (req, res) => {
     }
   }
 
-  let page = parseInt(params.page)
-  if (isNaN(page)) page = null
+  let page = utils.parseInt(params.page)
 
   sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
     if (error) {
@@ -59,15 +59,8 @@ router.get('/findBuyRequests', (req, res) => {
     }
   }
 
-  let paging = null
-  if (params.paging) {
-    if (typeof params.paging === 'string' || params.paging instanceof String) {
-      paging = JSON.parse(params.paging)
-    } else {
-      paging = params.paging
-    }
-  }
-  logger.log('filter:', filter)
+  let page = utils.parseInt(params.page)
+
   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
     if (error) {
       res.json({error: error, data: null})
@@ -80,7 +73,7 @@ router.get('/findBuyRequests', (req, res) => {
         }
       })
     }
-  }, paging)
+  }, page)
 })
 
 /**
@@ -99,14 +92,7 @@ router.get('/findRentPieces', (req, res) => {
     }
   }
 
-  let paging = null
-  if (params.paging) {
-    if (typeof params.paging === 'string' || params.paging instanceof String) {
-      paging = JSON.parse(params.paging)
-    } else {
-      paging = params.paging
-    }
-  }
+  let page = utils.parseInt(params.page)
 
   logger.info('filter:', filter)
   rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
@@ -121,7 +107,7 @@ router.get('/findRentPieces', (req, res) => {
         }
       })
     }
-  }, paging)
+  }, page)
 })
 
 /**
@@ -139,14 +125,7 @@ router.get('/findBorrowRequests', (req, res) => {
     }
   }
 
-  let paging = null
-  if (params.paging) {
-    if (typeof params.paging === 'string' || params.paging instanceof String) {
-      paging = JSON.parse(params.paging)
-    } else {
-      paging = params.paging
-    }
-  }
+  let page = utils.parseInt(params.page)
 
   borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
     if (error) {
@@ -160,7 +139,7 @@ router.get('/findBorrowRequests', (req, res) => {
         }
       })
     }
-  }, paging)
+  }, page)
 })
 
 module.exports = router

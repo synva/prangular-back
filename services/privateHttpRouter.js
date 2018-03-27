@@ -50,11 +50,11 @@ router.get('/findSellPieces', (req, res) => {
     }
   }
 
-  let page = parseInt(params.page)
-  if (isNaN(page)) page = null
+  let page = utils.parseInt(params.page)
 
   filter.contactID = req.session.passport.user._id
   logger.info('findSellPieces:', params)
+  logger.info('page:', page)
 
   sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
     if (error) {
@@ -74,24 +74,38 @@ router.post('/updateSellPiece', (req, res) => {
     }
   })
 })
-
-// router.post('/updateSellPiece', (req, res) => {
-//   logger.info('updateSellPiece:', req.body)
-
-//   userService.getUserInfoByID(req.session.passport.user._id, (error, userinfo) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       sellPieceService.updateSellPiece(userinfo, req.body, (error, sellPiece) => {
-//         if (error) {
-//           res.json({error: error, data: null})
-//         } else {
-//           res.json({error: null, data: {sellPiece: sellPiece}})
-//         }
-//       })
-//     }
-//   })
-// })
+router.post('/publishSellPiece', (req, res) => {
+  logger.info('publishSellPiece:', req.body)
+  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
+    sellPieceService.publishSellPiece(userinfo, req.body, (error, result) => {
+      if (error) {
+        res.json({error: error, data: null})
+      } else {
+        res.json({error: null, data: {result: result}})
+      }
+    })
+  })
+})
+router.post('/unPublishSellPiece', (req, res) => {
+  logger.info('unPublishSellPiece:', req.body)
+  sellPieceService.publishSellPiece(req.session.passport.user, req.body, (error, result) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {result: result}})
+    }
+  })
+})
+router.post('/deleteSellPiece', (req, res) => {
+  logger.info('deleteSellPiece:', req.body)
+  sellPieceService.deleteSellPiece(req.session.passport.user, req.body, (error, result) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {result: result}})
+    }
+  })
+})
 
 /**
  * buyRequest
@@ -123,6 +137,7 @@ router.get('/findBuyRequests', (req, res) => {
 
   filter.contactID = req.session.passport.user._id
   logger.info('findBuyRequests:', filter)
+  logger.info('page:', page)
 
   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
     // buyRequests.reduce((p, _, i) =>
@@ -188,11 +203,20 @@ router.post('/publishBuyRequest', (req, res) => {
     })
   })
 })
-
 router.post('/unPublishBuyRequest', (req, res) => {
   logger.info('unPublishBuyRequest:', req.body)
 
   buyRequestService.publishBuyRequest(req.session.passport.user, req.body, (error, result) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {result: result}})
+    }
+  })
+})
+router.post('/deleteBuyRequest', (req, res) => {
+  logger.info('deleteBuyRequest:', req.body)
+  buyRequestService.deleteBuyRequest(req.session.passport.user, req.body, (error, result) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -230,7 +254,8 @@ router.get('/findBorrowRequests', (req, res) => {
   let page = utils.parseInt(params.page)
 
   filter.contactID = req.session.passport.user._id
-  logger.info('findBorrowRequests:', filter)
+
+  logger.info('findBorrowRequests:', params)
   logger.info('page:', page)
 
   borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
@@ -241,10 +266,8 @@ router.get('/findBorrowRequests', (req, res) => {
     }
   }, page)
 })
-
 router.post('/updateBorrowRequest', (req, res) => {
   logger.info('updateBorrowRequest:', req.body)
-
   userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
     borrowRequestService.updateBorrowRequest(userinfo, req.body, (error, borrowRequest) => {
       if (error) {
@@ -253,6 +276,38 @@ router.post('/updateBorrowRequest', (req, res) => {
         res.json({error: null, data: {borrowRequest: borrowRequest}})
       }
     })
+  })
+})
+router.post('/publishBorrowRequest', (req, res) => {
+  logger.info('publishBorrowRequest:', req.body)
+  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
+    borrowRequestService.publishBorrowRequest(userinfo, req.body, (error, result) => {
+      if (error) {
+        res.json({error: error, data: null})
+      } else {
+        res.json({error: null, data: {result: result}})
+      }
+    })
+  })
+})
+router.post('/unPublishBorrowRequest', (req, res) => {
+  logger.info('unPublishBorrowRequest:', req.body)
+  borrowRequestService.publishBorrowRequest(req.session.passport.user, req.body, (error, result) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {result: result}})
+    }
+  })
+})
+router.post('/deleteBorrowRequest', (req, res) => {
+  logger.info('deleteBorrowRequest:', req.body)
+  borrowRequestService.deleteBorrowRequest(req.session.passport.user, req.body, (error, result) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {result: result}})
+    }
   })
 })
 
@@ -282,17 +337,12 @@ router.get('/findRentPieces', (req, res) => {
     }
   }
 
-  let paging = null
-  if (params.paging) {
-    if (typeof params.paging === 'string' || params.paging instanceof String) {
-      paging = JSON.parse(params.paging)
-    } else {
-      paging = params.paging
-    }
-  }
+  let page = utils.parseInt(params.page)
 
   filter.contactID = req.session.passport.user._id
-  logger.info('findRentPieces:', filter)
+
+  logger.info('findRentPieces:', params)
+  logger.info('page:', page)
 
   rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
     if (error) {
@@ -300,12 +350,10 @@ router.get('/findRentPieces', (req, res) => {
     } else {
       res.json({error: null, data: {datas: rentPieces, count: count}})
     }
-  }, paging)
+  }, page)
 })
-
 router.post('/updateRentPiece', (req, res) => {
   logger.info('updateRentPiece:', req.body)
-
   userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
     rentPieceService.updateRentPiece(userinfo, req.body, (error, rentPiece) => {
       if (error) {
@@ -314,6 +362,38 @@ router.post('/updateRentPiece', (req, res) => {
         res.json({error: null, data: {rentPiece: rentPiece}})
       }
     })
+  })
+})
+router.post('/publishRentPiece', (req, res) => {
+  logger.info('publishRentPiece:', req.body)
+  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
+    rentPieceService.publishRentPiece(userinfo, req.body, (error, result) => {
+      if (error) {
+        res.json({error: error, data: null})
+      } else {
+        res.json({error: null, data: {result: result}})
+      }
+    })
+  })
+})
+router.post('/unPublishRentPiece', (req, res) => {
+  logger.info('unPublishRentPiece:', req.body)
+  rentPieceService.publishRentPiece(req.session.passport.user, req.body, (error, result) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {result: result}})
+    }
+  })
+})
+router.post('/deleteRentPiece', (req, res) => {
+  logger.info('deleteRentPiece:', req.body)
+  rentPieceService.deleteRentPiece(req.session.passport.user, req.body, (error, result) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {result: result}})
+    }
   })
 })
 

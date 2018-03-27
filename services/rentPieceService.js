@@ -36,7 +36,6 @@ class RentPieceService {
 
     if (params.releday) {
       let dateBefore = utils.getDayBeforeYears(params.releday)
-      logger.info('dateBefore:', dateBefore.valueOf())
       filter.udate = {$gte: dateBefore.valueOf()}
     }
 
@@ -45,6 +44,8 @@ class RentPieceService {
     }
 
     filter.deleted = {$ne: true}
+    logger.debug('find rentPieces:', filter)
+
     mongo.find(
       'rentPieces',
       filter,
@@ -122,6 +123,74 @@ class RentPieceService {
         }
       }
     )
+  }
+  publishRentPiece (user, rentPiece, next) {
+    let that = this
+
+    if (rentPiece.isPublishing) {
+      let getPublishingPiecePromise = new Promise((resolve, reject) => {
+        that.getPublishingPiece(user._id, (err, publishingPieces, count) => {
+          let hasSelf = false
+          logger.debug('count:', count)
+          if (count === 0) {
+            resolve()
+            return
+          }
+
+          publishingPieces.forEach(one => {
+            if (rentPiece._id === one._id) {
+              hasSelf = true
+            }
+          })
+
+          if (hasSelf && count > user.maxPublish
+            || !hasSelf && count >= user.maxPublish) {
+            reject({code:'I007', detail: 'max is ' + user.maxPublish})
+          } else {
+            resolve()
+          }
+        })
+      })
+
+      getPublishingPiecePromise.then(
+        () => {
+          that.updateRentPiece(user, rentPiece, next)
+        },
+        (errReason) => {
+          next(errReason)
+        }
+      )
+    } else {
+      that.updateRentPiece(user, rentPiece, next)
+    }
+  }
+  getPublishingPiece (contactID, next) {
+    let filter = {
+      contactID: {$eq: contactID},
+      isPublishing: {$eq: true},
+      deleted: {$ne: true}
+    }
+
+    mongo.find(
+      'rentPieces',
+      filter,
+      {sort: {_id: -1}},
+      (error, result, count) => {
+        if (error) {
+          next(error, null)
+        } else {
+          next(null, result, count)
+        }
+      }
+    )
+  }
+
+  deleteRentPiece (user, params, next) {
+    let rentPiece = {
+      _id: params._id,
+      deleted: true
+    }
+    this.updateRentPiece(user, rentPiece, next)
   }
 }
 

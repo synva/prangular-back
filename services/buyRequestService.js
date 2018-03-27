@@ -170,9 +170,9 @@ class BuyRequestService {
     )
   }
 
-  deleteBuyRequest (user, buyRequestID, next) {
+  deleteBuyRequest (user, params, next) {
     let buyRequest = {
-      _id: buyRequestID,
+      _id: params._id,
       deleted: true
     }
     this.updateBuyRequest(user, buyRequest, next)
