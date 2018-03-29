@@ -82,7 +82,7 @@ class SellPieceService {
     mongo.find(
       'sellPieces',
       filter,
-      {sort: {isPublishing: -1, _id: -1}},
+      {sort: {isPublishing: -1, udate: -1}},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -93,27 +93,6 @@ class SellPieceService {
       page
     )
   }
-  // findSellPieceDetail (params, next, paging) {
-  //   let filter = {}
-  //   if (params.sellPiece) {
-  //     filter._id = ObjectId(params.sellPiece)
-  //   }
-
-  //   filter.deleted = {$ne: true}
-  //   mongo.find(
-  //     'sellPieces',
-  //     filter,
-  //     {sort: {_id: -1}},
-  //     (error, result, count) => {
-  //       if (error) {
-  //         next(error, null)
-  //       } else {
-  //         next(null, result, count)
-  //       }
-  //     },
-  //     paging
-  //   )
-  // }
   insertSellPiece (user, sellPiece, next) {
     let now = new Date()
     now = now.valueOf()
@@ -136,7 +115,6 @@ class SellPieceService {
       }
     )
   }
-
   updateSellPiece (user, sellPiece, next) {
     let id = sellPiece._id
     delete sellPiece._id
@@ -160,43 +138,23 @@ class SellPieceService {
   }
   publishSellPiece (user, sellPiece, next) {
     let that = this
+    that.getPublishingPiece(user._id, (error, publishingPieces, count) => {
+      if (error) {
+        next(error)
+        return
+      }
 
-    if (sellPiece.isPublishing) {
-      let getPublishingPiecePromise = new Promise((resolve, reject) => {
-        that.getPublishingPiece(user._id, (err, publishingPieces, count) => {
-          let hasSelf = false
-          logger.debug('count:', count)
-          if (count === 0) {
-            resolve()
-            return
-          }
-
-          publishingPieces.forEach(one => {
-            if (sellPiece._id === one._id) {
-              hasSelf = true
-            }
-          })
-
-          if (hasSelf && count > user.maxPublish
-            || !hasSelf && count >= user.maxPublish) {
-            reject({code:'I007', detail: 'max is ' + user.maxPublish})
-          } else {
-            resolve()
-          }
-        })
+      let hasSelf = publishingPieces.some(one => {
+        return sellPiece._id === one._id
       })
 
-      getPublishingPiecePromise.then(
-        () => {
-          that.updateSellPiece(user, sellPiece, next)
-        },
-        (errReason) => {
-          next(errReason)
-        }
-      )
-    } else {
-      that.updateSellPiece(user, sellPiece, next)
-    }
+      if (hasSelf && count > user.maxPublish
+        || !hasSelf && count >= user.maxPublish) {
+        next({code:'B008', detail: '掲載可能件数：' + user.maxPublish})
+      } else {
+        that.updateSellPiece(user, sellPiece, next)
+      }
+    })
   }
   getPublishingPiece (contactID, next) {
     let filter = {
@@ -204,11 +162,10 @@ class SellPieceService {
       isPublishing: {$eq: true},
       deleted: {$ne: true}
     }
-
     mongo.find(
       'sellPieces',
       filter,
-      {sort: {_id: -1}},
+      {},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -218,10 +175,9 @@ class SellPieceService {
       }
     )
   }
-
-  deleteSellPiece (user, params, next) {
+  deleteSellPiece (user, piece, next) {
     let sellPiece = {
-      _id: params._id,
+      _id: piece._id,
       deleted: true
     }
     this.updateSellPiece(user, sellPiece, next)

@@ -76,33 +76,27 @@ router.post('/updateSellPiece', (req, res) => {
 })
 router.post('/publishSellPiece', (req, res) => {
   logger.info('publishSellPiece:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    sellPieceService.publishSellPiece(userinfo, req.body, (error, result) => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {result: result}})
-      }
-    })
-  })
-})
-router.post('/unPublishSellPiece', (req, res) => {
-  logger.info('unPublishSellPiece:', req.body)
-  sellPieceService.publishSellPiece(req.session.passport.user, req.body, (error, result) => {
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {result: result}})
+      sellPieceService.publishSellPiece(user, req.body, (error, sellPiece) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {sellPiece: sellPiece}})
+        }
+      })
     }
   })
 })
 router.post('/deleteSellPiece', (req, res) => {
   logger.info('deleteSellPiece:', req.body)
-  sellPieceService.deleteSellPiece(req.session.passport.user, req.body, (error, result) => {
+  sellPieceService.deleteSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {result: result}})
+      res.json({error: null, data: {sellPiece: sellPiece}})
     }
   })
 })
@@ -140,35 +134,6 @@ router.get('/findBuyRequests', (req, res) => {
   logger.info('page:', page)
 
   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
-    // buyRequests.reduce((p, _, i) =>
-    //     p.then(_ => new Promise(resolve => {
-    //       userService.getUserInfoByID(buyRequests[i].contactID, (err, userinfo) => {
-    //         buyRequests[i].contact = userinfo
-    //         resolve()
-    //       })
-    //     }))
-    // , Promise.resolve()).then(() => {
-    //   if (error) {
-    //     res.json({error: error, data: null})
-    //   } else {
-    //     res.json({error: null, data: {datas: buyRequests, count: count}})
-    //   }
-    // })
-    // userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    //   let returnUserInfo = {
-    //     maxPublish: userinfo.maxPublish,
-    //     role: userinfo.role,
-    //     _id: userinfo._id
-    //   }
-    //   if (error) {
-    //     res.json({error: error, data: null})
-    //   } else {
-    //     buyRequests.forEach (function (v, i, a) {
-    //       v.contact = returnUserInfo
-    //     })
-    //     res.json({error: null, data: {datas: buyRequests, count: count}})
-    //   }
-    // })
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -192,35 +157,38 @@ router.post('/updateBuyRequest', (req, res) => {
 router.post('/publishBuyRequest', (req, res) => {
   logger.info('publishBuyRequest:', req.body)
 
-
-  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    buyRequestService.publishBuyRequest(userinfo, req.body, (error, result) => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {result: result}})
-      }
-    })
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      buyRequestService.publishBuyRequest(user, req.body, (error, buyRequest) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {buyRequest: buyRequest}})
+        }
+      })
+    }
   })
 })
 router.post('/unPublishBuyRequest', (req, res) => {
   logger.info('unPublishBuyRequest:', req.body)
 
-  buyRequestService.publishBuyRequest(req.session.passport.user, req.body, (error, result) => {
+  buyRequestService.publishBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {result: result}})
+      res.json({error: null, data: {buyRequest: buyRequest}})
     }
   })
 })
 router.post('/deleteBuyRequest', (req, res) => {
   logger.info('deleteBuyRequest:', req.body)
-  buyRequestService.deleteBuyRequest(req.session.passport.user, req.body, (error, result) => {
+  buyRequestService.deleteBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {result: result}})
+      res.json({error: null, data: {buyRequest: buyRequest}})
     }
   })
 })
@@ -268,45 +236,53 @@ router.get('/findBorrowRequests', (req, res) => {
 })
 router.post('/updateBorrowRequest', (req, res) => {
   logger.info('updateBorrowRequest:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    borrowRequestService.updateBorrowRequest(userinfo, req.body, (error, borrowRequest) => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {borrowRequest: borrowRequest}})
-      }
-    })
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      borrowRequestService.updateBorrowRequest(user, req.body, (error, borrowRequest) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {borrowRequest: borrowRequest}})
+        }
+      })
+    }
   })
 })
 router.post('/publishBorrowRequest', (req, res) => {
   logger.info('publishBorrowRequest:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    borrowRequestService.publishBorrowRequest(userinfo, req.body, (error, result) => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {result: result}})
-      }
-    })
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      borrowRequestService.publishBorrowRequest(user, req.body, (error, borrowRequest) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {borrowRequest: borrowRequest}})
+        }
+      })
+    }
   })
 })
 router.post('/unPublishBorrowRequest', (req, res) => {
   logger.info('unPublishBorrowRequest:', req.body)
-  borrowRequestService.publishBorrowRequest(req.session.passport.user, req.body, (error, result) => {
+  borrowRequestService.publishBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {result: result}})
+      res.json({error: null, data: {borrowRequest: borrowRequest}})
     }
   })
 })
 router.post('/deleteBorrowRequest', (req, res) => {
   logger.info('deleteBorrowRequest:', req.body)
-  borrowRequestService.deleteBorrowRequest(req.session.passport.user, req.body, (error, result) => {
+  borrowRequestService.deleteBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {result: result}})
+      res.json({error: null, data: {borrowRequest: borrowRequest}})
     }
   })
 })
@@ -354,45 +330,53 @@ router.get('/findRentPieces', (req, res) => {
 })
 router.post('/updateRentPiece', (req, res) => {
   logger.info('updateRentPiece:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    rentPieceService.updateRentPiece(userinfo, req.body, (error, rentPiece) => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {rentPiece: rentPiece}})
-      }
-    })
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      rentPieceService.updateRentPiece(user, req.body, (error, rentPiece) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {rentPiece: rentPiece}})
+        }
+      })
+    }
   })
 })
 router.post('/publishRentPiece', (req, res) => {
   logger.info('publishRentPiece:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (err, userinfo) => {
-    rentPieceService.publishRentPiece(userinfo, req.body, (error, result) => {
-      if (error) {
-        res.json({error: error, data: null})
-      } else {
-        res.json({error: null, data: {result: result}})
-      }
-    })
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      rentPieceService.publishRentPiece(user, req.body, (error, rentPiece) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {rentPiece: rentPiece}})
+        }
+      })
+    }
   })
 })
 router.post('/unPublishRentPiece', (req, res) => {
   logger.info('unPublishRentPiece:', req.body)
-  rentPieceService.publishRentPiece(req.session.passport.user, req.body, (error, result) => {
+  rentPieceService.publishRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {result: result}})
+      res.json({error: null, data: {rentPiece: rentPiece}})
     }
   })
 })
 router.post('/deleteRentPiece', (req, res) => {
   logger.info('deleteRentPiece:', req.body)
-  rentPieceService.deleteRentPiece(req.session.passport.user, req.body, (error, result) => {
+  rentPieceService.deleteRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {result: result}})
+      res.json({error: null, data: {rentPiece: rentPiece}})
     }
   })
 })

@@ -49,28 +49,7 @@ class RentPieceService {
     mongo.find(
       'rentPieces',
       filter,
-      {sort: {isPublishing:-1, id: -1}},
-      (error, result, count) => {
-        if (error) {
-          next(error, null)
-        } else {
-          next(null, result, count)
-        }
-      },
-      paging
-    )
-  }
-  findRentPieceDetail (params, next, paging) {
-    let filter = {}
-    if (params.rentPiece) {
-      filter._id = ObjectId(params.rentPiece)
-    }
-
-    filter.deleted = {$ne: true}
-    mongo.find(
-      'rentPieces',
-      filter,
-      {sort: {_id: -1}},
+      {sort: {isPublishing: -1, udate: -1}},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -145,7 +124,7 @@ class RentPieceService {
 
           if (hasSelf && count > user.maxPublish
             || !hasSelf && count >= user.maxPublish) {
-            reject({code:'I007', detail: 'max is ' + user.maxPublish})
+            reject({code:'B008', detail: '掲載可能件数：' + user.maxPublish})
           } else {
             resolve()
           }

@@ -52,7 +52,7 @@ class BuyRequestService {
     mongo.find(
       'buyRequests',
       filter,
-      {sort: {isPublishing: -1, _id: -1}},
+      {sort: {isPublishing: -1, udate: -1}},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -129,7 +129,7 @@ class BuyRequestService {
 
           if (hasSelf && count > user.maxPublish
             || !hasSelf && count >= user.maxPublish) {
-            reject({code:'I007', detail: 'max is ' + user.maxPublish})
+            reject({code:'B008', detail: '掲載可能件数：' + user.maxPublish})
           } else {
             resolve()
           }

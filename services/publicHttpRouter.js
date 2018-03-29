@@ -81,7 +81,7 @@ router.get('/findBuyRequests', (req, res) => {
  */
 router.get('/findRentPieces', (req, res) => {
   const params = url.parse(req.url, true).query
-  logger.info('findRentPieceDetail:', params)
+  logger.info('findRentPieces:', params)
 
   let filter = {}
   if (params.filter) {

@@ -10,6 +10,7 @@ class ContactService {
       logo: 1,
       nickname: 1,
       company: 1,
+      homepage: 1,
       license: 1,
       position: 1,
       phone: 1,
