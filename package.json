@@ -7,6 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "start": "npm run dev",
     "dev": "NODE_ENV=development babel-node app.js",
     "windev": "babel-node app.js"
   },
