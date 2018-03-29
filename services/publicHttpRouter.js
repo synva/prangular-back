@@ -142,4 +142,13 @@ router.get('/findBorrowRequests', (req, res) => {
   }, page)
 })
 
+/**
+ * company homepage
+ */
+router.get('/getCompanyConfig', (req, res) => {
+  const params = url.parse(req.url, true).query
+  logger.info('getCompanyConfig:', params)
+  res.json({error: null, data: params})
+})
+
 module.exports = router

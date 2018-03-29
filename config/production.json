@@ -1,7 +1,7 @@
 {
-  "port": 3000,
-  "endpoint": "http://52.192.185.252:3000",
-  "cors": "",
+  "port": 4000,
+  "endpoint": "http://52.192.185.252:4000",
+  "cors": ["http://www.yinxiang123.work", "http://www.yinxiang422.work"],
   "logger": {
     "appenders": {"system": {"type": "file", "filename": "system.log"}},
     "categories": {"default": {"appenders": ["system"], "level": "info"}}

@@ -37,7 +37,9 @@ app.use(bodyParser.urlencoded({limit: '2gb', extended: true}))
 
 
 let allowCrossDomain = (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', conf.cors)
+  let origin = conf.endpoint
+  if (req.headers.origin) origin = conf.cors.indexOf(req.headers.origin.toLowerCase()) > -1 ? req.headers.origin : conf.endpoint
+  res.header('Access-Control-Allow-Origin', origin)
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
   res.header('Access-Control-Allow-Credentials', true)
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
