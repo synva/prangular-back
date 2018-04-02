@@ -8,80 +8,68 @@ class SellPieceService {
   constructor () {
   }
   findSellPieces (params, next, page) {
-    let filterItem = []
+    let filter = []
     if (params._id) {
-      filterItem.push({_id: {$eq: ObjectId(params._id)}})
+      filter.push({_id: {$eq: ObjectId(params._id)}})
     }
-
     if (params.contactID) {
-      filterItem.push({contactID: {$eq: params.contactID}})
+      filter.push({contactID: {$eq: params.contactID}})
     }
-
+    if (params.isPublishing) {
+      filter.push({isPublishing: {$eq: true}})
+    }
     if (params.stations) {
       let stations = params.stations
       if (!Array.isArray(stations)) {
         stations = [stations]
       }
-
-      filterItem.push({'stations.station': {$in: stations}})
+      filter.push({'stations.station': {$in: stations}})
     }
-
-    if (params.minute) {
-      filterItem.push({'stations.walking': {$lte: parseInt(params.minute)}})
+    if (params.walking) {
+      filter.push({'stations.walking': {$lte: parseInt(params.walking)}})
     }
-
     if (params['layouts[]']) {
       let layouts = params['layouts[]']
       if (!Array.isArray(layouts)) {
         layouts = [layouts]
       }
-
-      filterItem.push({layout: {$in: layouts}})
+      filter.push({layout: {$in: layouts}})
     }
-
     if (params.area) {
       let oneItem = {$or: [
-        {exclusiveArea: {$gte: parseInt(params.area)}},
-        {buildingArea: {$gte: parseInt(params.area)}},
-        {landArea: {$gte: parseInt(params.area)}}
+        {exclusiveArea: {$gte: parseFloat(params.area)}},
+        {buildingArea: {$gte: parseFloat(params.area)}},
+        {landArea: {$gte: parseFloat(params.area)}}
       ]}
-      filterItem.push(oneItem)
+      filter.push(oneItem)
     }
-
     if (params.type) {
-      filterItem.push({type: {$eq: params.type}})
+      filter.push({type: {$eq: params.type}})
     }
-
     if (params.structure) {
-      filterItem.push({type: {$eq: params.structure}})
+      filter.push({type: {$eq: params.structure}})
     }
-
     if (params.age) {
-      let dateBeforeyear = utils.getDayBeforeYears(params.age)
-      filterItem.push({built: {$gte: dateBeforeyear.valueOf()}})
+      let dateBeforeyear = utils.yearsBefore(params.age)
+      filter.push({built: {$gte: dateBeforeyear.valueOf()}})
     }
-
     if (params.min) {
-      filterItem.push({price: {$gte: parseInt(params.min)}})
+      filter.push({price: {$gte: parseInt(params.min)}})
     }
-
     if (params.max) {
-      filterItem.push({price: {$lte: parseInt(params.max)}})
+      filter.push({price: {$lte: parseInt(params.max)}})
     }
-
-    if (params.releday) {
-      let dateBefore = utils.getDayBeforeYears(params.releday)
-      filterItem.push({udate: {$gte: dateBefore.valueOf()}})
+    if (params.yearsBefore) {
+      let dateBefore = utils.yearsBefore(params.yearsBefore)
+      filter.push({udate: {$gte: dateBefore.valueOf()}})
     }
+    filter.push({deleted: {$ne: true}})
 
-    filterItem.push({deleted: {$ne: true}})
-
-    let filter = {$and : filterItem}
-    logger.debug(JSON.stringify(filter))
+    logger.debug(JSON.stringify({$and : filter}))
 
     mongo.find(
       'sellPieces',
-      filter,
+      {$and : filter},
       {sort: {isPublishing: -1, udate: -1}},
       (error, result, count) => {
         if (error) {
@@ -143,13 +131,7 @@ class SellPieceService {
         next(error)
         return
       }
-
-      let hasSelf = publishingPieces.some(one => {
-        return sellPiece._id === one._id
-      })
-
-      if (hasSelf && count > user.maxPublish
-        || !hasSelf && count >= user.maxPublish) {
+      if (count >= user.maxPublish) {
         next({code:'B008', detail: '掲載可能件数：' + user.maxPublish})
       } else {
         that.updateSellPiece(user, sellPiece, next)

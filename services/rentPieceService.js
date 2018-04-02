@@ -35,7 +35,7 @@ class RentPieceService {
     }
 
     if (params.releday) {
-      let dateBefore = utils.getDayBeforeYears(params.releday)
+      let dateBefore = utils.yearsBefore(params.releday)
       filter.udate = {$gte: dateBefore.valueOf()}
     }
 

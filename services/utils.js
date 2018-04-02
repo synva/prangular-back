@@ -83,7 +83,7 @@ class Utils {
       }
     })
   }
-  getDayBeforeYears (year) {
+  yearsBefore (year) {
     year = year * -1
     let thisYear = (new Date()).getFullYear()
     let start = new Date('1/1/' + thisYear)
@@ -91,7 +91,7 @@ class Utils {
 
     return defaultStart.add(year, 'years')
   }
-  getBeforeDay (days) {
+  daysBefore (days) {
     let currentDate = new Date()
     currentDate.setHours(0, 0, 0, 0)
     let defaultStart = moment(currentDate.valueOf())
