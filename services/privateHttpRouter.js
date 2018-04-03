@@ -40,7 +40,6 @@ router.put('/insertSellPiece', (req, res) => {
 })
 router.get('/findSellPieces', (req, res) => {
   const params = url.parse(req.url, true).query
-
   let filter = {}
   if (params.filter) {
     if (typeof params.filter === 'string' || params.filter instanceof String) {
@@ -49,14 +48,13 @@ router.get('/findSellPieces', (req, res) => {
       filter = params.filter
     }
   }
-
+  filter.contactID = req.session.passport.user._id
   let page = utils.parseInt(params.page)
 
-  filter.contactID = req.session.passport.user._id
-  logger.info('findSellPieces:', params)
+  logger.info('private findSellPieces:', JSON.stringify(filter))
   logger.info('page:', page)
 
-  sellPieceService.findSellPieces(params, (error, sellPieces, count) => {
+  sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
     if (error) {
       res.json({error: error, data: null})
     } else {

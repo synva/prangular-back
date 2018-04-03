@@ -17,8 +17,6 @@ let router = express.Router()
  */
 router.get('/findSellPieces', (req, res) => {
   const params = url.parse(req.url, true).query
-  logger.info('findSellPieces:', params)
-
   let filter = {}
   if (params.filter) {
     if (typeof params.filter === 'string' || params.filter instanceof String) {
@@ -27,8 +25,11 @@ router.get('/findSellPieces', (req, res) => {
       filter = params.filter
     }
   }
-
+  filter.isPublishing = true
   let page = utils.parseInt(params.page)
+
+  logger.info('public findSellPieces:', JSON.stringify(filter))
+  logger.info('page:', page)
 
   sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
     if (error) {
