@@ -8,6 +8,7 @@ import sellPieceService from './sellPieceService.js'
 import borrowRequestService from './borrowRequestService.js'
 import rentPieceService from './rentPieceService.js'
 import contactService from './contactService.js'
+import userService from './userService.js'
 
 let router = express.Router()
 
@@ -148,7 +149,14 @@ router.get('/findBorrowRequests', (req, res) => {
 router.get('/getCompanyConfig', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('getCompanyConfig:', params)
-  res.json({error: null, data: params})
+  userService.getUserInfoByDomain(params.domain, (error, userInfo) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      logger.info('userInfo:', userInfo)
+      res.json({error: null, data: {datas: userInfo}})
+    }
+  })
 })
 
 module.exports = router
