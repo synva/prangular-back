@@ -19,10 +19,11 @@ class Mongo {
       next({code: 'S003', detail: JSON.stringify(error)})
     })
   }
-  find (collection_name, criteria, projection, next, page) {
+  find (collection_name, criteria, projection, next, page, customerlimit) {
     let skip = 0
+    let limit = customerlimit || conf.mongo.limit
     if (page && page > 0) {
-      skip = page * conf.mongo.limit
+      skip = page * limit
     }
     this.db.collection(collection_name, (outer_error, collection) => {
       if (outer_error) {
@@ -35,7 +36,7 @@ class Mongo {
             logger.error('count error:' + JSON.stringify(count_error))
             next('S003', null)
           } else {
-            mongoFind.skip(skip).limit(conf.mongo.limit).toArray((inner_error, list) => {
+            mongoFind.skip(skip).limit(limit).toArray((inner_error, list) => {
               if (inner_error) {
                 logger.error('find error:' + JSON.stringify(inner_error))
                 next('S003', null)

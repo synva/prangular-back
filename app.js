@@ -8,6 +8,7 @@ import mongo from './services/mongo.js'
 import compression from 'compression'
 import privateHttpRouter from './services/privateHttpRouter.js'
 import publicHttpRouter from './services/publicHttpRouter.js'
+import hpHttpRouter from './services/hpHttpRouter.js'
 import socketRouter from './services/socketRouter.js'
 import userService from './services/userService.js'
 import dataService from './services/dataService.js'
@@ -170,6 +171,7 @@ let checkAuth = (req, res, next) => {
 }
 app.use('/private', checkAuth, privateHttpRouter)
 app.use('/public', publicHttpRouter)
+app.use('/hp', hpHttpRouter)
 
 
 
