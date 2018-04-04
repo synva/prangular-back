@@ -30,12 +30,34 @@ router.post('/updateUser', (req, res) => {
  */
 router.put('/insertSellPiece', (req, res) => {
   logger.info('insertSellPiece:', req.body)
-  sellPieceService.insertSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: sellPiece})
-    }
+  Promise.all([
+    new Promise((resolve, reject) => {
+      userService.getUser(req.session.passport.user, (error, user) => {
+        if (error) return reject(error)
+        resolve(user)
+      })
+    }),
+    new Promise((resolve, reject) => {
+      sellPieceService.findSellPieces({contactID: req.session.passport.user._id}, (error, sellPieces, count) => {
+        if (error) return reject(error)
+        resolve(count)
+      })
+    })
+  ]).then((values) => {
+    let user = values[0]
+    let count = values[1]
+    logger.debug('max sell count:', user.maxSell)
+    logger.debug('current count:', count)
+    if (count >= user.maxSell) return res.json({error: {code: 'B008', detail: '登録可能件数：' + user.maxSell}, data: null})
+    sellPieceService.insertSellPiece(user, req.body, (error, sellPiece) => {
+      if (error) {
+        res.json({error: error, data: null})
+      } else {
+        res.json({error: null, data: sellPiece})
+      }
+    })
+  }, (reason) => {
+    res.json({error: reason, data: null})
   })
 })
 router.get('/findSellPieces', (req, res) => {
@@ -72,22 +94,6 @@ router.post('/updateSellPiece', (req, res) => {
     }
   })
 })
-router.post('/publishSellPiece', (req, res) => {
-  logger.info('publishSellPiece:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      sellPieceService.publishSellPiece(user, req.body, (error, sellPiece) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {sellPiece: sellPiece}})
-        }
-      })
-    }
-  })
-})
 router.post('/deleteSellPiece', (req, res) => {
   logger.info('deleteSellPiece:', req.body)
   sellPieceService.deleteSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
@@ -104,11 +110,17 @@ router.post('/deleteSellPiece', (req, res) => {
  */
 router.put('/insertBuyRequest', (req, res) => {
   logger.info('insertBuyRequest:', req.body)
-  buyRequestService.insertBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: buyRequest})
+      buyRequestService.insertBuyRequest(user, req.body, (error, buyRequest) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: buyRequest})
+        }
+      })
     }
   })
 })
@@ -155,7 +167,7 @@ router.post('/updateBuyRequest', (req, res) => {
 router.post('/publishBuyRequest', (req, res) => {
   logger.info('publishBuyRequest:', req.body)
 
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -234,7 +246,7 @@ router.get('/findBorrowRequests', (req, res) => {
 })
 router.post('/updateBorrowRequest', (req, res) => {
   logger.info('updateBorrowRequest:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -250,7 +262,7 @@ router.post('/updateBorrowRequest', (req, res) => {
 })
 router.post('/publishBorrowRequest', (req, res) => {
   logger.info('publishBorrowRequest:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -328,7 +340,7 @@ router.get('/findRentPieces', (req, res) => {
 })
 router.post('/updateRentPiece', (req, res) => {
   logger.info('updateRentPiece:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -344,7 +356,7 @@ router.post('/updateRentPiece', (req, res) => {
 })
 router.post('/publishRentPiece', (req, res) => {
   logger.info('publishRentPiece:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {

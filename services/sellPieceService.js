@@ -124,39 +124,6 @@ class SellPieceService {
       }
     )
   }
-  publishSellPiece (user, sellPiece, next) {
-    let that = this
-    that.getPublishingPiece(user._id, (error, publishingPieces, count) => {
-      if (error) {
-        next(error)
-        return
-      }
-      if (count >= user.maxPublish) {
-        next({code:'B008', detail: '掲載可能件数：' + user.maxPublish})
-      } else {
-        that.updateSellPiece(user, sellPiece, next)
-      }
-    })
-  }
-  getPublishingPiece (contactID, next) {
-    let filter = {
-      contactID: {$eq: contactID},
-      isPublishing: {$eq: true},
-      deleted: {$ne: true}
-    }
-    mongo.find(
-      'sellPieces',
-      filter,
-      {},
-      (error, result, count) => {
-        if (error) {
-          next(error, null)
-        } else {
-          next(null, result, count)
-        }
-      }
-    )
-  }
   deleteSellPiece (user, piece, next) {
     let sellPiece = {
       _id: piece._id,
