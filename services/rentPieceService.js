@@ -6,49 +6,69 @@ import utils from './utils'
 class RentPieceService {
   constructor () {
   }
-  findRentPieces (params, next, paging) {
-    let filter = {}
+  findRentPieces (params, next, page) {
+    let filter = []
     if (params._id) {
-      filter._id = ObjectId(params._id)
+      filter.push({_id: {$eq: ObjectId(params._id)}})
     }
-
-    if (params.line) {
-      let regexp = new RegExp('.*' + params.line + '.*')
-      filter.line = regexp
-    }
-
-    if (params.station) {
-      let regexp = new RegExp('.*' + params.station + '.*')
-      filter.station = regexp
-    }
-
-    if (params.minute) {
-      filter.minute = {$lte: parseInt(params.minute)}
-    }
-
-    if (params.isNew) {
-      filter.isnew = {$eq: params.isNew}
-    }
-
-    if (params.type) {
-      filter.type = {$eq: params.type}
-    }
-
-    if (params.releday) {
-      let dateBefore = utils.yearsBefore(params.releday)
-      filter.udate = {$gte: dateBefore.valueOf()}
-    }
-
     if (params.contactID) {
-      filter.contactID = params.contactID
+      filter.push({contactID: {$eq: params.contactID}})
     }
+    if (params.isPublishing) {
+      filter.push({isPublishing: {$eq: true}})
+    }
+    if (params.stations) {
+      let stations = params.stations
+      if (!Array.isArray(stations)) {
+        stations = [stations]
+      }
+      filter.push({'stations.station': {$in: stations}})
+    }
+    if (params.walking) {
+      filter.push({'stations.walking': {$lte: parseInt(params.walking)}})
+    }
+    if (params['layouts[]']) {
+      let layouts = params['layouts[]']
+      if (!Array.isArray(layouts)) {
+        layouts = [layouts]
+      }
+      filter.push({layout: {$in: layouts}})
+    }
+    if (params.area) {
+      let oneItem = {$or: [
+        {exclusiveArea: {$gte: parseFloat(params.area)}},
+        {buildingArea: {$gte: parseFloat(params.area)}},
+        {landArea: {$gte: parseFloat(params.area)}}
+      ]}
+      filter.push(oneItem)
+    }
+    if (params.type) {
+      filter.push({type: {$eq: params.type}})
+    }
+    if (params.structure) {
+      filter.push({type: {$eq: params.structure}})
+    }
+    if (params.age) {
+      let dateBeforeyear = utils.yearsBefore(params.age)
+      filter.push({built: {$gte: dateBeforeyear.valueOf()}})
+    }
+    if (params.min) {
+      filter.push({price: {$gte: parseInt(params.min)}})
+    }
+    if (params.max) {
+      filter.push({price: {$lte: parseInt(params.max)}})
+    }
+    if (params.yearsBefore) {
+      let dateBefore = utils.yearsBefore(params.yearsBefore)
+      filter.push({udate: {$gte: dateBefore.valueOf()}})
+    }
+    filter.push({deleted: {$ne: true}})
 
-    filter.deleted = {$ne: true}
-    logger.debug('find rentPieces:', filter)
+    logger.debug(JSON.stringify({$and : filter}))
 
     mongo.find(
       'rentPieces',
-      filter,
+      {$and : filter},
       {sort: {isPublishing: -1, udate: -1}},
       (error, result, count) => {
         if (error) {
@@ -57,7 +77,7 @@ class RentPieceService {
           next(null, result, count)
         }
       },
-      paging
+      page
     )
   }
   insertRentPiece (user, rentPiece, next) {
@@ -103,70 +123,9 @@ class RentPieceService {
       }
     )
   }
-  publishRentPiece (user, rentPiece, next) {
-    let that = this
-
-    if (rentPiece.isPublishing) {
-      let getPublishingPiecePromise = new Promise((resolve, reject) => {
-        that.getPublishingPiece(user._id, (err, publishingPieces, count) => {
-          let hasSelf = false
-          logger.debug('count:', count)
-          if (count === 0) {
-            resolve()
-            return
-          }
-
-          publishingPieces.forEach(one => {
-            if (rentPiece._id === one._id) {
-              hasSelf = true
-            }
-          })
-
-          if (hasSelf && count > user.maxPublish
-            || !hasSelf && count >= user.maxPublish) {
-            reject({code:'B008', detail: '登録可能件数：' + user.maxPublish})
-          } else {
-            resolve()
-          }
-        })
-      })
-
-      getPublishingPiecePromise.then(
-        () => {
-          that.updateRentPiece(user, rentPiece, next)
-        },
-        (errReason) => {
-          next(errReason)
-        }
-      )
-    } else {
-      that.updateRentPiece(user, rentPiece, next)
-    }
-  }
-  getPublishingPiece (contactID, next) {
-    let filter = {
-      contactID: {$eq: contactID},
-      isPublishing: {$eq: true},
-      deleted: {$ne: true}
-    }
-
-    mongo.find(
-      'rentPieces',
-      filter,
-      {sort: {_id: -1}},
-      (error, result, count) => {
-        if (error) {
-          next(error, null)
-        } else {
-          next(null, result, count)
-        }
-      }
-    )
-  }
-
-  deleteRentPiece (user, params, next) {
+  deleteRentPiece (user, piece, next) {
     let rentPiece = {
-      _id: params._id,
+      _id: piece._id,
       deleted: true
     }
     this.updateRentPiece(user, rentPiece, next)

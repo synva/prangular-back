@@ -3,10 +3,10 @@ import url from 'url'
 import logger from './logger.js'
 import utils from './utils.js'
 
-import buyRequestService from './buyRequestService.js'
 import sellPieceService from './sellPieceService.js'
-import borrowRequestService from './borrowRequestService.js'
 import rentPieceService from './rentPieceService.js'
+import buyRequestService from './buyRequestService.js'
+import borrowRequestService from './borrowRequestService.js'
 import userService from './userService.js'
 
 let router = express.Router()
@@ -101,6 +101,86 @@ router.post('/deleteSellPiece', (req, res) => {
       res.json({error: error, data: null})
     } else {
       res.json({error: null, data: {sellPiece: sellPiece}})
+    }
+  })
+})
+
+/**
+ * rentPiece
+ */
+router.put('/insertRentPiece', (req, res) => {
+  logger.info('insertRentPiece:', req.body)
+  Promise.all([
+    new Promise((resolve, reject) => {
+      userService.getUser(req.session.passport.user, (error, user) => {
+        if (error) return reject(error)
+        resolve(user)
+      })
+    }),
+    new Promise((resolve, reject) => {
+      rentPieceService.findRentPieces({contactID: req.session.passport.user._id}, (error, rentPieces, count) => {
+        if (error) return reject(error)
+        resolve(count)
+      })
+    })
+  ]).then((values) => {
+    let user = values[0]
+    let count = values[1]
+    logger.debug('max sell count:', user.maxRent)
+    logger.debug('current count:', count)
+    if (count >= user.maxRent) return res.json({error: {code: 'B008', detail: '登録可能件数：' + user.maxRent}, data: null})
+    rentPieceService.insertRentPiece(user, req.body, (error, rentPiece) => {
+      if (error) {
+        res.json({error: error, data: null})
+      } else {
+        res.json({error: null, data: rentPiece})
+      }
+    })
+  }, (reason) => {
+    res.json({error: reason, data: null})
+  })
+})
+router.get('/findRentPieces', (req, res) => {
+  const params = url.parse(req.url, true).query
+  let filter = {}
+  if (params.filter) {
+    if (typeof params.filter === 'string' || params.filter instanceof String) {
+      filter = JSON.parse(params.filter)
+    } else {
+      filter = params.filter
+    }
+  }
+  filter.contactID = req.session.passport.user._id
+  let page = utils.parseInt(params.page)
+
+  logger.info('private findRentPieces:', JSON.stringify(filter))
+  logger.info('page:', page)
+
+  rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {datas: rentPieces, count: count}})
+    }
+  }, page)
+})
+router.post('/updateRentPiece', (req, res) => {
+  logger.info('updateRentPiece:', req.body)
+  rentPieceService.updateRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {rentPiece: rentPiece}})
+    }
+  })
+})
+router.post('/deleteRentPiece', (req, res) => {
+  logger.info('deleteRentPiece:', req.body)
+  rentPieceService.deleteRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {rentPiece: rentPiece}})
     }
   })
 })
@@ -293,100 +373,6 @@ router.post('/deleteBorrowRequest', (req, res) => {
       res.json({error: error, data: null})
     } else {
       res.json({error: null, data: {borrowRequest: borrowRequest}})
-    }
-  })
-})
-
-/**
- * rentPiece
- */
-router.put('/insertRentPiece', (req, res) => {
-  logger.info('insertRentPiece:', req.body)
-  rentPieceService.insertRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: rentPiece})
-    }
-  })
-})
-
-router.get('/findRentPieces', (req, res) => {
-  const params = url.parse(req.url, true).query
-
-  let filter = {}
-  if (params.filter) {
-    if (typeof params.filter === 'string' || params.filter instanceof String) {
-      filter = JSON.parse(params.filter)
-    } else {
-      filter = params.filter
-    }
-  }
-
-  let page = utils.parseInt(params.page)
-
-  filter.contactID = req.session.passport.user._id
-
-  logger.info('findRentPieces:', params)
-  logger.info('page:', page)
-
-  rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {datas: rentPieces, count: count}})
-    }
-  }, page)
-})
-router.post('/updateRentPiece', (req, res) => {
-  logger.info('updateRentPiece:', req.body)
-  userService.getUser(req.session.passport.user, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      rentPieceService.updateRentPiece(user, req.body, (error, rentPiece) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {rentPiece: rentPiece}})
-        }
-      })
-    }
-  })
-})
-router.post('/publishRentPiece', (req, res) => {
-  logger.info('publishRentPiece:', req.body)
-  userService.getUser(req.session.passport.user, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      rentPieceService.publishRentPiece(user, req.body, (error, rentPiece) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {rentPiece: rentPiece}})
-        }
-      })
-    }
-  })
-})
-router.post('/unPublishRentPiece', (req, res) => {
-  logger.info('unPublishRentPiece:', req.body)
-  rentPieceService.publishRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {rentPiece: rentPiece}})
-    }
-  })
-})
-router.post('/deleteRentPiece', (req, res) => {
-  logger.info('deleteRentPiece:', req.body)
-  rentPieceService.deleteRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {rentPiece: rentPiece}})
     }
   })
 })

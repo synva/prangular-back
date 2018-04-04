@@ -78,6 +78,22 @@ class UserService {
       }
     )
   }
+  getUserInfoByDomain (domain, next) {
+    mongo.find(
+      'users',
+      {homepagedomain: {$in: [domain]}},
+      {},
+      (error, result) => {
+        if (error) {
+          next(error)
+        } else if (result.length <= 0) {
+          next({code: 'S002'})
+        } else {
+          next(null, result[0])
+        }
+      }
+    )
+  }
   authenticate (_id, password, next) {
     mongo.find(
       'users',

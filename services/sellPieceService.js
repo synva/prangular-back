@@ -1,7 +1,6 @@
 import logger from './logger.js'
 import mongo from './mongo.js'
 import {ObjectId} from 'mongodb'
-import moment from 'moment'
 import utils from './utils'
 
 class SellPieceService {
