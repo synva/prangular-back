@@ -378,100 +378,6 @@ router.post('/deleteBorrowRequest', (req, res) => {
   })
 })
 
-/**
- * rentPiece
- */
-router.put('/insertRentPiece', (req, res) => {
-  logger.info('insertRentPiece:', req.body)
-  rentPieceService.insertRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: rentPiece})
-    }
-  })
-})
-
-router.get('/findRentPieces', (req, res) => {
-  const params = url.parse(req.url, true).query
-
-  let filter = {}
-  if (params.filter) {
-    if (typeof params.filter === 'string' || params.filter instanceof String) {
-      filter = JSON.parse(params.filter)
-    } else {
-      filter = params.filter
-    }
-  }
-
-  let page = utils.parseInt(params.page)
-
-  filter.contactID = req.session.passport.user._id
-
-  logger.info('findRentPieces:', params)
-  logger.info('page:', page)
-
-  rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {datas: rentPieces, count: count}})
-    }
-  }, page)
-})
-router.post('/updateRentPiece', (req, res) => {
-  logger.info('updateRentPiece:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      rentPieceService.updateRentPiece(user, req.body, (error, rentPiece) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {rentPiece: rentPiece}})
-        }
-      })
-    }
-  })
-})
-router.post('/publishRentPiece', (req, res) => {
-  logger.info('publishRentPiece:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      rentPieceService.publishRentPiece(user, req.body, (error, rentPiece) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {rentPiece: rentPiece}})
-        }
-      })
-    }
-  })
-})
-router.post('/unPublishRentPiece', (req, res) => {
-  logger.info('unPublishRentPiece:', req.body)
-  rentPieceService.publishRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {rentPiece: rentPiece}})
-    }
-  })
-})
-router.post('/deleteRentPiece', (req, res) => {
-  logger.info('deleteRentPiece:', req.body)
-  rentPieceService.deleteRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {rentPiece: rentPiece}})
-    }
-  })
-})
-
 /*
 * HomePage
 */
@@ -495,7 +401,6 @@ router.put('/insertHomePageSetting', (req, res) => {
               res.json({error: null, data: HomePageSetting})
             }
           })
-
         }
       })
     }
