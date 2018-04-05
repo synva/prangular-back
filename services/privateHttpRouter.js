@@ -378,7 +378,6 @@ router.post('/deleteBorrowRequest', (req, res) => {
   })
 })
 
-<<<<<<< HEAD
 /**
  * rentPiece
  */
@@ -629,6 +628,4 @@ router.post('/deleteHomePageSetting', (req, res) => {
   })
 })
 
-=======
->>>>>>> 609d83bfa6bf24ee2644740a58412c920e4fe359
 module.exports = router
