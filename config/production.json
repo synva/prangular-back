@@ -11,7 +11,7 @@
     "server": "127.0.0.1",
     "port": 27017,
     "db": "budousan",
-    "limit": 50
+    "limit": 24
   },
   "session": {
     "mode": "mongo",

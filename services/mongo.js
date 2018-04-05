@@ -19,9 +19,9 @@ class Mongo {
       next({code: 'S003', detail: JSON.stringify(error)})
     })
   }
-  find (collection_name, criteria, projection, next, page, customerlimit) {
+  find (collection_name, criteria, projection, next, page, customLimit) {
     let skip = 0
-    let limit = customerlimit || conf.mongo.limit
+    let limit = customLimit || conf.mongo.limit
     if (page && page > 0) {
       skip = page * limit
     }

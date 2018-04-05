@@ -36,7 +36,8 @@ class UserService {
         } else {
           if (result.length <= 0) {
             user.role = '1'
-            user.maxPublish = 4
+            user.maxSell = 30
+            user.maxRent = 20
             user.cuser = user._id
             user.uuser = user._id
             let now = new Date()
@@ -65,22 +66,6 @@ class UserService {
     mongo.find(
       'users',
       {_id: user._id, password: user.password},
-      {},
-      (error, result) => {
-        if (error) {
-          next(error)
-        } else if (result.length <= 0) {
-          next({code: 'S002'})
-        } else {
-          next(null, result[0])
-        }
-      }
-    )
-  }
-  getUserInfoByID (userid, next) {
-    mongo.find(
-      'users',
-      {_id: userid},
       {},
       (error, result) => {
         if (error) {

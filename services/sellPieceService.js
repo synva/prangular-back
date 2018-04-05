@@ -1,7 +1,6 @@
 import logger from './logger.js'
 import mongo from './mongo.js'
 import {ObjectId} from 'mongodb'
-import moment from 'moment'
 import utils from './utils'
 
 class SellPieceService {
@@ -120,39 +119,6 @@ class SellPieceService {
         } else {
           sellPiece._id = id
           next(null, sellPiece)
-        }
-      }
-    )
-  }
-  publishSellPiece (user, sellPiece, next) {
-    let that = this
-    that.getPublishingPiece(user._id, (error, publishingPieces, count) => {
-      if (error) {
-        next(error)
-        return
-      }
-      if (count >= user.maxPublish) {
-        next({code:'B008', detail: '掲載可能件数：' + user.maxPublish})
-      } else {
-        that.updateSellPiece(user, sellPiece, next)
-      }
-    })
-  }
-  getPublishingPiece (contactID, next) {
-    let filter = {
-      contactID: {$eq: contactID},
-      isPublishing: {$eq: true},
-      deleted: {$ne: true}
-    }
-    mongo.find(
-      'sellPieces',
-      filter,
-      {},
-      (error, result, count) => {
-        if (error) {
-          next(error, null)
-        } else {
-          next(null, result, count)
         }
       }
     )

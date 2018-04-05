@@ -129,7 +129,7 @@ class BuyRequestService {
 
           if (hasSelf && count > user.maxPublish
             || !hasSelf && count >= user.maxPublish) {
-            reject({code:'B008', detail: '掲載可能件数：' + user.maxPublish})
+            reject({code:'B008', detail: '登録可能件数：' + user.maxPublish})
           } else {
             resolve()
           }
