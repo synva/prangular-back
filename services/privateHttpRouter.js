@@ -8,6 +8,7 @@ import sellPieceService from './sellPieceService.js'
 import borrowRequestService from './borrowRequestService.js'
 import rentPieceService from './rentPieceService.js'
 import userService from './userService.js'
+import homepageService from './homepageService.js'
 
 let router = express.Router()
 
@@ -375,6 +376,162 @@ router.post('/deleteRentPiece', (req, res) => {
       res.json({error: error, data: null})
     } else {
       res.json({error: null, data: {rentPiece: rentPiece}})
+    }
+  })
+})
+
+/*
+* HomePage
+*/
+router.put('/insertHomePageSetting', (req, res) => {
+  logger.info('insertHomePageSetting:', req.body)
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      homepageService.insertHomePageSetting(user, req.body, (error, HomePageSetting) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          user.homepagedomain.push(HomePageSetting.domain)
+          logger.debug('updateUser start')
+          userService.updateUser(user, user, (error, userinfo) => {
+            logger.debug('updateUser end:', error)
+            if (error) {
+              res.json({error: error, data: null})
+            } else {
+              res.json({error: null, data: HomePageSetting})
+            }
+          })
+
+        }
+      })
+    }
+  })
+})
+router.get('/getHomePageInfo', (req, res) => {
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      homepageService.getHomePageInfoByDomain(user.homepagedomain, (error, homepageInfos, count) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {datas: homepageInfos, count: count}})
+        }
+      })
+    }
+  })
+})
+router.get('/findHomePageSetting', (req, res) => {
+  const params = url.parse(req.url, true).query
+  logger.info('findHomePageSetting:', params)
+  homepageService.getHomePageInfoByDomain([params.domain], (error, homepageInfos, count) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {datas: homepageInfos, count: count}})
+    }
+  })
+})
+router.get('/findHomePageSettingByID', (req, res) => {
+  const params = url.parse(req.url, true).query
+  logger.info('findHomePageSetting:', params)
+  homepageService.getHomePageInfoByID(params, (error, homepageInfos, count) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {datas: homepageInfos, count: count}})
+    }
+  })
+})
+router.post('/updateHomePageSetting', (req, res) => {
+  logger.info('updateHomePageSetting:', req.body)
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      const setting = req.body
+      logger.debug('getHomePageInfoByID start:', setting._id)
+      homepageService.getHomePageInfoByID({_id:setting._id}, (error, origin_homepageInfo, count) => {
+        logger.debug('getHomePageInfoByID end:', error)
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+
+          logger.debug('updateHomePageSetting start:', setting)
+          homepageService.updateHomePageSetting(user, setting, (error, homepageInfo) => {
+            logger.debug('updateHomePageSetting end:', error)
+            if (error) {
+              res.json({error: error, data: null})
+            } else {
+
+              logger.debug('origin domain:', origin_homepageInfo[0].domain)
+              logger.debug('setting.domain:', setting.domain)
+              if (origin_homepageInfo[0].domain !== setting.domain) {
+                for (let i in user.homepagedomain) {
+                  if (user.homepagedomain[i] === origin_homepageInfo[0].domain) {
+                    user.homepagedomain[i] = setting.domain
+                    logger.debug('set domain:', user.homepagedomain)
+                    break
+                  }
+                }
+                logger.debug('updateUser start')
+                userService.updateUser(user, user, (error, userinfo) => {
+                  logger.debug('updateUser end:', error)
+                  if (error) {
+                    res.json({error: error, data: null})
+                  } else {
+                    res.json({error: null, data: homepageInfo})
+                  }
+                })
+              } else {
+                res.json({error: null, data: homepageInfo})
+              }
+            }
+          })
+        }
+      })
+    }
+  })
+})
+router.post('/deleteHomePageSetting', (req, res) => {
+  logger.info('deleteHomePageSetting:', req.body)
+  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      const setting = req.body
+      homepageService.getHomePageInfoByID({_id:setting._id}, (error, origin_homepageInfo, count) => {
+        logger.debug('getHomePageInfoByID end:', error)
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          homepageService.deleteHomePageSetting(user, req.body, (error, homepageInfo) => {
+            if (error) {
+              res.json({error: error, data: null})
+            } else {
+              for (let i in user.homepagedomain) {
+                if (user.homepagedomain[i] === origin_homepageInfo[0].domain) {
+                  user.homepagedomain.splice(i, 1)
+                  logger.debug('set domain:', user.homepagedomain)
+                  break
+                }
+              }
+              logger.debug('updateUser start')
+              userService.updateUser(user, user, (error, userinfo) => {
+                logger.debug('updateUser end:', error)
+                if (error) {
+                  res.json({error: error, data: null})
+                } else {
+                  res.json({error: null, data: homepageInfo})
+                }
+              })
+            }
+          })
+        }
+      })
     }
   })
 })

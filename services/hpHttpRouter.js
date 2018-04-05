@@ -6,9 +6,43 @@ import utils from './utils.js'
 import sellPieceService from './sellPieceService.js'
 import rentPieceService from './rentPieceService.js'
 import contactService from './contactService.js'
-import userService from './userService.js'
+import homepageService from './homepageService.js'
 
 let router = express.Router()
+
+/**
+ * homepage info
+ */
+router.get('/getHomePageInfo', (req, res) => {
+  const params = url.parse(req.url, true).query
+  let domain = ''
+  if (typeof params.domain === 'string' || params.domain instanceof String) {
+    domain = params.domain
+  } else {
+    res.json({error: {code: 'B009'}, data: null})
+    return
+  }
+
+  homepageService.getUserInfoByDomain(domain, (error, userInfo) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      if (userInfo == null) {
+        res.json({error: {code: 'B009'}, data: null})
+        return
+      }
+      homepageService.getHomePageInfoByDomain([domain], (error, homepageInfos) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: {datas: homepageInfos[0]}})
+        }
+      })
+    }
+  })
+})
+
+
 
 /**
  * sellPiece
@@ -81,17 +115,17 @@ router.get('/findRentPieces', (req, res) => {
 /**
  * company homepage
  */
-router.get('/getCompanyConfig', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('getCompanyConfig:', params)
-  userService.getUserInfoByDomain(params.domain, (error, userInfo) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      logger.info('userInfo:', userInfo)
-      res.json({error: null, data: {datas: userInfo}})
-    }
-  })
-})
+// router.get('/getCompanyConfig', (req, res) => {
+//   const params = url.parse(req.url, true).query
+//   logger.info('getCompanyConfig:', params)
+//   userService.getUserInfoByDomain(params.domain, (error, userInfo) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       logger.info('userInfo:', userInfo)
+//       res.json({error: null, data: {datas: userInfo}})
+//     }
+//   })
+// })
 
 module.exports = router
