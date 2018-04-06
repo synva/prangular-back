@@ -4,12 +4,16 @@ import {ObjectId} from 'mongodb'
 
 class HomepageService {
   constructor () {
+    this.userProjection = {
+      _id: 1,
+      homepages: 1
+    }
   }
-  getUserInfoByDomain (domain, next) {
+  getUser (domain, next) {
     mongo.find(
       'users',
-      {homepagedomain: {$in: [domain]}},
-      {},
+      {homepages: {$in: [domain]}},
+      this.userProjection,
       (error, result) => {
         if (error) {
           next(error)
@@ -21,8 +25,8 @@ class HomepageService {
       }
     )
   }
-  getHomePageInfoByDomain (domains, next) {
-    mongo.find(
+  getHomepages (domains, next) {
+    mongo.findAll(
       'homepages',
       {domain: {$in: domains}},
       {},
@@ -37,16 +41,10 @@ class HomepageService {
       }
     )
   }
-  getHomePageInfoByID (params, next) {
-    let filter = {}
-
-    if (params._id) {
-      filter._id = ObjectId(params._id)
-    }
-
+  getHomepage (id, next) {
     mongo.find(
       'homepages',
-      filter,
+      {_id: ObjectId(id)},
       {},
       (error, result, count) => {
         if (error) {
@@ -59,17 +57,17 @@ class HomepageService {
       }
     )
   }
-  insertSellPiece (user, setting, next) {
+  insertHomepage (user, config, next) {
     let now = new Date()
     now = now.valueOf()
-    setting.cdate = now
-    setting.cuser = user._id
-    setting.contactID = user._id
-    setting.udate = now
-    setting.uuser = user._id
+    config.cdate = now
+    config.cuser = user._id
+    config.contactID = user._id
+    config.udate = now
+    config.uuser = user._id
     mongo.insert(
       'homepages',
-      setting,
+      config,
       {},
       (error, result) => {
         if (error) {
@@ -81,30 +79,30 @@ class HomepageService {
       }
     )
   }
-  updateHomePageSetting (user, setting, next) {
-    let id = setting._id
-    delete setting._id
-    setting.uuser = user._id
+  updateHomePageSetting (user, config, next) {
+    let id = config._id
+    delete config._id
+    config.uuser = user._id
     let now = new Date()
-    setting.udate = now.valueOf()
+    config.udate = now.valueOf()
     mongo.update(
       'homepages',
       {_id: ObjectId(id)},
-      {$set: setting},
+      {$set: config},
       {multi: false},
       (error, result) => {
         if (error) {
           next(error)
         } else {
-          setting._id = id
-          next(null, setting)
+          config._id = id
+          next(null, config)
         }
       }
     )
   }
-  deleteHomePageSetting (user, setting, next) {
+  deleteHomePageSetting (user, config, next) {
     let homepageSetting = {
-      _id: setting._id,
+      _id: config._id,
       deleted: true
     }
     this.updateHomePageSetting(user, homepageSetting, next)

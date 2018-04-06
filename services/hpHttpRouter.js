@@ -11,38 +11,29 @@ import homepageService from './homepageService.js'
 let router = express.Router()
 
 /**
- * homepage info
+ * homepage
  */
-router.get('/getHomePageInfo', (req, res) => {
-  const params = url.parse(req.url, true).query
-  let domain = ''
-  if (typeof params.domain === 'string' || params.domain instanceof String) {
-    domain = params.domain
-  } else {
-    res.json({error: {code: 'B009'}, data: null})
-    return
-  }
-
-  homepageService.getUserInfoByDomain(domain, (error, userInfo) => {
+router.get('/getHomepage', (req, res) => {
+  let domain = req.headers.origin.toLowerCase()
+  logger.info('getHomepage:', domain)
+  homepageService.getUser(domain, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      if (userInfo == null) {
-        res.json({error: {code: 'B009'}, data: null})
+      if (user == null) {
+        res.json({error: {code: 'S999'}, data: null})
         return
       }
-      homepageService.getHomePageInfoByDomain([domain], (error, homepageInfos) => {
+      homepageService.getHomepages([domain], (error, configs) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: homepageInfos[0]})
+          res.json({error: null, data: configs[0]})
         }
       })
     }
   })
 })
-
-
 
 /**
  * sellPiece
@@ -111,21 +102,5 @@ router.get('/findRentPieces', (req, res) => {
     }
   }, page)
 })
-
-/**
- * company homepage
- */
-// router.get('/getCompanyConfig', (req, res) => {
-//   const params = url.parse(req.url, true).query
-//   logger.info('getCompanyConfig:', params)
-//   userService.getUserInfoByDomain(params.domain, (error, userInfo) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       logger.info('userInfo:', userInfo)
-//       res.json({error: null, data: {datas: userInfo}})
-//     }
-//   })
-// })
 
 module.exports = router
