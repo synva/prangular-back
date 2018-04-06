@@ -20,15 +20,11 @@ router.get('/getHomepage', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      if (user == null) {
-        res.json({error: {code: 'S999'}, data: null})
-        return
-      }
-      homepageService.getHomepages([domain], (error, configs) => {
+      homepageService.getHomepages([domain], (error, homepages) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: configs[0]})
+          res.json({error: null, data: homepages[0]})
         }
       })
     }

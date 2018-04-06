@@ -414,41 +414,30 @@ router.get('/getHomepages', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      homepageService.getHomepages(user.homepages, (error, configs, count) => {
+      homepageService.getHomepages(user.homepages, (error, homepages) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: {configs: configs, count: count}})
+          res.json({error: null, data: homepages})
         }
       })
     }
   })
 })
-// router.get('/getHomepage', (req, res) => {
-//   const params = url.parse(req.url, true).query
-//   logger.info('findconfig:', params)
-//   homepageService.getHomepages([params.domain], (error, homepageInfos, count) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {datas: homepageInfos, count: count}})
-//     }
-//   })
-// })
 router.get('/getHomepage', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('getHomepage:', params)
-  homepageService.getHomepage(params, (error, homepageInfos, count) => {
+  homepageService.getHomepage(params._id, (error, homepage, count) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {datas: homepageInfos, count: count}})
+      res.json({error: null, data: homepage})
     }
   })
 })
 router.post('/updateHomepage', (req, res) => {
   logger.info('updateHomepage:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -498,7 +487,7 @@ router.post('/updateHomepage', (req, res) => {
 })
 router.post('/deleteHomepage', (req, res) => {
   logger.info('deleteHomepage:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {

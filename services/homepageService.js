@@ -18,7 +18,7 @@ class HomepageService {
         if (error) {
           next(error)
         } else if (result.length <= 0) {
-          next({code: 'S002'})
+          next({code: 'B001'})
         } else {
           next(null, result[0])
         }
@@ -30,13 +30,13 @@ class HomepageService {
       'homepages',
       {domain: {$in: domains}},
       {},
-      (error, result, count) => {
+      (error, results) => {
         if (error) {
           next(error)
-        } else if (result.length <= 0) {
-          next({code: 'S002'})
+        } else if (results.length <= 0) {
+          next({code: 'B001'})
         } else {
-          next(null, result, count)
+          next(null, results)
         }
       }
     )
@@ -50,9 +50,9 @@ class HomepageService {
         if (error) {
           next(error)
         } else if (result.length <= 0) {
-          next({code: 'S002'})
+          next({code: 'B001'})
         } else {
-          next(null, result, count)
+          next(null, result[0], count)
         }
       }
     )
