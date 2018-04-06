@@ -35,7 +35,7 @@ router.get('/getHomePageInfo', (req, res) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: {datas: homepageInfos[0]}})
+          res.json({error: null, data: homepageInfos[0]})
         }
       })
     }
