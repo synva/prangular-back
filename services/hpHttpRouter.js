@@ -14,7 +14,7 @@ let router = express.Router()
  * homepage
  */
 router.get('/getHomepage', (req, res) => {
-  let domain = req.headers.origin.toLowerCase()
+  let domain = req.headers.origin.toLowerCase().split('//')[1]
   logger.info('getHomepage:', domain)
   homepageService.getUser(domain, (error, user) => {
     if (error) {
