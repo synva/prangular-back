@@ -477,7 +477,7 @@ router.post('/deleteRentPiece', (req, res) => {
 */
 router.put('/insertHomePageSetting', (req, res) => {
   logger.info('insertHomePageSetting:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -502,7 +502,7 @@ router.put('/insertHomePageSetting', (req, res) => {
   })
 })
 router.get('/getHomePageInfo', (req, res) => {
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -540,7 +540,7 @@ router.get('/findHomePageSettingByID', (req, res) => {
 })
 router.post('/updateHomePageSetting', (req, res) => {
   logger.info('updateHomePageSetting:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -590,7 +590,7 @@ router.post('/updateHomePageSetting', (req, res) => {
 })
 router.post('/deleteHomePageSetting', (req, res) => {
   logger.info('deleteHomePageSetting:', req.body)
-  userService.getUserInfoByID(req.session.passport.user._id, (error, user) => {
+  userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
