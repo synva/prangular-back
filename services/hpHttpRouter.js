@@ -11,38 +11,25 @@ import homepageService from './homepageService.js'
 let router = express.Router()
 
 /**
- * homepage info
+ * homepage
  */
-router.get('/getHomePageInfo', (req, res) => {
-  const params = url.parse(req.url, true).query
-  let domain = ''
-  if (typeof params.domain === 'string' || params.domain instanceof String) {
-    domain = params.domain
-  } else {
-    res.json({error: {code: 'B009'}, data: null})
-    return
-  }
-
-  homepageService.getUserInfoByDomain(domain, (error, userInfo) => {
+router.get('/getHomepage', (req, res) => {
+  let domain = req.headers.origin.toLowerCase().split('//')[1]
+  logger.info('getHomepage:', domain)
+  homepageService.getUser(domain, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      if (userInfo == null) {
-        res.json({error: {code: 'B009'}, data: null})
-        return
-      }
-      homepageService.getHomePageInfoByDomain([domain], (error, homepageInfos) => {
+      homepageService.getHomepages([domain], (error, homepages) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: homepageInfos[0]})
+          res.json({error: null, data: homepages[0]})
         }
       })
     }
   })
 })
-
-
 
 /**
  * sellPiece
@@ -60,22 +47,29 @@ router.get('/findSellPieces', (req, res) => {
   filter.isPublishing = true
   let page = utils.parseInt(params.page)
 
-  logger.info('public findSellPieces:', JSON.stringify(filter))
-  logger.info('page:', page)
-
-  sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
+  let domain = req.headers.origin.toLowerCase().split('//')[1]
+  logger.info('hp findSellPieces:', domain)
+  homepageService.getUser(domain, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      contactService.assignContacts(sellPieces, (error) => {
+      filter.contactID = user._id
+
+      logger.info('filter:', JSON.stringify(filter))
+      logger.info('page:', page)
+
+      sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
+          sellPieces.forEach(one => {
+            one.contact = user
+          })
           res.json({error: null, data: {datas: sellPieces, count: count}})
         }
-      })
+      }, page)
     }
-  }, page)
+  })
 })
 
 /**
@@ -83,8 +77,6 @@ router.get('/findSellPieces', (req, res) => {
  */
 router.get('/findRentPieces', (req, res) => {
   const params = url.parse(req.url, true).query
-  logger.info('findRentPieces:', params)
-
   let filter = {}
   if (params.filter) {
     if (typeof params.filter === 'string' || params.filter instanceof String) {
@@ -93,39 +85,32 @@ router.get('/findRentPieces', (req, res) => {
       filter = params.filter
     }
   }
-
+  filter.isPublishing = true
   let page = utils.parseInt(params.page)
 
-  logger.info('filter:', filter)
-  rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
+  let domain = req.headers.origin.toLowerCase().split('//')[1]
+  logger.info('hp findRentPieces:', domain)
+  homepageService.getUser(domain, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      contactService.assignContacts(rentPieces, (error) => {
+      filter.contactID = user._id
+
+      logger.info('filter:', JSON.stringify(filter))
+      logger.info('page:', page)
+
+      rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
+          rentPieces.forEach(one => {
+            one.contact = user
+          })
           res.json({error: null, data: {datas: rentPieces, count: count}})
         }
-      })
+      }, page)
     }
-  }, page)
+  })
 })
-
-/**
- * company homepage
- */
-// router.get('/getCompanyConfig', (req, res) => {
-//   const params = url.parse(req.url, true).query
-//   logger.info('getCompanyConfig:', params)
-//   userService.getUserInfoByDomain(params.domain, (error, userInfo) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       logger.info('userInfo:', userInfo)
-//       res.json({error: null, data: {datas: userInfo}})
-//     }
-//   })
-// })
 
 module.exports = router

@@ -381,85 +381,77 @@ router.post('/deleteBorrowRequest', (req, res) => {
 /*
 * HomePage
 */
-router.put('/insertHomePageSetting', (req, res) => {
-  logger.info('insertHomePageSetting:', req.body)
+router.put('/insertHomepage', (req, res) => {
+  logger.info('insertHomepage:', req.body)
   userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      homepageService.insertHomePageSetting(user, req.body, (error, HomePageSetting) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          user.homepagedomain.push(HomePageSetting.domain)
-          logger.debug('updateUser start')
-          userService.updateUser(user, user, (error, userinfo) => {
-            logger.debug('updateUser end:', error)
-            if (error) {
-              res.json({error: error, data: null})
-            } else {
-              res.json({error: null, data: HomePageSetting})
-            }
+      Promise.all([
+        new Promise((resolve, reject) => {
+          homepageService.insertHomepage(user, req.body, (error, config) => {
+            if (error) return reject(error)
+            resolve(config)
           })
-        }
+        }),
+        new Promise((resolve, reject) => {
+          userService.updateUser(user, user, (error, updated) => {
+            if (error) return reject(error)
+            resolve(updated)
+          })
+        })
+      ]).then((values) => {
+        let config = values[0]
+        res.json({error: null, data: config})
+      }, (reason) => {
+        res.json({error: reason, data: null})
       })
     }
   })
 })
-router.get('/getHomePageInfo', (req, res) => {
+router.get('/getHomepages', (req, res) => {
   userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      homepageService.getHomePageInfoByDomain(user.homepagedomain, (error, homepageInfos, count) => {
+      homepageService.getHomepages(user.homepages, (error, homepages) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: {datas: homepageInfos, count: count}})
+          res.json({error: null, data: homepages})
         }
       })
     }
   })
 })
-router.get('/findHomePageSetting', (req, res) => {
+router.get('/getHomepage', (req, res) => {
   const params = url.parse(req.url, true).query
-  logger.info('findHomePageSetting:', params)
-  homepageService.getHomePageInfoByDomain([params.domain], (error, homepageInfos, count) => {
+  logger.info('getHomepage:', params)
+  homepageService.getHomepage(params._id, (error, homepage, count) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {datas: homepageInfos, count: count}})
+      res.json({error: null, data: homepage})
     }
   })
 })
-router.get('/findHomePageSettingByID', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('findHomePageSetting:', params)
-  homepageService.getHomePageInfoByID(params, (error, homepageInfos, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {datas: homepageInfos, count: count}})
-    }
-  })
-})
-router.post('/updateHomePageSetting', (req, res) => {
-  logger.info('updateHomePageSetting:', req.body)
+router.post('/updateHomepage', (req, res) => {
+  logger.info('updateHomepage:', req.body)
   userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
       const setting = req.body
-      logger.debug('getHomePageInfoByID start:', setting._id)
-      homepageService.getHomePageInfoByID({_id:setting._id}, (error, origin_homepageInfo, count) => {
-        logger.debug('getHomePageInfoByID end:', error)
+      logger.debug('getHomepage start:', setting._id)
+      homepageService.getHomepage({_id:setting._id}, (error, origin_homepageInfo, count) => {
+        logger.debug('getHomepage end:', error)
         if (error) {
           res.json({error: error, data: null})
         } else {
 
-          logger.debug('updateHomePageSetting start:', setting)
-          homepageService.updateHomePageSetting(user, setting, (error, homepageInfo) => {
-            logger.debug('updateHomePageSetting end:', error)
+          logger.debug('updateHomepage start:', setting)
+          homepageService.updateHomepage(user, setting, (error, homepageInfo) => {
+            logger.debug('updateHomepage end:', error)
             if (error) {
               res.json({error: error, data: null})
             } else {
@@ -467,15 +459,15 @@ router.post('/updateHomePageSetting', (req, res) => {
               logger.debug('origin domain:', origin_homepageInfo[0].domain)
               logger.debug('setting.domain:', setting.domain)
               if (origin_homepageInfo[0].domain !== setting.domain) {
-                for (let i in user.homepagedomain) {
-                  if (user.homepagedomain[i] === origin_homepageInfo[0].domain) {
-                    user.homepagedomain[i] = setting.domain
-                    logger.debug('set domain:', user.homepagedomain)
+                for (let i in user.homepages) {
+                  if (user.homepages[i] === origin_homepageInfo[0].domain) {
+                    user.homepages[i] = setting.domain
+                    logger.debug('set domain:', user.homepages)
                     break
                   }
                 }
                 logger.debug('updateUser start')
-                userService.updateUser(user, user, (error, userinfo) => {
+                userService.updateUser(user, user, (error, user) => {
                   logger.debug('updateUser end:', error)
                   if (error) {
                     res.json({error: error, data: null})
@@ -493,31 +485,31 @@ router.post('/updateHomePageSetting', (req, res) => {
     }
   })
 })
-router.post('/deleteHomePageSetting', (req, res) => {
-  logger.info('deleteHomePageSetting:', req.body)
+router.post('/deleteHomepage', (req, res) => {
+  logger.info('deleteHomepage:', req.body)
   userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
       const setting = req.body
-      homepageService.getHomePageInfoByID({_id:setting._id}, (error, origin_homepageInfo, count) => {
-        logger.debug('getHomePageInfoByID end:', error)
+      homepageService.getHomepage({_id:setting._id}, (error, origin_homepageInfo, count) => {
+        logger.debug('getHomepage end:', error)
         if (error) {
           res.json({error: error, data: null})
         } else {
-          homepageService.deleteHomePageSetting(user, req.body, (error, homepageInfo) => {
+          homepageService.deleteHomepage(user, req.body, (error, homepageInfo) => {
             if (error) {
               res.json({error: error, data: null})
             } else {
-              for (let i in user.homepagedomain) {
-                if (user.homepagedomain[i] === origin_homepageInfo[0].domain) {
-                  user.homepagedomain.splice(i, 1)
-                  logger.debug('set domain:', user.homepagedomain)
+              for (let i in user.homepages) {
+                if (user.homepages[i] === origin_homepageInfo[0].domain) {
+                  user.homepages.splice(i, 1)
+                  logger.debug('set domain:', user.homepages)
                   break
                 }
               }
               logger.debug('updateUser start')
-              userService.updateUser(user, user, (error, userinfo) => {
+              userService.updateUser(user, user, (error, user) => {
                 logger.debug('updateUser end:', error)
                 if (error) {
                   res.json({error: error, data: null})

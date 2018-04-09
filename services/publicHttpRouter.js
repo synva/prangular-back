@@ -150,7 +150,7 @@ router.get('/findBorrowRequests', (req, res) => {
 router.get('/getCompanyConfig', (req, res) => {
   const params = url.parse(req.url, true).query
   logger.info('getCompanyConfig:', params)
-  userService.getUserInfoByDomain(params.domain, (error, userInfo) => {
+  userService.getUser(params.domain, (error, userInfo) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
