@@ -409,7 +409,7 @@ router.put('/insertHomepage', (req, res) => {
     }
   })
 })
-router.get('/getHomepages', (req, res) => {
+router.get('/getMyHomepages', (req, res) => {
   userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
@@ -441,27 +441,27 @@ router.post('/updateHomepage', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      const setting = req.body
-      logger.debug('getHomepage start:', setting._id)
-      homepageService.getHomepage({_id:setting._id}, (error, origin_homepageInfo, count) => {
+      const config = req.body
+      logger.debug('getHomepage start:', config._id)
+      homepageService.getHomepage(config._id, (error, origin_config, count) => {
         logger.debug('getHomepage end:', error)
         if (error) {
           res.json({error: error, data: null})
         } else {
 
-          logger.debug('updateHomepage start:', setting)
-          homepageService.updateHomepage(user, setting, (error, homepageInfo) => {
+          logger.debug('updateHomepage start:', config)
+          homepageService.updateHomepage(user, config, (error, updatedConfig) => {
             logger.debug('updateHomepage end:', error)
             if (error) {
               res.json({error: error, data: null})
             } else {
 
-              logger.debug('origin domain:', origin_homepageInfo[0].domain)
-              logger.debug('setting.domain:', setting.domain)
-              if (origin_homepageInfo[0].domain !== setting.domain) {
+              logger.debug('origin domain:', origin_config.domain)
+              logger.debug('config.domain:', config.domain)
+              if (origin_config.domain !== config.domain) {
                 for (let i in user.homepages) {
-                  if (user.homepages[i] === origin_homepageInfo[0].domain) {
-                    user.homepages[i] = setting.domain
+                  if (user.homepages[i] === origin_config.domain) {
+                    user.homepages[i] = config.domain
                     logger.debug('set domain:', user.homepages)
                     break
                   }
@@ -472,11 +472,11 @@ router.post('/updateHomepage', (req, res) => {
                   if (error) {
                     res.json({error: error, data: null})
                   } else {
-                    res.json({error: null, data: homepageInfo})
+                    res.json({error: null, data: updatedConfig})
                   }
                 })
               } else {
-                res.json({error: null, data: homepageInfo})
+                res.json({error: null, data: updatedConfig})
               }
             }
           })

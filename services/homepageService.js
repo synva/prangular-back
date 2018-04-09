@@ -44,6 +44,7 @@ class HomepageService {
       {domain: {$in: domains}},
       {},
       (error, results) => {
+        logger.info('results:', results)
         if (error) {
           next(error)
         } else if (results.length <= 0) {
@@ -92,7 +93,7 @@ class HomepageService {
       }
     )
   }
-  updateHomePageSetting (user, config, next) {
+  updateHomepage (user, config, next) {
     let id = config._id
     delete config._id
     config.uuser = user._id
