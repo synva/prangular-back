@@ -533,4 +533,58 @@ router.post('/deleteHomePageSetting', (req, res) => {
   })
 })
 
+import userResourceService from './userResourceService.js'
+/*
+* Resource
+*/
+router.put('/insertUserResources', (req, res) => {
+  logger.info('insertBorrowRequest:', req.body)
+  userResourceService.insertUserResources(req.session.passport.user, req.body, (error, borrowRequest) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: borrowRequest})
+    }
+  })
+})
+
+router.get('/findUserResources', (req, res) => {
+  const params = url.parse(req.url, true).query
+
+  let filter = {}
+  if (params.filter) {
+    if (typeof params.filter === 'string' || params.filter instanceof String) {
+      filter = JSON.parse(params.filter)
+    } else {
+      filter = params.filter
+    }
+  }
+
+  let page = utils.parseInt(params.page)
+
+  filter.cuser = req.session.passport.user._id
+
+  logger.info('findUserResources:', filter)
+  logger.info('page:', page)
+
+  userResourceService.findUserResources(filter, (error, userResources, count) => {
+    logger.debug('error:', error)
+    logger.debug('userResources:', userResources)
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {datas: userResources, count: count}})
+    }
+  }, page)
+})
+router.post('/deleteUserResources', (req, res) => {
+  logger.info('deleteUserResources:', req.body)
+  userResourceService.deleteUserResource(req.session.passport.user, req.body, (error, userResource) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: userResource})
+    }
+  })
+})
 module.exports = router
