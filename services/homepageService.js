@@ -6,6 +6,19 @@ class HomepageService {
   constructor () {
     this.userProjection = {
       _id: 1,
+      avatar: 1,
+      logo: 1,
+      nickname: 1,
+      company: 1,
+      homepage: 1,
+      license: 1,
+      position: 1,
+      phone: 1,
+      fax: 1,
+      email: 1,
+      // TODO: error with this column, why?
+      // comment: 1,
+      address: 1,
       homepages: 1
     }
   }

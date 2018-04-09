@@ -47,22 +47,29 @@ router.get('/findSellPieces', (req, res) => {
   filter.isPublishing = true
   let page = utils.parseInt(params.page)
 
-  logger.info('public findSellPieces:', JSON.stringify(filter))
-  logger.info('page:', page)
-
-  sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
+  let domain = req.headers.origin.toLowerCase().split('//')[1]
+  logger.info('hp findSellPieces:', domain)
+  homepageService.getUser(domain, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      contactService.assignContacts(sellPieces, (error) => {
+      filter.contactID = user._id
+
+      logger.info('filter:', JSON.stringify(filter))
+      logger.info('page:', page)
+
+      sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
+          sellPieces.forEach(one => {
+            one.contact = user
+          })
           res.json({error: null, data: {datas: sellPieces, count: count}})
         }
-      })
+      }, page)
     }
-  }, page)
+  })
 })
 
 /**
@@ -70,8 +77,6 @@ router.get('/findSellPieces', (req, res) => {
  */
 router.get('/findRentPieces', (req, res) => {
   const params = url.parse(req.url, true).query
-  logger.info('findRentPieces:', params)
-
   let filter = {}
   if (params.filter) {
     if (typeof params.filter === 'string' || params.filter instanceof String) {
@@ -80,23 +85,32 @@ router.get('/findRentPieces', (req, res) => {
       filter = params.filter
     }
   }
-
+  filter.isPublishing = true
   let page = utils.parseInt(params.page)
 
-  logger.info('filter:', filter)
-  rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
+  let domain = req.headers.origin.toLowerCase().split('//')[1]
+  logger.info('hp findRentPieces:', domain)
+  homepageService.getUser(domain, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      contactService.assignContacts(rentPieces, (error) => {
+      filter.contactID = user._id
+
+      logger.info('filter:', JSON.stringify(filter))
+      logger.info('page:', page)
+
+      rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
+          rentPieces.forEach(one => {
+            one.contact = user
+          })
           res.json({error: null, data: {datas: rentPieces, count: count}})
         }
-      })
+      }, page)
     }
-  }, page)
+  })
 })
 
 module.exports = router
