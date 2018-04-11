@@ -5,7 +5,7 @@ import utils from './utils.js'
 
 import sellPieceService from './sellPieceService.js'
 import rentPieceService from './rentPieceService.js'
-import contactService from './contactService.js'
+import infoService from './infoService.js'
 import homepageService from './homepageService.js'
 
 let router = express.Router()
@@ -109,6 +109,41 @@ router.get('/findRentPieces', (req, res) => {
           res.json({error: null, data: {datas: rentPieces, count: count}})
         }
       }, page)
+    }
+  })
+})
+
+/**
+ * info
+ */
+router.get('/findInfos', (req, res) => {
+  const params = url.parse(req.url, true).query
+  let filter = {}
+  if (params.filter) {
+    if (typeof params.filter === 'string' || params.filter instanceof String) {
+      filter = JSON.parse(params.filter)
+    } else {
+      filter = params.filter
+    }
+  }
+
+  let domain = req.headers.origin.toLowerCase().split('//')[1]
+  logger.info('hp findInfos:', domain)
+  homepageService.getUser(domain, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      filter.user = user._id
+
+      logger.info('filter:', JSON.stringify(filter))
+
+      infoService.findInfos(filter, (error, infos) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: infos})
+        }
+      })
     }
   })
 })

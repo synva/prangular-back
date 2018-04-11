@@ -43,6 +43,7 @@ class HomepageService {
       'homepages',
       {domain: {$in: domains}},
       {},
+      {},
       (error, results) => {
         logger.info('results:', results)
         if (error) {
