@@ -1,14 +1,14 @@
 import express from 'express'
 import url from 'url'
-import logger from './logger.js'
-import utils from './utils.js'
+import logger from '../services/logger.js'
+import utils from '../services/utils.js'
 
-import buyRequestService from './buyRequestService.js'
-import sellPieceService from './sellPieceService.js'
-import borrowRequestService from './borrowRequestService.js'
-import rentPieceService from './rentPieceService.js'
-import contactService from './contactService.js'
-import userService from './userService.js'
+import buyRequestService from '../services/buyRequestService.js'
+import sellPieceService from '../services/sellPieceService.js'
+import borrowRequestService from '../services/borrowRequestService.js'
+import rentPieceService from '../services/rentPieceService.js'
+import contactService from '../services/contactService.js'
+import userService from '../services/userService.js'
 
 let router = express.Router()
 

@@ -1,14 +1,15 @@
 import express from 'express'
 import url from 'url'
-import logger from './logger.js'
-import utils from './utils.js'
+import logger from '../services/logger.js'
+import utils from '../services/utils.js'
 
-import sellPieceService from './sellPieceService.js'
-import rentPieceService from './rentPieceService.js'
-import buyRequestService from './buyRequestService.js'
-import borrowRequestService from './borrowRequestService.js'
-import userService from './userService.js'
-import homepageService from './homepageService.js'
+import sellPieceService from '../services/sellPieceService.js'
+import rentPieceService from '../services/rentPieceService.js'
+import buyRequestService from '../services/buyRequestService.js'
+import borrowRequestService from '../services/borrowRequestService.js'
+import userService from '../services/userService.js'
+import homepageService from '../services/homepageService.js'
+import userResourceService from '../services/userResourceService.js'
 
 let router = express.Router()
 
@@ -525,7 +526,6 @@ router.post('/deleteHomepage', (req, res) => {
   })
 })
 
-import userResourceService from './userResourceService.js'
 /*
 * Resource
 */

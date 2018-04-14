@@ -103,6 +103,17 @@ class Utils {
     if (isNaN(i)) return null
     return i
   }
+  getDomain (req) {
+    let domain = null
+    if (req.headers.origin) {
+      domain = req.headers.origin.toLowerCase().split('//')[1]
+    } else if (req.headers.host) {
+      domain = req.headers.host.toLowerCase()
+    } else {
+      logger.error('miss domain:', JSON.stringify(req.headers))
+    }
+    return domain
+  }
 }
 
 export default new Utils()

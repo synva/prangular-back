@@ -7,6 +7,38 @@ class SellPieceService {
   constructor () {
   }
   findSellPieces (params, next, page) {
+    let filter = this.getFilter(params)
+    mongo.find(
+      'sellPieces',
+      {$and: filter},
+      {sort: {isPublishing: -1, udate: -1}},
+      (error, result, count) => {
+        if (error) {
+          next(error, null)
+        } else {
+          next(null, result, count)
+        }
+      },
+      page
+    )
+  }
+  findAllSellPieces (params, next) {
+    let filter = this.getFilter(params)
+    mongo.findAll(
+      'sellPieces',
+      {$and: filter},
+      {},
+      {isPublishing: -1, udate: -1},
+      (error, results) => {
+        if (error) {
+          next(error, null)
+        } else {
+          next(null, results)
+        }
+      }
+    )
+  }
+  getFilter (params) {
     let filter = []
     if (params._id) {
       filter.push({_id: {$eq: ObjectId(params._id)}})
@@ -64,21 +96,9 @@ class SellPieceService {
     }
     filter.push({deleted: {$ne: true}})
 
-    logger.debug(JSON.stringify({$and : filter}))
+    logger.debug(JSON.stringify({$and: filter}))
 
-    mongo.find(
-      'sellPieces',
-      {$and : filter},
-      {sort: {isPublishing: -1, udate: -1}},
-      (error, result, count) => {
-        if (error) {
-          next(error, null)
-        } else {
-          next(null, result, count)
-        }
-      },
-      page
-    )
+    return filter
   }
   insertSellPiece (user, sellPiece, next) {
     let now = new Date()

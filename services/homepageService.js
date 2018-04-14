@@ -45,7 +45,6 @@ class HomepageService {
       {},
       {},
       (error, results) => {
-        logger.info('results:', results)
         if (error) {
           next(error)
         } else if (results.length <= 0) {

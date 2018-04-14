@@ -6,7 +6,7 @@ import utils from './utils'
 class InfoService {
   constructor () {
   }
-  findInfos (params, next) {
+  findAllInfos (params, next) {
     let filter = []
     if (params._id) {
       filter.push({_id: {$eq: ObjectId(params._id)}})

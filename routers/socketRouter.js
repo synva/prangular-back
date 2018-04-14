@@ -1,5 +1,5 @@
-import logger from './logger.js'
-import socketService from './socketService.js'
+import logger from '../services/logger.js'
+import socketService from '../services/socketService.js'
 
 class SocketRouter {
   constructor () {
