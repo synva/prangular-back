@@ -184,7 +184,8 @@ app.get('/static/*', (req, res) => {
     let client = knox.createClient({
       key: conf.storagy.key,
       secret: conf.storagy.secret,
-      bucket: conf.storagy.bucket
+      bucket: conf.storagy.bucket,
+      region: conf.storagy.region
     })
     let s3path = url.substring(11, url.length)
     client.getFile(s3path, (error, s3res) => {

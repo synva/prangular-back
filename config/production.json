@@ -26,10 +26,11 @@
     "mode": "basic"
   },
   "storagy": {
-    "mode": "local",
-    "bucket": "any-bucket",
-    "key": "key-string",
-    "secret": "secret-string",
+    "mode": "s3",
+    "bucket": "budousan",
+    "region": "ap-northeast-1",
+    "key": "AKIAJL6LDOAYA6N7I6WA",
+    "secret": "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",
     "upload": "upload"
   }
 }
