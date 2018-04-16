@@ -1,13 +1,13 @@
 {
   "port": 3000,
-  "cors": ["http://www.yinxiang123.work", "http://www.yinxiang422.work"],
+  "cors": ["http://192.168.0.20:8001", "http://192.168.0.20:8001"],
   "logger": {
     "appenders": {"system": {"type": "file", "filename": "system.log"}},
     "categories": {"default": {"appenders": ["system"], "level": "info"}}
   },
   "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
   "mongo": {
-    "server": "127.0.0.1",
+    "server": "52.192.185.252",
     "port": 27017,
     "db": "budousan",
     "limit": 24
