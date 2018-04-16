@@ -66,7 +66,7 @@ class SocketRouter {
         socketService.spy()
       })
     })
-    logger.debug('socket init ok!')
+    logger.info('socket init ok!')
   }
   checkAuth (socket, next) {
     if (socket.request && socket.request.session && socket.request.session.passport && socket.request.session.passport.user) {

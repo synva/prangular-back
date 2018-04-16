@@ -294,7 +294,6 @@ let onListening = () => {
 }
 mongo.init((error) => {
   if (!error && !isError) {
-    logger.debug('Begin listen...')
     server.listen(conf.port)
     server.on('listening', onListening)
     socketRouter.init(server, session)
