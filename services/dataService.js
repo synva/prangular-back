@@ -6,7 +6,7 @@ import path from 'path'
 import uuid from 'uuid'
 import formidable from 'formidable'
 import AWS from 'aws-sdk'
-let s3 = new AWS.S3({signatureVersion: 'v2'})
+let s3 = new AWS.S3({region: conf.storagy.region})
 import os from 'os'
 let sharp = null
 if (os.arch() === 'x64') {
