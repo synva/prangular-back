@@ -1,8 +1,10 @@
 import express from 'express'
 import url from 'url'
+import conf from 'config'
 import logger from '../services/logger.js'
 import utils from '../services/utils.js'
 
+import dataService from '../services/dataService.js'
 import sellPieceService from '../services/sellPieceService.js'
 import rentPieceService from '../services/rentPieceService.js'
 import buyRequestService from '../services/buyRequestService.js'
@@ -12,6 +14,33 @@ import homepageService from '../services/homepageService.js'
 import userResourceService from '../services/userResourceService.js'
 
 let router = express.Router()
+
+/**
+ * upload
+ */
+router.post('/uploadFiles', (req, res) => {
+  logger.info('uploadFiles')
+  dataService.uploadFiles(req, (error, list) => {
+    if (!error) {
+      logger.info('upload end:', JSON.stringify(list))
+      let files = []
+      let root = conf.storagy.mode === 'local' ? '/static/upload/' : '/static/s3/upload/'
+      list.forEach(one => {
+        files.push({
+          file: root + one.folder + '/' + one.name,
+          thumbnail: one.thumbnail ? (root + one.folder + '/' + one.thumbnail) : null,
+          folder: one.folder,
+          name: one.name,
+          type: one.type,
+          size: one.size
+        })
+      })
+      res.json({error: null, data: files})
+    } else {
+      res.json({error: error, data: null})
+    }
+  })
+})
 
 /**
  * user

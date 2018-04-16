@@ -10,7 +10,6 @@ import privateHttpRouter from './routers/privateHttpRouter.js'
 import publicHttpRouter from './routers/publicHttpRouter.js'
 import socketRouter from './routers/socketRouter.js'
 import userService from './services/userService.js'
-import dataService from './services/dataService.js'
 
 logger.info('NODE_ENV:', process.env.NODE_ENV)
 logger.info('session mode:', conf.session.mode)
@@ -37,12 +36,14 @@ app.use(bodyParser.urlencoded({limit: '2gb', extended: true}))
 
 
 let allowCrossDomain = (req, res, next) => {
-  let origin = conf.endpoint
-  if (req.headers.origin) origin = conf.cors.indexOf(req.headers.origin.toLowerCase()) > -1 ? req.headers.origin : conf.endpoint
-  res.header('Access-Control-Allow-Origin', origin)
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-  res.header('Access-Control-Allow-Credentials', true)
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
+  let origin = null
+  if (req.headers.origin) origin = conf.cors.indexOf(req.headers.origin.toLowerCase()) > -1 ? req.headers.origin : null
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin)
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    res.header('Access-Control-Allow-Credentials', true)
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
+  }
 
   // intercept OPTIONS method
   if ('OPTIONS' === req.method) {
@@ -209,43 +210,6 @@ app.get('/static/*', (req, res) => {
   } else {
     res.sendFile(path.join(__dirname, 'dist', url))
   }
-})
-
-
-
-
-app.post('/uploadFiles', (req, res) => {
-  logger.info('uploadFiles')
-  dataService.uploadFiles(req, (error, list) => {
-    if (!error) {
-      logger.info('upload end:', JSON.stringify(list))
-      let files = []
-      for (let i = 0; i < list.length; i++) {
-        if (conf.storagy.mode === 'local') {
-          files.push({
-            file: conf.endpoint + '/static/upload/' + list[i].folder + '/' + list[i].name,
-            thumbnail: list[i].thumbnail ? (conf.endpoint + '/static/upload/' + list[i].folder + '/' + list[i].thumbnail) : null,
-            folder: list[i].folder,
-            name: list[i].name,
-            type: list[i].type,
-            size: list[i].size
-          })
-        } else {
-          files.push({
-            file: '/static/s3/upload/' + list[i].folder + '/' + list[i].name,
-            thumbnail: list[i].thumbnail ? ('/static/s3/upload/' + list[i].folder + '/' + list[i].thumbnail) : null,
-            folder: list[i].folder,
-            name: list[i].name,
-            type: list[i].type,
-            size: list[i].size
-          })
-        }
-      }
-      res.json({error: null, data: files})
-    } else {
-      res.json({error: error, data: null})
-    }
-  })
 })
 
 

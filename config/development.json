@@ -1,6 +1,5 @@
 {
   "port": 3000,
-  "endpoint": "http://localhost:3000",
   "cors": ["http://localhost:8000", "http://localhost:8001"],
   "logger": {
     "appenders": {"system": {"type": "console"}},
