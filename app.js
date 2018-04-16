@@ -1,6 +1,7 @@
 import express from 'express'
 import path from 'path'
 import bodyParser from 'body-parser'
+import fs from 'fs'
 import conf from 'config'
 import http from 'http'
 import logger from './services/logger.js'
@@ -15,6 +16,8 @@ logger.info('NODE_ENV:', process.env.NODE_ENV)
 logger.info('session mode:', conf.session.mode)
 logger.info('authentication mode:', conf.authentication.mode)
 logger.info('storagy mode:', conf.storagy.mode)
+
+let isError = false
 
 let app = express()
 // app.set('views', path.join(__dirname, 'dist'))
@@ -175,43 +178,58 @@ app.use('/public', publicHttpRouter)
 
 
 
-let inspect = require('eyespect').inspector()
+// let inspect = require('eyespect').inspector()
 import knox from 'knox'
-
-app.get('/static/*', (req, res) => {
-  let url = decodeURI(req.url)
-  if (url.indexOf('/static/s3') === 0) {
-    let client = knox.createClient({
-      key: conf.storagy.key,
-      secret: conf.storagy.secret,
-      bucket: conf.storagy.bucket,
-      region: conf.storagy.region
-    })
-    let s3path = url.substring(11, url.length)
-    client.getFile(s3path, (error, s3res) => {
-      if (error) {
-        logger.error(error)
-        res.send(404, 'Not found')
-        return
-      }
-      s3res.pipe(res)
-      s3res.on('error', (s3err) => {
-        inspect(s3err, '')
-      })
-      s3res.on('progress', (data) => {
-        inspect(data, '')
-      })
-      s3res.on('end', () => {
-        inspect(s3path, '')
-      })
-    })
-  } else if (url.indexOf('/static/upload') === 0) {
-    url = url.replace('/static/', '/')
-    res.sendFile(path.join(__dirname, url))
-  } else {
-    res.sendFile(path.join(__dirname, 'dist', url))
-  }
+import userHome from 'user-home'
+let key = null
+let secret = null
+let text = fs.readFileSync(path.join(userHome, '.aws', 'credentials'), 'utf-8')
+let texts = text ? text.split(/\r\n|\r|\n/) : []
+texts.forEach(one => {
+  if (one.indexOf('aws_access_key_id = ') === 0) key = one.split('aws_access_key_id = ')[1]
+  if (one.indexOf('aws_secret_access_key = ') === 0) secret = one.split('aws_secret_access_key = ')[1]
 })
+if (key && secret) {
+  app.get('/static/*', (req, res) => {
+    let url = decodeURI(req.url)
+    if (url.indexOf('/static/s3') === 0) {
+      let client = knox.createClient({
+        key: key,
+        secret: secret,
+        bucket: conf.storagy.bucket,
+        region: conf.storagy.region
+      })
+      let s3path = url.substring(11, url.length)
+      client.getFile(s3path, (error, s3res) => {
+        if (error) {
+          logger.error(error)
+          res.send(404, 'Not found')
+          return
+        }
+        s3res.pipe(res)
+        s3res.on('error', (s3err) => {
+          logger.error(JSON.stringify(s3err))
+          res.send(404, 'Not found')
+          // inspect(s3err, '')
+        })
+        // s3res.on('progress', (data) => {
+        //   inspect(data, '')
+        // })
+        // s3res.on('end', () => {
+        //   inspect(s3path, '')
+        // })
+      })
+    } else if (url.indexOf('/static/upload') === 0) {
+      url = url.replace('/static/', '/')
+      res.sendFile(path.join(__dirname, url))
+    } else {
+      res.sendFile(path.join(__dirname, 'dist', url))
+    }
+  })
+} else {
+  isError = true
+  logger.error('invalid aws configure!')
+}
 
 
 
@@ -275,7 +293,7 @@ let onListening = () => {
   logger.info('Listening on', bind)
 }
 mongo.init((error) => {
-  if (!error) {
+  if (!error && !isError) {
     logger.debug('Begin listen...')
     server.listen(conf.port)
     server.on('listening', onListening)

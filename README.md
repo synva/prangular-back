@@ -10,6 +10,17 @@
 
 - install python(version == 2.7.x)
 
+- install awscli and configure s3
+
+``` bash
+pip install awscli
+aws configure
+AWS Access Key ID [None]: any key
+AWS Secret Access Key [None]: any secret
+Default region name [None]: any region
+Default output format [None]: json
+```
+
 - install mongodb(make sure that mongodb service is on)
 
 ``` bash
