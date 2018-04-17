@@ -265,11 +265,11 @@ app.get('/api/logout', (req, res) => {
   if (req.session && req.session.passport && req.session.passport.user) {
     logger.info('user:', req.session.passport.user._id)
   }
-  if (req.session) {
-    req.session.destroy((error) => {
-      logger.debug('logouted:', error)
-    })
-  }
+  // if (req.session) {
+  //   req.session.destroy((error) => {
+  //     logger.debug('logouted:', error)
+  //   })
+  // }
   req.logout()
   res.json({error: null, data: {}})
 })
