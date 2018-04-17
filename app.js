@@ -140,7 +140,7 @@ app.use(passport.session())
 
 
 if (conf.authentication.mode === 'basic') {
-  app.post('/authenticate',
+  app.post('/api/authenticate',
     passport.authenticate('local'),
     (req, res) => {
       // authenticate failed will not comes here. so here is only normal case and system error.
@@ -234,7 +234,7 @@ if (key && secret) {
 
 
 
-app.get('/login', (req, res) => {
+app.get('/api/login', (req, res) => {
   logger.info('login')
   if (!req.session || !req.session.passport || !req.session.passport.user) {
     logger.info('need authenticate')
@@ -250,7 +250,7 @@ app.get('/login', (req, res) => {
     })
   }
 })
-app.post('/register', (req, res) => {
+app.post('/api/register', (req, res) => {
   logger.info('register:', JSON.stringify(req.body))
   userService.insertUser(req.body, (error, user) => {
     if (error) {
@@ -260,7 +260,7 @@ app.post('/register', (req, res) => {
     }
   })
 })
-app.get('/logout', (req, res) => {
+app.get('/api/logout', (req, res) => {
   logger.info('logout')
   if (req.session && req.session.passport && req.session.passport.user) {
     logger.info('user:', req.session.passport.user._id)
