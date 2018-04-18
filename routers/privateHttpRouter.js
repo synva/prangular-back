@@ -11,7 +11,7 @@ import buyRequestService from '../services/buyRequestService.js'
 import borrowRequestService from '../services/borrowRequestService.js'
 import userService from '../services/userService.js'
 import homepageService from '../services/homepageService.js'
-import userResourceService from '../services/userResourceService.js'
+import resourceService from '../services/resourceService.js'
 
 let router = express.Router()
 
@@ -411,6 +411,26 @@ router.post('/deleteBorrowRequest', (req, res) => {
 /*
 * HomePage
 */
+router.get('/findHomepages', (req, res) => {
+  logger.info('findHomepages')
+  userService.getUser(req.session.passport.user, (error, user) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      if (!user.homepages || user.homepages.length <= 0) {
+        res.json({error: null, data: []})
+      } else {
+        homepageService.getHomepages(user.homepages, (error, homepages) => {
+          if (error) {
+            res.json({error: error, data: null})
+          } else {
+            res.json({error: null, data: homepages})
+          }
+        })
+      }
+    }
+  })
+})
 router.put('/insertHomepage', (req, res) => {
   logger.info('insertHomepage:', req.body)
   userService.getUser(req.session.passport.user, (error, user) => {
@@ -419,52 +439,32 @@ router.put('/insertHomepage', (req, res) => {
     } else {
       Promise.all([
         new Promise((resolve, reject) => {
-          homepageService.insertHomepage(user, req.body, (error, config) => {
+          homepageService.insertHomepage(user, req.body, (error, homepage) => {
             if (error) return reject(error)
-            resolve(config)
+            resolve(homepage)
           })
         }),
         new Promise((resolve, reject) => {
-          userService.updateUser(user, user, (error, updated) => {
+          let update = {
+            _id: user._id,
+            homepages: user.homepages || []
+          }
+          update.homepages.push(req.body.domain)
+          userService.updateUser(req.session.passport.user, update, (error, updated) => {
             if (error) return reject(error)
             resolve(updated)
           })
         })
       ]).then((values) => {
-        let config = values[0]
-        res.json({error: null, data: config})
+        let homepage = values[0]
+        res.json({error: null, data: homepage})
       }, (reason) => {
         res.json({error: reason, data: null})
       })
     }
   })
 })
-router.get('/getMyHomepages', (req, res) => {
-  userService.getUser(req.session.passport.user, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      homepageService.getHomepages(user.homepages, (error, homepages) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: homepages})
-        }
-      })
-    }
-  })
-})
-router.get('/getHomepage', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('getHomepage:', params)
-  homepageService.getHomepage(params._id, (error, homepage, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: homepage})
-    }
-  })
-})
+
 router.post('/updateHomepage', (req, res) => {
   logger.info('updateHomepage:', req.body)
   userService.getUser(req.session.passport.user, (error, user) => {
@@ -558,9 +558,9 @@ router.post('/deleteHomepage', (req, res) => {
 /*
 * Resource
 */
-router.put('/insertUserResources', (req, res) => {
+router.put('/insertResources', (req, res) => {
   logger.info('insertBorrowRequest:', req.body)
-  userResourceService.insertUserResources(req.session.passport.user, req.body, (error, borrowRequest) => {
+  resourceService.insertResources(req.session.passport.user, req.body, (error, borrowRequest) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -569,7 +569,7 @@ router.put('/insertUserResources', (req, res) => {
   })
 })
 
-router.get('/findUserResources', (req, res) => {
+router.get('/findResources', (req, res) => {
   const params = url.parse(req.url, true).query
 
   let filter = {}
@@ -585,10 +585,10 @@ router.get('/findUserResources', (req, res) => {
 
   filter.cuser = req.session.passport.user._id
 
-  logger.info('findUserResources:', filter)
+  logger.info('findResources:', filter)
   logger.info('page:', page)
 
-  userResourceService.findUserResources(filter, (error, userResources, count) => {
+  resourceService.findResources(filter, (error, userResources, count) => {
     logger.debug('error:', error)
     logger.debug('userResources:', userResources)
     if (error) {
@@ -598,9 +598,9 @@ router.get('/findUserResources', (req, res) => {
     }
   }, page)
 })
-router.post('/deleteUserResources', (req, res) => {
-  logger.info('deleteUserResources:', req.body)
-  userResourceService.deleteUserResource(req.session.passport.user, req.body, (error, userResource) => {
+router.post('/deleteResources', (req, res) => {
+  logger.info('deleteResources:', req.body)
+  resourceService.deleteResource(req.session.passport.user, req.body, (error, userResource) => {
     if (error) {
       res.json({error: error, data: null})
     } else {

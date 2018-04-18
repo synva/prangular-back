@@ -43,45 +43,26 @@ class HomepageService {
       'homepages',
       {domain: {$in: domains}},
       {},
-      {},
+      {udate: -1},
       (error, results) => {
         if (error) {
           next(error)
-        } else if (results.length <= 0) {
-          next({code: 'B001'})
         } else {
           next(null, results)
         }
       }
     )
   }
-  getHomepage (id, next) {
-    mongo.find(
-      'homepages',
-      {_id: ObjectId(id)},
-      {},
-      (error, result, count) => {
-        if (error) {
-          next(error)
-        } else if (result.length <= 0) {
-          next({code: 'B001'})
-        } else {
-          next(null, result[0], count)
-        }
-      }
-    )
-  }
-  insertHomepage (user, config, next) {
+  insertHomepage (user, homepage, next) {
     let now = new Date()
     now = now.valueOf()
-    config.cdate = now
-    config.cuser = user._id
-    config.contactID = user._id
-    config.udate = now
-    config.uuser = user._id
+    homepage.cdate = now
+    homepage.cuser = user._id
+    homepage.udate = now
+    homepage.uuser = user._id
     mongo.insert(
       'homepages',
-      config,
+      homepage,
       {},
       (error, result) => {
         if (error) {
@@ -93,33 +74,33 @@ class HomepageService {
       }
     )
   }
-  updateHomepage (user, config, next) {
-    let id = config._id
-    delete config._id
-    config.uuser = user._id
+  updateHomepage (user, homepage, next) {
+    let id = homepage._id
+    delete homepage._id
+    homepage.uuser = user._id
     let now = new Date()
-    config.udate = now.valueOf()
+    homepage.udate = now.valueOf()
     mongo.update(
       'homepages',
       {_id: ObjectId(id)},
-      {$set: config},
+      {$set: homepage},
       {multi: false},
       (error, result) => {
         if (error) {
           next(error)
         } else {
-          config._id = id
-          next(null, config)
+          homepage._id = id
+          next(null, homepage)
         }
       }
     )
   }
-  deleteHomePageSetting (user, config, next) {
-    let homepageSetting = {
-      _id: config._id,
+  deleteHomepage (user, homepage, next) {
+    let deleted = {
+      _id: homepage._id,
       deleted: true
     }
-    this.updateHomePageSetting(user, homepageSetting, next)
+    this.updateHomepage(user, deleted, next)
   }
 }
 
