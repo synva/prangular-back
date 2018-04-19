@@ -73,7 +73,7 @@ class DataService {
     form.on('end', () => {
       logger.info('params:', JSON.stringify(params))
       let fileList = []
-      that.thumbnail(localFileList, 0, fileList, params.withoutThumbnail, (error) => {
+      that.thumbnail(localFileList, 0, fileList, params.type, (error) => {
         if (error) {
           next(error)
         } else {
@@ -95,7 +95,7 @@ class DataService {
 
     form.parse(req)
   }
-  thumbnail (localFileList, idx, fileList, withoutThumbnail, next) {
+  thumbnail (localFileList, idx, fileList, type, next) {
     let that = this
     if (idx > localFileList.length - 1) {
       next(null)
@@ -108,10 +108,12 @@ class DataService {
         break
       }
     }
-    if (withoutThumbnail) needThumbnail = false
+    if (type === 'none') needThumbnail = false
     if (needThumbnail) {
       if (os.arch() === 'x64') {
-        let thumbnailName = path.basename(localFileList[idx].name, path.extname(localFileList[idx].name)) + '_thumbnail' + '.png'
+        let thumbnailName = path.basename(localFileList[idx].name, path.extname(localFileList[idx].name)) + '_thumbnail'
+        if (type === 'icon') thumbnailName += '.ico'
+        else thumbnailName += '.png'
         let thumbnailFullname = path.join(__dirname, '..', 'upload', localFileList[idx].folder, thumbnailName)
         sharp(localFileList[idx].fullname)
           .rotate()
@@ -128,7 +130,7 @@ class DataService {
               name: localFileList[idx].name,
               thumbnail: thumbnailName
             })
-            that.thumbnail(localFileList, idx + 1, fileList, withoutThumbnail, next)
+            that.thumbnail(localFileList, idx + 1, fileList, type, next)
           })
           .catch((error) => {
             logger.error('sharp error:', JSON.stringify(error))
@@ -143,7 +145,7 @@ class DataService {
           name: localFileList[idx].name,
           thumbnail: localFileList[idx].name
         })
-        that.thumbnail(localFileList, idx + 1, fileList, withoutThumbnail, next)
+        that.thumbnail(localFileList, idx + 1, fileList, type, next)
       }
     } else {
       fileList.push({
@@ -154,7 +156,7 @@ class DataService {
         name: localFileList[idx].name,
         thumbnail: null
       })
-      that.thumbnail(localFileList, idx + 1, fileList, withoutThumbnail, next)
+      that.thumbnail(localFileList, idx + 1, fileList, type, next)
     }
   }
   putToS3 (fileList, next) {
