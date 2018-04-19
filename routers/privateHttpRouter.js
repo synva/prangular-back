@@ -464,49 +464,37 @@ router.put('/insertHomepage', (req, res) => {
     }
   })
 })
-
 router.post('/updateHomepage', (req, res) => {
   logger.info('updateHomepage:', req.body)
   userService.getUser(req.session.passport.user, (error, user) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      const config = req.body
-      logger.debug('getHomepage start:', config._id)
-      homepageService.getHomepage(config._id, (error, origin_config, count) => {
-        logger.debug('getHomepage end:', error)
+      const homepage = req.body
+      homepageService.getHomepage(homepage._id, (error, origin_homepage) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-
-          logger.debug('updateHomepage start:', config)
-          homepageService.updateHomepage(user, config, (error, updatedConfig) => {
-            logger.debug('updateHomepage end:', error)
+          homepageService.updateHomepage(user, homepage, (error, updated) => {
             if (error) {
               res.json({error: error, data: null})
             } else {
-
-              logger.debug('origin domain:', origin_config.domain)
-              logger.debug('config.domain:', config.domain)
-              if (origin_config.domain !== config.domain) {
+              if (origin_homepage.domain !== homepage.domain) {
                 for (let i in user.homepages) {
-                  if (user.homepages[i] === origin_config.domain) {
-                    user.homepages[i] = config.domain
-                    logger.debug('set domain:', user.homepages)
+                  if (user.homepages[i] === origin_homepage.domain) {
+                    user.homepages[i] = homepage.domain
                     break
                   }
                 }
-                logger.debug('updateUser start')
-                userService.updateUser(user, user, (error, user) => {
-                  logger.debug('updateUser end:', error)
+                userService.updateUser(user, user, (error, updatedUser) => {
                   if (error) {
                     res.json({error: error, data: null})
                   } else {
-                    res.json({error: null, data: updatedConfig})
+                    res.json({error: null, data: updated})
                   }
                 })
               } else {
-                res.json({error: null, data: updatedConfig})
+                res.json({error: null, data: updated})
               }
             }
           })
@@ -521,30 +509,26 @@ router.post('/deleteHomepage', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      const setting = req.body
-      homepageService.getHomepage({_id:setting._id}, (error, origin_homepageInfo, count) => {
-        logger.debug('getHomepage end:', error)
+      const homepage = req.body
+      homepageService.getHomepage(homepage._id, (error, origin_homepage) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          homepageService.deleteHomepage(user, req.body, (error, homepageInfo) => {
+          homepageService.deleteHomepage(user, req.body, (error, updated) => {
             if (error) {
               res.json({error: error, data: null})
             } else {
               for (let i in user.homepages) {
-                if (user.homepages[i] === origin_homepageInfo[0].domain) {
+                if (user.homepages[i] === origin_homepage.domain) {
                   user.homepages.splice(i, 1)
-                  logger.debug('set domain:', user.homepages)
                   break
                 }
               }
-              logger.debug('updateUser start')
-              userService.updateUser(user, user, (error, user) => {
-                logger.debug('updateUser end:', error)
+              userService.updateUser(user, user, (error, updatedUser) => {
                 if (error) {
                   res.json({error: error, data: null})
                 } else {
-                  res.json({error: null, data: homepageInfo})
+                  res.json({error: null, data: updated})
                 }
               })
             }
@@ -608,4 +592,5 @@ router.post('/deleteResources', (req, res) => {
     }
   })
 })
+
 module.exports = router

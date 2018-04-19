@@ -53,6 +53,22 @@ class HomepageService {
       }
     )
   }
+  getHomepage (id, next) {
+    mongo.find(
+      'homepages',
+      {_id: ObjectId(id)},
+      {},
+      (error, results) => {
+        if (error) {
+          next(error)
+        } else if (results.length <= 0) {
+          next({code: 'S002'})
+        } else {
+          next(null, results[0])
+        }
+      }
+    )
+  }
   insertHomepage (user, homepage, next) {
     let now = new Date()
     now = now.valueOf()
