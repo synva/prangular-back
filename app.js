@@ -68,7 +68,7 @@ let store = null
 let session = null
 if (conf.session.mode === 'mongo') {
   store = new expressMongoStore({
-    url: 'mongodb://' + conf.mongo.server + ':' + conf.mongo.port + '/' + conf.mongo.db,
+    url: 'mongodb://' + conf.mongo.user + ':' + conf.mongo.password + '@' + conf.mongo.server + ':' + conf.mongo.port + '/' + conf.mongo.db,
     clear_interval: 60 * 60
   })
   session = expressSession({

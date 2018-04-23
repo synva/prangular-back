@@ -11,7 +11,10 @@ class Mongo {
     let that = this
     this.db = null
 
-    MongoClient.connect('mongodb://' + conf.mongo.server + ':' + conf.mongo.port).then(client => {
+    const str = 'mongodb://' + conf.mongo.user + ':' + conf.mongo.password + '@' + conf.mongo.server + ':' + conf.mongo.port + '/' + conf.mongo.db
+    logger.debug(str)
+
+    MongoClient.connect(str).then(client => {
       that.db = client.db(conf.mongo.db)
       next(null)
     }).catch(error => {
