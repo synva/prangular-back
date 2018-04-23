@@ -8,9 +8,11 @@
   "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
   "mongo": {
     "server": "52.192.185.252",
-    "port": 27017,
+    "port": 10001,
     "db": "budousan",
-    "limit": 24
+    "limit": 24,
+    "user": "budousan",
+    "password": "budousan.123"
   },
   "session": {
     "mode": "mongo",
