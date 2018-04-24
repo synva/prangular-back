@@ -41,7 +41,7 @@ class HomepageService {
   getHomepages (domains, next) {
     mongo.findAll(
       'homepages',
-      {domain: {$in: domains}},
+      {domain: {$in: domains}, deleted: {$ne: true}},
       {},
       {udate: -1},
       (error, results) => {
