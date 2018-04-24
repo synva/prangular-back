@@ -57,6 +57,6 @@
     "upload": "upload"
   },
   "cluster": {
-    "instances": 3
+    "instances": 2
   }
 }
