@@ -32,9 +32,9 @@ if (process.env.NODE_ENV === 'development') {
 } else {
   if (cluster.isMaster) {
     let confInstance = 1
-    if(conf.cluster) confInstance = conf.cluster.instances
+    if (conf.cluster) confInstance = conf.cluster.instances
     let numCPUs = os.cpus().length
-    if(confInstance > numCPUs) confInstance = numCPUs
+    if (confInstance > numCPUs) confInstance = numCPUs
 
     for (let i = 0; i < confInstance; i++) {
         // Create a worker
