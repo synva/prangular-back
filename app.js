@@ -166,7 +166,7 @@ function startupExpress () {
 
 
   if (conf.authentication.mode === 'basic') {
-    app.post('/api/authenticate',
+    app.post('/authenticate',
       passport.authenticate('local'),
       (req, res) => {
         // authenticate failed will not comes here. so here is only normal case and system error.
@@ -258,7 +258,7 @@ function startupExpress () {
 
 
 
-  app.get('/api/login', (req, res) => {
+  app.get('/login', (req, res) => {
     logger.info('login')
     if (!req.session || !req.session.passport || !req.session.passport.user) {
       logger.info('need authenticate')
@@ -274,7 +274,7 @@ function startupExpress () {
       })
     }
   })
-  app.post('/api/register', (req, res) => {
+  app.post('/register', (req, res) => {
     logger.info('register:', JSON.stringify(req.body))
     userService.insertUser(req.body, (error, user) => {
       if (error) {
@@ -284,7 +284,7 @@ function startupExpress () {
       }
     })
   })
-  app.get('/api/logout', (req, res) => {
+  app.get('/logout', (req, res) => {
     logger.info('logout')
     if (req.session && req.session.passport && req.session.passport.user) {
       logger.info('user:', req.session.passport.user._id)
