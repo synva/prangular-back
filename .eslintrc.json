@@ -27,7 +27,8 @@
     "comma-spacing": "error",
     "brace-style": "error",
     "no-unused-vars": [1, {"vars": "all", "args": "after-used"}],
-    "no-multi-spaces": "error"
+    "no-multi-spaces": "error",
+    "indent": [2, 2]
   },
   "globals": {
     "process": true,
