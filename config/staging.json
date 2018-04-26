@@ -1,6 +1,6 @@
 {
   "port": 3000,
-  "cors": ["http://192.168.0.20:8001", "http://192.168.0.20:8001"],
+  "cors": [],
   "logger": {
     "appenders": {
       "stdout": {
@@ -52,7 +52,7 @@
   },
   "storagy": {
     "mode": "s3",
-    "bucket": "budousan",
+    "bucket": "budousan-static-staging.wyxtech.com",
     "region": "ap-northeast-1",
     "upload": "upload"
   },

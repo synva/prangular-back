@@ -1,6 +1,6 @@
 {
   "port": 3000,
-  "cors": ["http://localhost:8000", "http://localhost:8001"],
+  "cors": ["http://localhost:8000"],
   "logger": {
     "appenders": {"system": {"type": "console"}},
     "categories": {"default": {"appenders": ["system"], "level": "all"}}
@@ -29,7 +29,7 @@
   },
   "storagy": {
     "mode": "s3",
-    "bucket": "budousan",
+    "bucket": "budousan-static-staging.wyxtech.com",
     "region": "ap-northeast-1",
     "upload": "upload"
   }
