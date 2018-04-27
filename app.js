@@ -5,6 +5,8 @@ import bodyParser from 'body-parser'
 import fs from 'fs'
 import conf from 'config'
 import http from 'http'
+import cluster from 'cluster'
+import os from 'os'
 import logger from './services/logger.js'
 import mongo from './services/mongo.js'
 import compression from 'compression'
@@ -16,9 +18,6 @@ import privateHttpRouter from './routers/privateHttpRouter.js'
 import publicHttpRouter from './routers/publicHttpRouter.js'
 import socketRouter from './routers/socketRouter.js'
 import userService from './services/userService.js'
-
-import cluster from 'cluster'
-import os from 'os'
 
 logger.info('NODE_ENV:', process.env.NODE_ENV)
 logger.info('session mode:', conf.session.mode)
@@ -37,8 +36,8 @@ if (process.env.NODE_ENV === 'development') {
     if (confInstance > numCPUs) confInstance = numCPUs
 
     for (let i = 0; i < confInstance; i++) {
-        // Create a worker
-        cluster.fork()
+      // Create a worker
+      cluster.fork()
     }
   } else {
     startupExpress()
