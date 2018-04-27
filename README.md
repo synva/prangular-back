@@ -21,15 +21,25 @@ Default region name [None]: any region
 Default output format [None]: json
 ```
 
-- install mongodb(make sure that mongodb service is on)
+- install mongodb(make sure that mongodb service is on) and create db user
 
 ``` bash
 brew install mongodb
 brew services start mongodb
+# make sure mongo is working.
 mongo
-# make sure mongo is working. then exit mongo.
+# create user.
+use budousan
+db.createUser({
+  user: "...",
+  pwd: "...",
+  roles: [{role: "readWrite", db: "budousan"}]
+})
+# exit mongo
 exit
-# config file is here
+# restart service
+brew services restart mongodb
+# config file is here if necessary
 vim /usr/local/etc/mongod.conf
 
 # if you installed without brew, you may use this command to serve mongodb

@@ -1,14 +1,14 @@
 {
   "port": 3000,
-  "cors": ["http://localhost:8000", "http://localhost:8001"],
+  "cors": ["http://localhost:8000"],
   "logger": {
     "appenders": {"system": {"type": "console"}},
     "categories": {"default": {"appenders": ["system"], "level": "all"}}
   },
   "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
   "mongo": {
-    "server": "52.192.185.252",
-    "port": 10001,
+    "server": "localhost",
+    "port": 27017,
     "db": "budousan",
     "limit": 12,
     "user": "budousan",
@@ -21,8 +21,8 @@
     "redisdb": 0,
     "cookiePath": "/session/",
     "cookieMaxAge": 1209600000,
-    "key": "xiefan",
-    "secret": "xiefan-secret"
+    "key": "budousan",
+    "secret": "budousan-secret"
   },
   "authentication": {
     "mode": "basic"
