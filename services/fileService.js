@@ -13,7 +13,7 @@ if (os.arch() === 'x64') {
   sharp = require('sharp')
 }
 
-class DataService {
+class FileService {
   constructor () {
   }
   uploadFiles (req, next) {
@@ -228,4 +228,4 @@ class DataService {
   }
 }
 
-export default new DataService()
+export default new FileService()

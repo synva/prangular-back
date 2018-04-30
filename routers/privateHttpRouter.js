@@ -4,14 +4,14 @@ import conf from 'config'
 import logger from '../services/logger.js'
 import utils from '../services/utils.js'
 
-import dataService from '../services/dataService.js'
+import fileService from '../services/fileService.js'
 import sellPieceService from '../services/sellPieceService.js'
 import rentPieceService from '../services/rentPieceService.js'
-import buyRequestService from '../services/buyRequestService.js'
-import borrowRequestService from '../services/borrowRequestService.js'
+// import buyRequestService from '../services/buyRequestService.js'
+// import borrowRequestService from '../services/borrowRequestService.js'
 import userService from '../services/userService.js'
 import homepageService from '../services/homepageService.js'
-import resourceService from '../services/resourceService.js'
+// import resourceService from '../services/resourceService.js'
 
 let router = express.Router()
 
@@ -20,7 +20,7 @@ let router = express.Router()
  */
 router.post('/uploadFiles', (req, res) => {
   logger.info('uploadFiles')
-  dataService.uploadFiles(req, (error, list) => {
+  fileService.uploadFiles(req, (error, list) => {
     if (!error) {
       logger.info('upload end:', JSON.stringify(list))
       let files = []
@@ -219,194 +219,194 @@ router.post('/deleteRentPiece', (req, res) => {
 /**
  * buyRequest
  */
-router.put('/insertBuyRequest', (req, res) => {
-  logger.info('insertBuyRequest:', req.body)
-  userService.getUser(req.session.passport.user, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      buyRequestService.insertBuyRequest(user, req.body, (error, buyRequest) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: buyRequest})
-        }
-      })
-    }
-  })
-})
+// router.put('/insertBuyRequest', (req, res) => {
+//   logger.info('insertBuyRequest:', req.body)
+//   userService.getUser(req.session.passport.user, (error, user) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       buyRequestService.insertBuyRequest(user, req.body, (error, buyRequest) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           res.json({error: null, data: buyRequest})
+//         }
+//       })
+//     }
+//   })
+// })
 
-router.get('/findBuyRequests', (req, res) => {
-  const params = url.parse(req.url, true).query
+// router.get('/findBuyRequests', (req, res) => {
+//   const params = url.parse(req.url, true).query
 
-  let filter = {}
-  if (params.filter) {
-    if (typeof params.filter === 'string' || params.filter instanceof String) {
-      filter = JSON.parse(params.filter)
-    } else {
-      filter = params.filter
-    }
-  }
+//   let filter = {}
+//   if (params.filter) {
+//     if (typeof params.filter === 'string' || params.filter instanceof String) {
+//       filter = JSON.parse(params.filter)
+//     } else {
+//       filter = params.filter
+//     }
+//   }
 
-  let page = utils.parseInt(params.page)
+//   let page = utils.parseInt(params.page)
 
-  filter.contactID = req.session.passport.user._id
-  logger.info('findBuyRequests:', filter)
-  logger.info('page:', page)
+//   filter.contactID = req.session.passport.user._id
+//   logger.info('findBuyRequests:', filter)
+//   logger.info('page:', page)
 
-  buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {datas: buyRequests, count: count}})
-    }
-  }, page)
-})
+//   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: {datas: buyRequests, count: count}})
+//     }
+//   }, page)
+// })
 
-router.post('/updateBuyRequest', (req, res) => {
-  logger.info('updateBuyRequest:', req.body)
+// router.post('/updateBuyRequest', (req, res) => {
+//   logger.info('updateBuyRequest:', req.body)
 
-  buyRequestService.updateBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {buyRequest: buyRequest}})
-    }
-  })
-})
+//   buyRequestService.updateBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: {buyRequest: buyRequest}})
+//     }
+//   })
+// })
 
-router.post('/publishBuyRequest', (req, res) => {
-  logger.info('publishBuyRequest:', req.body)
+// router.post('/publishBuyRequest', (req, res) => {
+//   logger.info('publishBuyRequest:', req.body)
 
-  userService.getUser(req.session.passport.user, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      buyRequestService.publishBuyRequest(user, req.body, (error, buyRequest) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {buyRequest: buyRequest}})
-        }
-      })
-    }
-  })
-})
-router.post('/unPublishBuyRequest', (req, res) => {
-  logger.info('unPublishBuyRequest:', req.body)
+//   userService.getUser(req.session.passport.user, (error, user) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       buyRequestService.publishBuyRequest(user, req.body, (error, buyRequest) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           res.json({error: null, data: {buyRequest: buyRequest}})
+//         }
+//       })
+//     }
+//   })
+// })
+// router.post('/unPublishBuyRequest', (req, res) => {
+//   logger.info('unPublishBuyRequest:', req.body)
 
-  buyRequestService.publishBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {buyRequest: buyRequest}})
-    }
-  })
-})
-router.post('/deleteBuyRequest', (req, res) => {
-  logger.info('deleteBuyRequest:', req.body)
-  buyRequestService.deleteBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {buyRequest: buyRequest}})
-    }
-  })
-})
+//   buyRequestService.publishBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: {buyRequest: buyRequest}})
+//     }
+//   })
+// })
+// router.post('/deleteBuyRequest', (req, res) => {
+//   logger.info('deleteBuyRequest:', req.body)
+//   buyRequestService.deleteBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: {buyRequest: buyRequest}})
+//     }
+//   })
+// })
 
 /**
  * borrowRequest
  */
-router.put('/insertBorrowRequest', (req, res) => {
-  logger.info('insertBorrowRequest:', req.body)
-  borrowRequestService.insertBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: borrowRequest})
-    }
-  })
-})
+// router.put('/insertBorrowRequest', (req, res) => {
+//   logger.info('insertBorrowRequest:', req.body)
+//   borrowRequestService.insertBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: borrowRequest})
+//     }
+//   })
+// })
 
-router.get('/findBorrowRequests', (req, res) => {
-  const params = url.parse(req.url, true).query
+// router.get('/findBorrowRequests', (req, res) => {
+//   const params = url.parse(req.url, true).query
 
-  let filter = {}
-  if (params.filter) {
-    if (typeof params.filter === 'string' || params.filter instanceof String) {
-      filter = JSON.parse(params.filter)
-    } else {
-      filter = params.filter
-    }
-  }
+//   let filter = {}
+//   if (params.filter) {
+//     if (typeof params.filter === 'string' || params.filter instanceof String) {
+//       filter = JSON.parse(params.filter)
+//     } else {
+//       filter = params.filter
+//     }
+//   }
 
-  let page = utils.parseInt(params.page)
+//   let page = utils.parseInt(params.page)
 
-  filter.contactID = req.session.passport.user._id
+//   filter.contactID = req.session.passport.user._id
 
-  logger.info('findBorrowRequests:', params)
-  logger.info('page:', page)
+//   logger.info('findBorrowRequests:', params)
+//   logger.info('page:', page)
 
-  borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {datas: borrowRequests, count: count}})
-    }
-  }, page)
-})
-router.post('/updateBorrowRequest', (req, res) => {
-  logger.info('updateBorrowRequest:', req.body)
-  userService.getUser(req.session.passport.user, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      borrowRequestService.updateBorrowRequest(user, req.body, (error, borrowRequest) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {borrowRequest: borrowRequest}})
-        }
-      })
-    }
-  })
-})
-router.post('/publishBorrowRequest', (req, res) => {
-  logger.info('publishBorrowRequest:', req.body)
-  userService.getUser(req.session.passport.user, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      borrowRequestService.publishBorrowRequest(user, req.body, (error, borrowRequest) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {borrowRequest: borrowRequest}})
-        }
-      })
-    }
-  })
-})
-router.post('/unPublishBorrowRequest', (req, res) => {
-  logger.info('unPublishBorrowRequest:', req.body)
-  borrowRequestService.publishBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {borrowRequest: borrowRequest}})
-    }
-  })
-})
-router.post('/deleteBorrowRequest', (req, res) => {
-  logger.info('deleteBorrowRequest:', req.body)
-  borrowRequestService.deleteBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {borrowRequest: borrowRequest}})
-    }
-  })
-})
+//   borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: {datas: borrowRequests, count: count}})
+//     }
+//   }, page)
+// })
+// router.post('/updateBorrowRequest', (req, res) => {
+//   logger.info('updateBorrowRequest:', req.body)
+//   userService.getUser(req.session.passport.user, (error, user) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       borrowRequestService.updateBorrowRequest(user, req.body, (error, borrowRequest) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           res.json({error: null, data: {borrowRequest: borrowRequest}})
+//         }
+//       })
+//     }
+//   })
+// })
+// router.post('/publishBorrowRequest', (req, res) => {
+//   logger.info('publishBorrowRequest:', req.body)
+//   userService.getUser(req.session.passport.user, (error, user) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       borrowRequestService.publishBorrowRequest(user, req.body, (error, borrowRequest) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           res.json({error: null, data: {borrowRequest: borrowRequest}})
+//         }
+//       })
+//     }
+//   })
+// })
+// router.post('/unPublishBorrowRequest', (req, res) => {
+//   logger.info('unPublishBorrowRequest:', req.body)
+//   borrowRequestService.publishBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: {borrowRequest: borrowRequest}})
+//     }
+//   })
+// })
+// router.post('/deleteBorrowRequest', (req, res) => {
+//   logger.info('deleteBorrowRequest:', req.body)
+//   borrowRequestService.deleteBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: {borrowRequest: borrowRequest}})
+//     }
+//   })
+// })
 
 /*
 * HomePage
@@ -542,55 +542,55 @@ router.post('/deleteHomepage', (req, res) => {
 /*
 * Resource
 */
-router.put('/insertResources', (req, res) => {
-  logger.info('insertBorrowRequest:', req.body)
-  resourceService.insertResources(req.session.passport.user, req.body, (error, borrowRequest) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: borrowRequest})
-    }
-  })
-})
+// router.put('/insertResources', (req, res) => {
+//   logger.info('insertBorrowRequest:', req.body)
+//   resourceService.insertResources(req.session.passport.user, req.body, (error, borrowRequest) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: borrowRequest})
+//     }
+//   })
+// })
 
-router.get('/findResources', (req, res) => {
-  const params = url.parse(req.url, true).query
+// router.get('/findResources', (req, res) => {
+//   const params = url.parse(req.url, true).query
 
-  let filter = {}
-  if (params.filter) {
-    if (typeof params.filter === 'string' || params.filter instanceof String) {
-      filter = JSON.parse(params.filter)
-    } else {
-      filter = params.filter
-    }
-  }
+//   let filter = {}
+//   if (params.filter) {
+//     if (typeof params.filter === 'string' || params.filter instanceof String) {
+//       filter = JSON.parse(params.filter)
+//     } else {
+//       filter = params.filter
+//     }
+//   }
 
-  let page = utils.parseInt(params.page)
+//   let page = utils.parseInt(params.page)
 
-  filter.cuser = req.session.passport.user._id
+//   filter.cuser = req.session.passport.user._id
 
-  logger.info('findResources:', filter)
-  logger.info('page:', page)
+//   logger.info('findResources:', filter)
+//   logger.info('page:', page)
 
-  resourceService.findResources(filter, (error, userResources, count) => {
-    logger.debug('error:', error)
-    logger.debug('userResources:', userResources)
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: {datas: userResources, count: count}})
-    }
-  }, page)
-})
-router.post('/deleteResources', (req, res) => {
-  logger.info('deleteResources:', req.body)
-  resourceService.deleteResource(req.session.passport.user, req.body, (error, userResource) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      res.json({error: null, data: userResource})
-    }
-  })
-})
+//   resourceService.findResources(filter, (error, userResources, count) => {
+//     logger.debug('error:', error)
+//     logger.debug('userResources:', userResources)
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: {datas: userResources, count: count}})
+//     }
+//   }, page)
+// })
+// router.post('/deleteResources', (req, res) => {
+//   logger.info('deleteResources:', req.body)
+//   resourceService.deleteResource(req.session.passport.user, req.body, (error, userResource) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       res.json({error: null, data: userResource})
+//     }
+//   })
+// })
 
 module.exports = router
