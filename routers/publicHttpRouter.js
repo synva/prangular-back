@@ -39,7 +39,7 @@ router.get('/findSellPieces', (req, res) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: {datas: sellPieces, count: count}})
+          res.json({error: null, data: {sellPieces: sellPieces, count: count}})
         }
       })
     }
@@ -73,7 +73,7 @@ router.get('/findRentPieces', (req, res) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: {datas: rentPieces, count: count}})
+          res.json({error: null, data: {rentPieces: rentPieces, count: count}})
         }
       })
     }

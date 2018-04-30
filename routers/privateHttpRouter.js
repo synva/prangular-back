@@ -11,6 +11,8 @@ import rentPieceService from '../services/rentPieceService.js'
 // import borrowRequestService from '../services/borrowRequestService.js'
 import userService from '../services/userService.js'
 import homepageService from '../services/homepageService.js'
+import inquiryService from '../services/inquiryService.js'
+import topicService from '../services/topicService.js'
 // import resourceService from '../services/resourceService.js'
 
 let router = express.Router()
@@ -111,7 +113,7 @@ router.get('/findSellPieces', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {datas: sellPieces, count: count}})
+      res.json({error: null, data: {sellPieces: sellPieces, count: count}})
     }
   }, page)
 })
@@ -121,7 +123,7 @@ router.post('/updateSellPiece', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {sellPiece: sellPiece}})
+      res.json({error: null, data: sellPiece})
     }
   })
 })
@@ -131,7 +133,7 @@ router.post('/deleteSellPiece', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {sellPiece: sellPiece}})
+      res.json({error: null, data: sellPiece})
     }
   })
 })
@@ -191,7 +193,7 @@ router.get('/findRentPieces', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {datas: rentPieces, count: count}})
+      res.json({error: null, data: {rentPieces: rentPieces, count: count}})
     }
   }, page)
 })
@@ -201,7 +203,7 @@ router.post('/updateRentPiece', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {rentPiece: rentPiece}})
+      res.json({error: null, data: rentPiece})
     }
   })
 })
@@ -211,7 +213,7 @@ router.post('/deleteRentPiece', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      res.json({error: null, data: {rentPiece: rentPiece}})
+      res.json({error: null, data: rentPiece})
     }
   })
 })
@@ -535,6 +537,88 @@ router.post('/deleteHomepage', (req, res) => {
           })
         }
       })
+    }
+  })
+})
+
+/**
+ * inquiry
+ */
+router.get('/findInquiries', (req, res) => {
+  const params = url.parse(req.url, true).query
+  let filter = {}
+  if (params.filter) {
+    if (typeof params.filter === 'string' || params.filter instanceof String) {
+      filter = JSON.parse(params.filter)
+    } else {
+      filter = params.filter
+    }
+  }
+  filter.user = req.session.passport.user._id
+
+  logger.info('private findInquiries:', JSON.stringify(filter))
+
+  inquiryService.findAllInquiries(filter, (error, inquiries) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: inquiries})
+    }
+  })
+})
+router.post('/updateInquiry', (req, res) => {
+  logger.info('updateInquiry:', req.body)
+  inquiryService.updateInquiry(req.session.passport.user, req.body, (error, inquiry) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: inquiry})
+    }
+  })
+})
+
+/**
+ * topic
+ */
+router.get('/findTopics', (req, res) => {
+  const params = url.parse(req.url, true).query
+  let filter = {}
+  if (params.filter) {
+    if (typeof params.filter === 'string' || params.filter instanceof String) {
+      filter = JSON.parse(params.filter)
+    } else {
+      filter = params.filter
+    }
+  }
+  filter.user = req.session.passport.user._id
+
+  logger.info('private findTopics:', JSON.stringify(filter))
+
+  topicService.findAllTopics(filter, (error, topics) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: topics})
+    }
+  })
+})
+router.post('/updateTopic', (req, res) => {
+  logger.info('updateTopic:', req.body)
+  topicService.updateTopic(req.session.passport.user, req.body, (error, topic) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: topic})
+    }
+  })
+})
+router.post('/deleteTopic', (req, res) => {
+  logger.info('deleteTopic:', req.body)
+  topicService.deleteTopic(req.session.passport.user, req.body, (error, topic) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: topic})
     }
   })
 })

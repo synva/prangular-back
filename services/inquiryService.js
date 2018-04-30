@@ -32,13 +32,13 @@ class InquiryService {
       }
     )
   }
-  insertInquiry (inquiry, next) {
+  insertInquiry (user, inquiry, next) {
     let now = new Date()
     now = now.valueOf()
     inquiry.cdate = now
-    inquiry.cuser = 'anonymous'
+    inquiry.cuser = user._id
     inquiry.udate = now
-    inquiry.uuser = 'anonymous'
+    inquiry.uuser = user._id
     mongo.insert(
       'inquiries',
       inquiry,
