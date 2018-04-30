@@ -3,10 +3,10 @@ import mongo from './mongo.js'
 import {ObjectId} from 'mongodb'
 import utils from './utils'
 
-class InfoService {
+class TopicService {
   constructor () {
   }
-  findAllInfos (params, next) {
+  findAllTopics (params, next) {
     let filter = []
     if (params._id) {
       filter.push({_id: {$eq: ObjectId(params._id)}})
@@ -19,7 +19,7 @@ class InfoService {
     logger.debug(JSON.stringify({$and : filter}))
 
     mongo.findAll(
-      'infos',
+      'topics',
       {$and : filter},
       {},
       {cdate: -1},
@@ -32,17 +32,17 @@ class InfoService {
       }
     )
   }
-  insertInfo (user, info, next) {
+  insertTopic (user, topic, next) {
     let now = new Date()
     now = now.valueOf()
-    info.cdate = now
-    info.cuser = user._id
-    info.contactID = user._id
-    info.udate = now
-    info.uuser = user._id
+    topic.cdate = now
+    topic.cuser = user._id
+    topic.contactID = user._id
+    topic.udate = now
+    topic.uuser = user._id
     mongo.insert(
-      'infos',
-      info,
+      'topics',
+      topic,
       {},
       (error, result) => {
         if (error) {
@@ -54,34 +54,34 @@ class InfoService {
       }
     )
   }
-  updateInfo (user, info, next) {
-    let id = info._id
-    delete info._id
-    info.uuser = user._id
+  updateTopic (user, topic, next) {
+    let id = topic._id
+    delete topic._id
+    topic.uuser = user._id
     let now = new Date()
-    info.udate = now.valueOf()
+    topic.udate = now.valueOf()
     mongo.update(
-      'infos',
+      'topics',
       {_id: ObjectId(id)},
-      {$set: info},
+      {$set: topic},
       {multi: false},
       (error, result) => {
         if (error) {
           next(error)
         } else {
-          info._id = id
-          next(null, info)
+          topic._id = id
+          next(null, topic)
         }
       }
     )
   }
-  deleteInfo (user, info, next) {
+  deleteTopic (user, topic, next) {
     let json = {
-      _id: info._id,
+      _id: topic._id,
       deleted: true
     }
-    this.updateInfo(user, json, next)
+    this.updateTopic(user, json, next)
   }
 }
 
-export default new InfoService()
+export default new TopicService()
