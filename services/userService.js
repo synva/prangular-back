@@ -36,8 +36,8 @@ class UserService {
         } else {
           if (result.length <= 0) {
             user.role = '1'
-            user.maxSell = 8
-            user.maxRent = 8
+            user.maxSell = 2
+            user.maxRent = 2
             user.cuser = user._id
             user.uuser = user._id
             let now = new Date()
