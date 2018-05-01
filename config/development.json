@@ -1,6 +1,7 @@
 {
   "port": 3000,
   "cors": ["http://localhost:8000"],
+  "fixedSubDomain": "localhost:8001",
   "logger": {
     "appenders": {"system": {"type": "console"}},
     "categories": {"default": {"appenders": ["system"], "level": "all"}}

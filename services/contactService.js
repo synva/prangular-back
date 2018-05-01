@@ -16,7 +16,7 @@ class ContactService {
       phone: 1,
       fax: 1,
       email: 1,
-      comment: 1,
+      remark: 1,
       address: 1
     }
   }
