@@ -1,6 +1,7 @@
 {
   "port": 3000,
   "cors": [],
+  "fixedSubDomain": "homepage-staging.wyxtech.work:8080",
   "logger": {
     "appenders": {
       "stdout": {

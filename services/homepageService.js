@@ -16,8 +16,7 @@ class HomepageService {
       phone: 1,
       fax: 1,
       email: 1,
-      // TODO: error with this column, why?
-      // comment: 1,
+      remark: 1,
       address: 1,
       homepages: 1
     }

@@ -3,12 +3,12 @@ import url from 'url'
 import logger from '../services/logger.js'
 import utils from '../services/utils.js'
 
-import buyRequestService from '../services/buyRequestService.js'
 import sellPieceService from '../services/sellPieceService.js'
-import borrowRequestService from '../services/borrowRequestService.js'
 import rentPieceService from '../services/rentPieceService.js'
+// import buyRequestService from '../services/buyRequestService.js'
+// import borrowRequestService from '../services/borrowRequestService.js'
 import contactService from '../services/contactService.js'
-import userService from '../services/userService.js'
+// import userService from '../services/userService.js'
 
 let router = express.Router()
 
@@ -39,7 +39,7 @@ router.get('/findSellPieces', (req, res) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: {datas: sellPieces, count: count}})
+          res.json({error: null, data: {sellPieces: sellPieces, count: count}})
         }
       })
     }
@@ -73,7 +73,7 @@ router.get('/findRentPieces', (req, res) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          res.json({error: null, data: {datas: rentPieces, count: count}})
+          res.json({error: null, data: {rentPieces: rentPieces, count: count}})
         }
       })
     }
@@ -83,81 +83,65 @@ router.get('/findRentPieces', (req, res) => {
 /**
  * buyRequest
  */
-router.get('/findBuyRequests', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('findBuyRequests:', params)
-  let filter = {}
-  if (params.filter) {
-    if (typeof params.filter === 'string' || params.filter instanceof String) {
-      filter = JSON.parse(params.filter)
-    } else {
-      filter = params.filter
-    }
-  }
+// router.get('/findBuyRequests', (req, res) => {
+//   const params = url.parse(req.url, true).query
+//   logger.info('findBuyRequests:', params)
+//   let filter = {}
+//   if (params.filter) {
+//     if (typeof params.filter === 'string' || params.filter instanceof String) {
+//       filter = JSON.parse(params.filter)
+//     } else {
+//       filter = params.filter
+//     }
+//   }
 
-  let page = utils.parseInt(params.page)
+//   let page = utils.parseInt(params.page)
 
-  buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      contactService.assignContacts(buyRequests, (error) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {datas: buyRequests, count: count}})
-        }
-      })
-    }
-  }, page)
-})
+//   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       contactService.assignContacts(buyRequests, (error) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           res.json({error: null, data: {datas: buyRequests, count: count}})
+//         }
+//       })
+//     }
+//   }, page)
+// })
 
 /**
  * borrowRequest
  */
-router.get('/findBorrowRequests', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('findBorrowRequest:', params)
-  let filter = {}
-  if (params.filter) {
-    if (typeof params.filter === 'string' || params.filter instanceof String) {
-      filter = JSON.parse(params.filter)
-    } else {
-      filter = params.filter
-    }
-  }
+// router.get('/findBorrowRequests', (req, res) => {
+//   const params = url.parse(req.url, true).query
+//   logger.info('findBorrowRequest:', params)
+//   let filter = {}
+//   if (params.filter) {
+//     if (typeof params.filter === 'string' || params.filter instanceof String) {
+//       filter = JSON.parse(params.filter)
+//     } else {
+//       filter = params.filter
+//     }
+//   }
 
-  let page = utils.parseInt(params.page)
+//   let page = utils.parseInt(params.page)
 
-  borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      contactService.assignContacts(borrowRequests, (error) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          res.json({error: null, data: {datas: borrowRequests, count: count}})
-        }
-      })
-    }
-  }, page)
-})
-
-/**
- * company homepage
- */
-router.get('/getCompanyConfig', (req, res) => {
-  const params = url.parse(req.url, true).query
-  logger.info('getCompanyConfig:', params)
-  userService.getUser(params.domain, (error, userInfo) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      logger.info('userInfo:', userInfo)
-      res.json({error: null, data: {datas: userInfo}})
-    }
-  })
-})
+//   borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       contactService.assignContacts(borrowRequests, (error) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           res.json({error: null, data: {datas: borrowRequests, count: count}})
+//         }
+//       })
+//     }
+//   }, page)
+// })
 
 module.exports = router
