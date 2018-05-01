@@ -602,6 +602,16 @@ router.get('/findTopics', (req, res) => {
     }
   })
 })
+router.put('/insertTopic', (req, res) => {
+  logger.info('insertTopic:', req.body)
+  topicService.insertTopic(req.session.passport.user, req.body, (error, topic) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: topic})
+    }
+  })
+})
 router.post('/updateTopic', (req, res) => {
   logger.info('updateTopic:', req.body)
   topicService.updateTopic(req.session.passport.user, req.body, (error, topic) => {
