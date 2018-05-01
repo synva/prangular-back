@@ -1,5 +1,6 @@
 import logger from './logger.js'
 import mongo from './mongo.js'
+import conf from 'config'
 import {ObjectId} from 'mongodb'
 
 class UserService {
@@ -35,9 +36,14 @@ class UserService {
           next(error)
         } else {
           if (result.length <= 0) {
-            user.role = '1'
+            user.role = '2'
             user.maxSell = 2
             user.maxRent = 2
+            if (conf.fixedSubDomain) {
+              user.homepage = conf.fixedSubDomain
+            } else {
+              user.homepage = user._id + '.budousan.com'
+            }
             user.cuser = user._id
             user.uuser = user._id
             let now = new Date()

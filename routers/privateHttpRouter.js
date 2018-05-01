@@ -439,29 +439,12 @@ router.put('/insertHomepage', (req, res) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
-      Promise.all([
-        new Promise((resolve, reject) => {
-          homepageService.insertHomepage(user, req.body, (error, homepage) => {
-            if (error) return reject(error)
-            resolve(homepage)
-          })
-        }),
-        new Promise((resolve, reject) => {
-          let update = {
-            _id: user._id,
-            homepages: user.homepages || []
-          }
-          update.homepages.push(req.body.domain)
-          userService.updateUser(req.session.passport.user, update, (error, updated) => {
-            if (error) return reject(error)
-            resolve(updated)
-          })
-        })
-      ]).then((values) => {
-        let homepage = values[0]
-        res.json({error: null, data: homepage})
-      }, (reason) => {
-        res.json({error: reason, data: null})
+      homepageService.insertHomepage(user, req.body, (error, homepage) => {
+        if (error) {
+          res.json({error: error, data: null})
+        } else {
+          res.json({error: null, data: homepage})
+        }
       })
     }
   })
