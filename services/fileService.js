@@ -3,6 +3,7 @@ import conf from 'config'
 import utils from './utils.js'
 import fs from 'fs'
 import path from 'path'
+import mkdirp from 'mkdirp'
 import uuid from 'uuid'
 import formidable from 'formidable'
 import AWS from 'aws-sdk'
@@ -32,15 +33,12 @@ class FileService {
       if (params.subFolder) {
         file.path = path.join(__dirname, '..', 'upload', params.subFolder, folder, file.name)
         try {
-          fs.mkdirSync(path.join(__dirname, '..', 'upload', params.subFolder))
+          mkdirp.sync(path.join(__dirname, '..', 'upload', params.subFolder, folder))
         } catch (error) {
-          if (error.code !== 'EEXIST') {
-            logger.error(JSON.stringify(error))
-            next({code: 'S002', detail: JSON.stringify(error)})
-            return
-          }
+          logger.error(JSON.stringify(error))
+          next({code: 'S002', detail: JSON.stringify(error)})
+          return
         }
-        fs.mkdirSync(path.join(__dirname, '..', 'upload', params.subFolder, folder))
         localFileList.push({
           fullname: file.path,
           folder: path.join(params.subFolder, folder),
@@ -50,7 +48,13 @@ class FileService {
         })
       } else {
         file.path = path.join(__dirname, '..', 'upload', folder, file.name)
-        fs.mkdirSync(path.join(__dirname, '..', 'upload', folder))
+        try {
+          mkdirp.sync(path.join(__dirname, '..', 'upload', folder))
+        } catch (error) {
+          logger.error(JSON.stringify(error))
+          next({code: 'S002', detail: JSON.stringify(error)})
+          return
+        }
         localFileList.push({
           fullname: file.path,
           folder: folder,
