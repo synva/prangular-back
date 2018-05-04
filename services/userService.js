@@ -31,6 +31,7 @@ class UserService {
       'users',
       {_id: user._id},
       {},
+      {},
       (error, result) => {
         if (error) {
           next(error)
@@ -73,6 +74,7 @@ class UserService {
       'users',
       {_id: user._id, password: user.password},
       {},
+      {},
       (error, result) => {
         if (error) {
           next(error)
@@ -88,6 +90,7 @@ class UserService {
     mongo.find(
       'users',
       {_id: _id, password: password},
+      {},
       {},
       (error, result) => {
         if (error) {

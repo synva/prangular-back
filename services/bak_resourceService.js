@@ -36,7 +36,8 @@ class ResourceService {
     mongo.find(
       'resources',
       params,
-      {sort: {udate: -1}},
+      {},
+      {udate: -1},
       (error, result, count) => {
         if (error) {
           next(error, null)

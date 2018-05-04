@@ -1,7 +1,6 @@
 import conf from 'config'
 import logger from './logger.js'
 import mongodb from 'mongodb'
-import {ObjectId} from 'mongodb'
 const MongoClient = mongodb.MongoClient
 
 class Mongo {
@@ -22,7 +21,20 @@ class Mongo {
       next({code: 'S003', detail: JSON.stringify(error)})
     })
   }
-  find (collection_name, criteria, projection, next, page, customLimit) {
+  find (collection_name, criteria, projection, sort, next, page, customLimit) {
+    if (typeof(criteria) === 'function') {
+      next = criteria
+      criteria = {}
+      projection = null
+      sort = null
+    } else if (typeof(projection) === 'function') {
+      next = projection
+      projection = null
+      sort = null
+    } else if (typeof(sort) === 'function') {
+      next = sort
+      sort = null
+    }
     let skip = 0
     let limit = customLimit || conf.mongo.limit
     if (page && page > 0) {
@@ -33,13 +45,19 @@ class Mongo {
         logger.error('find connect error:' + JSON.stringify(outer_error))
         next('S003', null)
       } else {
-        let mongoFind = collection.find(criteria, projection)
-        mongoFind.count((count_error, count) => {
+        let cursor = collection.find(criteria)
+        if (projection) {
+          cursor = cursor.project(projection)
+        }
+        if (sort) {
+          cursor = cursor.sort(sort)
+        }
+        cursor.count((count_error, count) => {
           if (count_error) {
             logger.error('count error:' + JSON.stringify(count_error))
             next('S003', null)
           } else {
-            mongoFind.skip(skip).limit(limit).toArray((inner_error, list) => {
+            cursor.skip(skip).limit(limit).toArray((inner_error, list) => {
               if (inner_error) {
                 logger.error('find error:' + JSON.stringify(inner_error))
                 next('S003', null)
