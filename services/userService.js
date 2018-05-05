@@ -38,13 +38,14 @@ class UserService {
         } else {
           if (result.length <= 0) {
             user.role = '2'
-            user.maxSell = 2
-            user.maxRent = 2
+            user.maxSell = 8
+            user.maxRent = 8
             if (conf.fixedSubDomain) {
               user.homepage = conf.fixedSubDomain
             } else {
               user.homepage = user._id + '.budousan.com'
             }
+            user.links = [{img: '/static/resources/budousan.png', url: 'https://www.budousan.com'}]
             user.cuser = user._id
             user.uuser = user._id
             let now = new Date()

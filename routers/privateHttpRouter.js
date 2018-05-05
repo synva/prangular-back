@@ -81,7 +81,7 @@ router.put('/insertSellPiece', (req, res) => {
     let count = values[1]
     logger.debug('max sell count:', user.maxSell)
     logger.debug('current count:', count)
-    if (count >= user.maxSell) return res.json({error: {code: 'B008', detail: '登録可能件数：' + user.maxSell}, data: null})
+    if (count >= user.maxSell) return res.json({error: {code: 'B008', detail: '登録可能な売買物件件数：' + user.maxSell}, data: null})
     sellPieceService.insertSellPiece(user, req.body, (error, sellPiece) => {
       if (error) {
         res.json({error: error, data: null})
@@ -161,7 +161,7 @@ router.put('/insertRentPiece', (req, res) => {
     let count = values[1]
     logger.debug('max sell count:', user.maxRent)
     logger.debug('current count:', count)
-    if (count >= user.maxRent) return res.json({error: {code: 'B008', detail: '登録可能件数：' + user.maxRent}, data: null})
+    if (count >= user.maxRent) return res.json({error: {code: 'B008', detail: '登録可能な賃貸物件件数：' + user.maxRent}, data: null})
     rentPieceService.insertRentPiece(user, req.body, (error, rentPiece) => {
       if (error) {
         res.json({error: error, data: null})

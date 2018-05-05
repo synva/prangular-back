@@ -31,7 +31,8 @@ class ContactService {
       services: 1,
       vision: 1,
       shops: 1,
-      downloads: 1
+      downloads: 1,
+      links: 1
     }
   }
   assignContacts (list, next) {
