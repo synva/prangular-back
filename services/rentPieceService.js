@@ -11,7 +11,8 @@ class RentPieceService {
     mongo.find(
       'rentPieces',
       {$and: filter},
-      {sort: {isPublishing: -1, udate: -1}},
+      {},
+      {isPublishing: -1, udate: -1},
       (error, result, count) => {
         if (error) {
           next(error, null)

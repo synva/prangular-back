@@ -52,7 +52,8 @@ class BuyRequestService {
     mongo.find(
       'buyRequests',
       filter,
-      {sort: {isPublishing: -1, udate: -1}},
+      {},
+      {isPublishing: -1, udate: -1},
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -158,7 +159,8 @@ class BuyRequestService {
     mongo.find(
       'buyRequests',
       filter,
-      {sort: {_id: -1}},
+      {},
+      {_id: -1},
       (error, result, count) => {
         if (error) {
           next(error, null)

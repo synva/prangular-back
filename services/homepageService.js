@@ -26,6 +26,7 @@ class HomepageService {
       'users',
       {homepages: {$in: [domain]}},
       this.userProjection,
+      {},
       (error, result) => {
         if (error) {
           next(error)
@@ -56,6 +57,7 @@ class HomepageService {
     mongo.find(
       'homepages',
       {_id: ObjectId(id)},
+      {},
       {},
       (error, results) => {
         if (error) {
