@@ -31,7 +31,7 @@
   },
   "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
   "mongo": {
-    "server": "localhost",
+    "server": "13.231.232.98",
     "port": 55555,
     "db": "budousan",
     "limit": 24,
