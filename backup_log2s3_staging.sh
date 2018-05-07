@@ -24,7 +24,10 @@ log(){
 }
 
 log "*** start ${PROG} ***"
-log "backuplist:$BACKUP_LIST"
+log "DATE:$DATE"
+log "BACKUP_PATH:$BACKUP_PATH"
+log "BACKUP_LIST:$BACKUP_LIST"
+log "DELETE_LIST:$BACKUP_LIST"
 
 ### to s3
 for list in ${BACKUP_LIST}

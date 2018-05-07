@@ -6,8 +6,8 @@ TIMESTAMP="/tmp/${PROG}.log"
 DATE=`date +%Y-%m-%d --date '1 day ago'`
 DELETE_DATE=`date +%Y-%m-%d --date '7 day ago'`
 BUCKET="budousan-backup/honban/budousan-back"
-BACKUP_LIST=`ls | grep $DATE`
-DELETE_LIST=`ls | grep $DELETE_DATE`
+BACKUP_LIST=`ls ${BACKUP_PATH} | grep $DATE`
+DELETE_LIST=`ls ${BACKUP_PATH} | grep $DELETE_DATE`
 BACKUP_PATH="/opt/log/budousan/budousan-back/"
 
 ### error
