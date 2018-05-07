@@ -7,8 +7,8 @@ TIMESTAMP="/tmp/${PROG}.log"
 DATE=`date +%Y-%m-%d`
 DELETE_DATE=`date +%Y-%m-%d --date '7 day ago'`
 BUCKET="budousan-backup/staging/budousan-back"
-BACKUP_LIST=`ls | grep $DATE`
-DELETE_LIST=`ls | grep $DELETE_DATE`
+BACKUP_LIST=`ls ${BACKUP_PATH} | grep $DATE`
+DELETE_LIST=`ls ${BACKUP_PATH} | grep $DELETE_DATE`
 BACKUP_PATH="/opt/log/budousan/budousan-back/"
 
 ### error
@@ -24,7 +24,10 @@ log(){
 }
 
 log "*** start ${PROG} ***"
-log "backuplist:$BACKUP_LIST"
+log "DATE:$DATE"
+log "BACKUP_PATH:$BACKUP_PATH"
+log "BACKUP_LIST:$BACKUP_LIST"
+log "DELETE_LIST:$BACKUP_LIST"
 
 ### to s3
 for list in ${BACKUP_LIST}
