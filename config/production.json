@@ -6,7 +6,7 @@
     "appenders": {
       "stdout": {
         "type": "dateFile",
-        "filename": "out_log4js.log",
+        "filename": "/opt/log/budousan/budousan-back/out_log4js.log",
         "pattern": "__yyyy-MM-dd",
         "layout": {
           "type": "pattern",
@@ -15,7 +15,7 @@
       },
       "error": {
         "type": "dateFile",
-        "filename": "error_log4js.log",
+        "filename": "/opt/log/budousan/budousan-back/error_log4js.log",
         "pattern": "__yyyy-MM-dd",
         "layout": {
           "type": "pattern",

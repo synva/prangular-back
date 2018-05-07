@@ -3,12 +3,13 @@
 PROG=`basename $0`
 LOCKFILE="/tmp/${PROG}.lock"
 TIMESTAMP="/tmp/${PROG}.log"
-DATE=`date +%Y-%m-%d --date '1 day ago'`
+#DATE=`date +%Y-%m-%d --date '1 day ago'`
+DATE=`date +%Y-%m-%d`
 DELETE_DATE=`date +%Y-%m-%d --date '7 day ago'`
 BUCKET="budousan-backup/staging/budousan-back"
 BACKUP_LIST=`ls | grep $DATE`
 DELETE_LIST=`ls | grep $DELETE_DATE`
-BACKUP_PATH=`pwd`
+BACKUP_PATH="/opt/log/budousan/budousan-back/"
 
 ### error
 error(){

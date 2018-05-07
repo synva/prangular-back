@@ -6,6 +6,7 @@ class ContactService {
   constructor () {
     this.contactProjection = {
       _id: 1,
+      role: 1,
       avatar: 1,
       nickname: 1,
       position: 1,
