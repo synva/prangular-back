@@ -7,9 +7,9 @@ TIMESTAMP="/tmp/${PROG}.log"
 DATE=`date +%Y-%m-%d`
 DELETE_DATE=`date +%Y-%m-%d --date '7 day ago'`
 BUCKET="budousan-backup/staging/budousan-back"
+BACKUP_PATH="/opt/log/budousan/budousan-back"
 BACKUP_LIST=`ls ${BACKUP_PATH} | grep $DATE`
 DELETE_LIST=`ls ${BACKUP_PATH} | grep $DELETE_DATE`
-BACKUP_PATH="/opt/log/budousan/budousan-back/"
 
 ### error
 error(){
