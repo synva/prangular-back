@@ -7,7 +7,7 @@
       "stdout": {
         "type": "dateFile",
         "filename": "/opt/log/budousan/budousan-back/out_log4js.log",
-        "pattern": "__yyyy-MM-dd hh:mm",
+        "pattern": "__yyyy-MM-dd hh",
         "layout": {
           "type": "pattern",
           "pattern": "%d{yyyy-MM-dd hh:mm:ss}: %p: %m"
@@ -16,7 +16,7 @@
       "error": {
         "type": "dateFile",
         "filename": "/opt/log/budousan/budousan-back/error_log4js.log",
-        "pattern": "__yyyy-MM-dd hh:mm",
+        "pattern": "__yyyy-MM-dd hh",
         "layout": {
           "type": "pattern",
           "pattern": "%d{yyyy-MM-dd hh:mm:ss}: %p: %m"
