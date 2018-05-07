@@ -9,11 +9,10 @@
     "error_file"      : "/opt/log/budousan/budousan-back/error_pm2.log",
     "out_file"        : "/opt/log/budousan/budousan-back/out_pm2.log",
     "merge_logs"      : true,
-    "rotateInterval"  : "1 * * * *",
     "log_date_format" : "YYYY-MM-DD HH:mm:ss"
   },{
     "name": "logbackup_bd",
     "script": "./cron_staging.js",
-    "cron_restart": "0 2 * * * *"
+    "cron_restart": "0 2 1 * * *"
   }]
 }
