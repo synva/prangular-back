@@ -20,7 +20,7 @@ exit 1;
 
 ### log
 log(){
-    echo "[`date '+%Y/%m/%d %k:%M:%S'`($$)] $1" >> backup.log
+    echo "[`date '+%Y/%m/%d %k:%M:%S'`($$)] $1" >> ${BACKUP_PATH}/backup.log
 }
 
 log "*** start ${PROG} ***"
