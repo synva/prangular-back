@@ -3,14 +3,27 @@ import url from 'url'
 import logger from '../services/logger.js'
 import utils from '../services/utils.js'
 
+import systemService from '../services/systemService.js'
 import sellPieceService from '../services/sellPieceService.js'
 import rentPieceService from '../services/rentPieceService.js'
 // import buyRequestService from '../services/buyRequestService.js'
 // import borrowRequestService from '../services/borrowRequestService.js'
 import contactService from '../services/contactService.js'
-// import userService from '../services/userService.js'
 
 let router = express.Router()
+
+/**
+ * init
+ */
+router.get('/initApplication', (req, res) => {
+  systemService.findInformation((error, information) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {information: information}})
+    }
+  })
+})
 
 /**
  * sellPiece
