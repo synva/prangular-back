@@ -3,12 +3,13 @@
 PROG=`basename $0`
 LOCKFILE="/tmp/${PROG}.lock"
 TIMESTAMP="/tmp/${PROG}.log"
-DATE=`date +%Y-%m-%d --date '1 day ago'`
+#DATE=`date +%Y-%m-%d --date '1 day ago'`
+DATE=`date +%Y-%m-%d`
 DELETE_DATE=`date +%Y-%m-%d --date '7 day ago'`
 BUCKET="budousan-backup/staging/budousan-back"
-BACKUP_LIST=`ls | grep $DATE`
-DELETE_LIST=`ls | grep $DELETE_DATE`
-BACKUP_PATH=`pwd`
+BACKUP_PATH="/opt/log/budousan/budousan-back"
+BACKUP_LIST=`ls ${BACKUP_PATH} | grep $DATE`
+DELETE_LIST=`ls ${BACKUP_PATH} | grep $DELETE_DATE`
 
 ### error
 error(){
@@ -19,11 +20,14 @@ exit 1;
 
 ### log
 log(){
-    echo "[`date '+%Y/%m/%d %k:%M:%S'`($$)] $1" >> backup.log
+    echo "[`date '+%Y/%m/%d %k:%M:%S'`($$)] $1" >> ${BACKUP_PATH}/backup.log
 }
 
 log "*** start ${PROG} ***"
-log "backuplist:$BACKUP_LIST"
+log "DATE:$DATE"
+log "BACKUP_PATH:$BACKUP_PATH"
+log "BACKUP_LIST:$BACKUP_LIST"
+log "DELETE_LIST:$BACKUP_LIST"
 
 ### to s3
 for list in ${BACKUP_LIST}

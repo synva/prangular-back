@@ -1,12 +1,18 @@
 {
-  "name": "bd",
-  "script": "app.js",
-  "interpreter": "./node_modules/.bin/babel-node",
-  "env": {
-    "NODE_ENV": "staging"
-  },
-  "error_file"      : "error_pm2.log",
-  "out_file"        : "out_pm2.log",
-  "merge_logs"      : true,
-  "log_date_format" : "YYYY-MM-DD HH:mm:ss"
+  "apps" :[{
+    "name": "bd",
+    "script": "app.js",
+    "interpreter": "./node_modules/.bin/babel-node",
+    "env": {
+      "NODE_ENV": "staging"
+    },
+    "error_file"      : "/opt/log/budousan/budousan-back/error_pm2.log",
+    "out_file"        : "/opt/log/budousan/budousan-back/out_pm2.log",
+    "merge_logs"      : true,
+    "log_date_format" : "YYYY-MM-DD HH:mm:ss"
+  },{
+    "name": "logbackup_bd",
+    "script": "./cron_staging.js",
+    "cron_restart": "0 2 1 * * *"
+  }]
 }
