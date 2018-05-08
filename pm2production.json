@@ -13,6 +13,6 @@
   },{
     "name": "logbackup_bd",
     "script": "./cron.js",
-    "cron_restart": "0 0 1 * * *"
+    "cron_restart": "0 2 1 * * *"
   }]
 }

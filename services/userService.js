@@ -42,8 +42,10 @@ class UserService {
             user.maxRent = 8
             if (conf.fixedSubDomain) {
               user.homepage = conf.fixedSubDomain
+              user.homepages = [conf.fixedSubDomain]
             } else {
               user.homepage = user._id + '.budousan.com'
+              user.homepages = [user._id + '.budousan.com']
             }
             user.links = [{img: '/static/resources/budousan.png', url: 'https://www.budousan.com'}]
             user.cuser = user._id
