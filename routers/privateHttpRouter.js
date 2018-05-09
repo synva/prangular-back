@@ -13,7 +13,6 @@ import userService from '../services/userService.js'
 import homepageService from '../services/homepageService.js'
 import inquiryService from '../services/inquiryService.js'
 import topicService from '../services/topicService.js'
-// import resourceService from '../services/resourceService.js'
 
 let router = express.Router()
 
@@ -456,73 +455,90 @@ router.post('/updateHomepage', (req, res) => {
       res.json({error: error, data: null})
     } else {
       const homepage = req.body
-      homepageService.getHomepage(homepage._id, (error, origin_homepage) => {
+      homepageService.updateHomepage(user, homepage, (error, updated) => {
         if (error) {
           res.json({error: error, data: null})
         } else {
-          homepageService.updateHomepage(user, homepage, (error, updated) => {
-            if (error) {
-              res.json({error: error, data: null})
-            } else {
-              if (origin_homepage.domain !== homepage.domain) {
-                for (let i in user.homepages) {
-                  if (user.homepages[i] === origin_homepage.domain) {
-                    user.homepages[i] = homepage.domain
-                    break
-                  }
-                }
-                userService.updateUser(user, user, (error, updatedUser) => {
-                  if (error) {
-                    res.json({error: error, data: null})
-                  } else {
-                    res.json({error: null, data: updated})
-                  }
-                })
-              } else {
-                res.json({error: null, data: updated})
-              }
-            }
-          })
+          res.json({error: null, data: updated})
         }
       })
     }
   })
 })
-router.post('/deleteHomepage', (req, res) => {
-  logger.info('deleteHomepage:', req.body)
-  userService.getUser(req.session.passport.user, (error, user) => {
-    if (error) {
-      res.json({error: error, data: null})
-    } else {
-      const homepage = req.body
-      homepageService.getHomepage(homepage._id, (error, origin_homepage) => {
-        if (error) {
-          res.json({error: error, data: null})
-        } else {
-          homepageService.deleteHomepage(user, req.body, (error, updated) => {
-            if (error) {
-              res.json({error: error, data: null})
-            } else {
-              for (let i in user.homepages) {
-                if (user.homepages[i] === origin_homepage.domain) {
-                  user.homepages.splice(i, 1)
-                  break
-                }
-              }
-              userService.updateUser(user, user, (error, updatedUser) => {
-                if (error) {
-                  res.json({error: error, data: null})
-                } else {
-                  res.json({error: null, data: updated})
-                }
-              })
-            }
-          })
-        }
-      })
-    }
-  })
-})
+// router.post('/updateHomepage', (req, res) => {
+//   logger.info('updateHomepage:', req.body)
+//   userService.getUser(req.session.passport.user, (error, user) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       const homepage = req.body
+//       homepageService.getHomepage(homepage._id, (error, origin_homepage) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           homepageService.updateHomepage(user, homepage, (error, updated) => {
+//             if (error) {
+//               res.json({error: error, data: null})
+//             } else {
+//               if (origin_homepage.domain !== homepage.domain) {
+//                 for (let i in user.homepages) {
+//                   if (user.homepages[i] === origin_homepage.domain) {
+//                     user.homepages[i] = homepage.domain
+//                     break
+//                   }
+//                 }
+//                 userService.updateUser(user, user, (error, updatedUser) => {
+//                   if (error) {
+//                     res.json({error: error, data: null})
+//                   } else {
+//                     res.json({error: null, data: updated})
+//                   }
+//                 })
+//               } else {
+//                 res.json({error: null, data: updated})
+//               }
+//             }
+//           })
+//         }
+//       })
+//     }
+//   })
+// })
+// router.post('/deleteHomepage', (req, res) => {
+//   logger.info('deleteHomepage:', req.body)
+//   userService.getUser(req.session.passport.user, (error, user) => {
+//     if (error) {
+//       res.json({error: error, data: null})
+//     } else {
+//       const homepage = req.body
+//       homepageService.getHomepage(homepage._id, (error, origin_homepage) => {
+//         if (error) {
+//           res.json({error: error, data: null})
+//         } else {
+//           homepageService.deleteHomepage(user, req.body, (error, updated) => {
+//             if (error) {
+//               res.json({error: error, data: null})
+//             } else {
+//               for (let i in user.homepages) {
+//                 if (user.homepages[i] === origin_homepage.domain) {
+//                   user.homepages.splice(i, 1)
+//                   break
+//                 }
+//               }
+//               userService.updateUser(user, user, (error, updatedUser) => {
+//                 if (error) {
+//                   res.json({error: error, data: null})
+//                 } else {
+//                   res.json({error: null, data: updated})
+//                 }
+//               })
+//             }
+//           })
+//         }
+//       })
+//     }
+//   })
+// })
 
 /**
  * inquiry
@@ -615,59 +631,5 @@ router.post('/deleteTopic', (req, res) => {
     }
   })
 })
-
-/*
-* Resource
-*/
-// router.put('/insertResources', (req, res) => {
-//   logger.info('insertBorrowRequest:', req.body)
-//   resourceService.insertResources(req.session.passport.user, req.body, (error, borrowRequest) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: borrowRequest})
-//     }
-//   })
-// })
-
-// router.get('/findResources', (req, res) => {
-//   const params = url.parse(req.url, true).query
-
-//   let filter = {}
-//   if (params.filter) {
-//     if (typeof params.filter === 'string' || params.filter instanceof String) {
-//       filter = JSON.parse(params.filter)
-//     } else {
-//       filter = params.filter
-//     }
-//   }
-
-//   let page = utils.parseInt(params.page)
-
-//   filter.cuser = req.session.passport.user._id
-
-//   logger.info('findResources:', filter)
-//   logger.info('page:', page)
-
-//   resourceService.findResources(filter, (error, userResources, count) => {
-//     logger.debug('error:', error)
-//     logger.debug('userResources:', userResources)
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {datas: userResources, count: count}})
-//     }
-//   }, page)
-// })
-// router.post('/deleteResources', (req, res) => {
-//   logger.info('deleteResources:', req.body)
-//   resourceService.deleteResource(req.session.passport.user, req.body, (error, userResource) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: userResource})
-//     }
-//   })
-// })
 
 module.exports = router
