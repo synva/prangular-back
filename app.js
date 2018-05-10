@@ -200,7 +200,13 @@ function startupExpress () {
   app.use('/private', checkAuth, privateHttpRouter)
   app.use('/public', publicHttpRouter)
 
-
+  let commonResponseHeader = (req, res, next) => {
+    res.header('X-XSS-Protection', '1; mode=block')
+    res.header('X-Frame-Options', 'DENY')
+    res.header('X-Content-Type-Options', 'nosniff')
+    next()
+  }
+  app.all('/*', commonResponseHeader)
 
 
   // let inspect = require('eyespect').inspector()
@@ -322,5 +328,4 @@ function startupExpress () {
       socketRouter.init(server, session)
     }
   })
-
 }
