@@ -203,6 +203,17 @@ function startupExpress () {
 
 
 
+  let commonResponseHeader = (req, res, next) => {
+    res.header('X-XSS-Protection', '1; mode=block')
+    res.header('X-Frame-Options', 'DENY')
+    res.header('X-Content-Type-Options', 'nosniff')
+    next()
+  }
+  app.all('/*', commonResponseHeader)
+
+
+
+
   // let inspect = require('eyespect').inspector()
   let key = null
   let secret = null
@@ -322,5 +333,4 @@ function startupExpress () {
       socketRouter.init(server, session)
     }
   })
-
 }
