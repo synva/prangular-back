@@ -1,8 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 import mkdirp from 'mkdirp'
+import conf from 'config'
 import logger from './logger.js'
 import moment from 'moment'
+import nodemailer from 'nodemailer'
+import smtpTransport from 'nodemailer-smtp-transport'
 
 class Utils {
   constructor () {
@@ -113,6 +116,23 @@ class Utils {
       logger.error('miss domain:', JSON.stringify(req.headers))
     }
     return domain
+  }
+  validateEmail (email) {
+    let re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    return re.test(String(email).toLowerCase())
+  }
+  /**
+   * send mail without next
+   */
+  sendMail (mailOptions) {
+    let transporter = nodemailer.createTransport(
+      smtpTransport(conf.smtp)
+    )
+    transporter.sendMail(mailOptions, (error) => {
+      if (error) {
+        logger.error(error)
+      }
+    })
   }
 }
 

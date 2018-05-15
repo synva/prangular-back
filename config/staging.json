@@ -58,5 +58,15 @@
   },
   "cluster": {
     "instances": 2
+  },
+  "smtp": {
+    "host": "smtp.kagoya.net",
+    "port": 587,
+    "auth": {
+      "user": "wyxtech.budousan",
+      "pass": "budousan.123"
+    },
+    "from": "'ブドウさん運営チーム <budousan@wyxtech.com>'",
+    "to": "budousan@wyxtech.com"
   }
 }

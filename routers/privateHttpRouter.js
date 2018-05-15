@@ -13,6 +13,7 @@ import userService from '../services/userService.js'
 import homepageService from '../services/homepageService.js'
 import inquiryService from '../services/inquiryService.js'
 import topicService from '../services/topicService.js'
+import purchaseService from '../services/purchaseService.js'
 
 let router = express.Router()
 
@@ -259,7 +260,7 @@ router.post('/deleteRentPiece', (req, res) => {
 //     if (error) {
 //       res.json({error: error, data: null})
 //     } else {
-//       res.json({error: null, data: {datas: buyRequests, count: count}})
+//       res.json({error: null, data: {buyRequests: buyRequests, count: count}})
 //     }
 //   }, page)
 // })
@@ -352,7 +353,7 @@ router.post('/deleteRentPiece', (req, res) => {
 //     if (error) {
 //       res.json({error: error, data: null})
 //     } else {
-//       res.json({error: null, data: {datas: borrowRequests, count: count}})
+//       res.json({error: null, data: {borrowRequests: borrowRequests, count: count}})
 //     }
 //   }, page)
 // })
@@ -629,6 +630,49 @@ router.post('/deleteTopic', (req, res) => {
     } else {
       res.json({error: null, data: topic})
     }
+  })
+})
+
+/**
+ * purchase
+ */
+router.put('/insertPurchase', (req, res) => {
+  let purchase = req.body
+  logger.info('private insertPurchase:', purchase)
+
+  Promise.all([
+    new Promise((resolve, reject) => {
+      purchaseService.insertPurchase(req.session.passport.user, purchase, (error, inserted) => {
+        if (error) {
+          return reject(error)
+        } else {
+          resolve(inserted)
+        }
+      })
+    }),
+    new Promise((resolve, reject) => {
+      if (!utils.validateEmail(conf.smtp.to)) {
+        logger.warn('invalid mail address:', conf.smtp.to)
+        return resolve()
+      }
+      let mailText = '「' + req.session.passport.user._id + '」さんがサービスを購入しました。\n'
+      mailText += '＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n'
+      mailText += '\n' + JSON.stringify(purchase) + '\n'
+      mailText += '\n＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝\n'
+      let mailOptions = {
+        from: conf.smtp.from,
+        to: conf.smtp.to,
+        subject: '「ブドウさん」購入申請',
+        text: mailText
+      }
+      utils.sendMail(mailOptions)
+      resolve()
+    })
+  ]).then((values) => {
+    let inserted = values[0]
+    res.json({error: null, data: inserted})
+  }, (reason) => {
+    res.json({error: reason, data: null})
   })
 })
 
