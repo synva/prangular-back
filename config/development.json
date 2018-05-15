@@ -1,6 +1,6 @@
 {
   "port": 3000,
-  "cors": ["http://localhost:8000"],
+  "cors": [],
   "fixedSubDomain": "localhost:8001",
   "logger": {
     "appenders": {"system": {"type": "console"}},
@@ -33,5 +33,15 @@
     "bucket": "budousan-static-staging.wyxtech.com",
     "region": "ap-northeast-1",
     "upload": "upload"
+  },
+  "smtp": {
+    "host": "smtp.kagoya.net",
+    "port": 587,
+    "auth": {
+      "user": "wyxtech.budousan",
+      "pass": "budousan.123"
+    },
+    "from": "'ブドウさん運営チーム <budousan@wyxtech.com>'",
+    "to": "budousan@wyxtech.com"
   }
 }

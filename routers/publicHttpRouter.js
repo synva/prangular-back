@@ -118,7 +118,7 @@ router.get('/findRentPieces', (req, res) => {
 //         if (error) {
 //           res.json({error: error, data: null})
 //         } else {
-//           res.json({error: null, data: {datas: buyRequests, count: count}})
+//           res.json({error: null, data: {buyRequests: buyRequests, count: count}})
 //         }
 //       })
 //     }
@@ -150,7 +150,7 @@ router.get('/findRentPieces', (req, res) => {
 //         if (error) {
 //           res.json({error: error, data: null})
 //         } else {
-//           res.json({error: null, data: {datas: borrowRequests, count: count}})
+//           res.json({error: null, data: {borrowRequests: borrowRequests, count: count}})
 //         }
 //       })
 //     }
