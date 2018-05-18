@@ -122,7 +122,7 @@ class Utils {
     return re.test(String(email).toLowerCase())
   }
   /**
-   * send mail without next
+   * send mail without callback
    */
   sendMail (mailOptions) {
     let transporter = nodemailer.createTransport(

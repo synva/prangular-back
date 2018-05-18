@@ -71,7 +71,7 @@ router.put('/insertSellPiece', (req, res) => {
       })
     }),
     new Promise((resolve, reject) => {
-      sellPieceService.findSellPieces({contactID: req.session.passport.user._id}, (error, sellPieces, count) => {
+      sellPieceService.findSellPieces({contactID: req.session.passport.user._id}, {}, (error, sellPieces, count) => {
         if (error) return reject(error)
         resolve(count)
       })
@@ -105,11 +105,21 @@ router.get('/findSellPieces', (req, res) => {
   }
   filter.contactID = req.session.passport.user._id
   let page = utils.parseInt(params.page)
+  let sort = {}
+  if (params.sort) {
+    if (typeof params.sort === 'string' || params.sort instanceof String) {
+      sort = JSON.parse(params.sort)
+    } else {
+      sort = params.sort
+    }
+  }
+  sort.udate = -1
 
   logger.info('private findSellPieces:', JSON.stringify(filter))
   logger.info('page:', page)
+  logger.info('sort:', JSON.stringify(sort))
 
-  sellPieceService.findSellPieces(filter, (error, sellPieces, count) => {
+  sellPieceService.findSellPieces(filter, sort, (error, sellPieces, count) => {
     if (error) {
       res.json({error: error, data: null})
     } else {
@@ -151,7 +161,7 @@ router.put('/insertRentPiece', (req, res) => {
       })
     }),
     new Promise((resolve, reject) => {
-      rentPieceService.findRentPieces({contactID: req.session.passport.user._id}, (error, rentPieces, count) => {
+      rentPieceService.findRentPieces({contactID: req.session.passport.user._id}, {}, (error, rentPieces, count) => {
         if (error) return reject(error)
         resolve(count)
       })
@@ -185,11 +195,21 @@ router.get('/findRentPieces', (req, res) => {
   }
   filter.contactID = req.session.passport.user._id
   let page = utils.parseInt(params.page)
+  let sort = {}
+  if (params.sort) {
+    if (typeof params.sort === 'string' || params.sort instanceof String) {
+      sort = JSON.parse(params.sort)
+    } else {
+      sort = params.sort
+    }
+  }
+  sort.udate = -1
 
   logger.info('private findRentPieces:', JSON.stringify(filter))
   logger.info('page:', page)
+  logger.info('sort:', JSON.stringify(sort))
 
-  rentPieceService.findRentPieces(filter, (error, rentPieces, count) => {
+  rentPieceService.findRentPieces(filter, sort, (error, rentPieces, count) => {
     if (error) {
       res.json({error: error, data: null})
     } else {

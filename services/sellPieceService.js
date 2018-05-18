@@ -6,13 +6,13 @@ import utils from './utils'
 class SellPieceService {
   constructor () {
   }
-  findSellPieces (params, next, page) {
+  findSellPieces (params, sort, next, page) {
     let filter = this.getFilter(params)
     mongo.find(
       'sellPieces',
       {$and: filter},
       {},
-      {isPublishing: -1, udate: -1},
+      sort,
       (error, result, count) => {
         if (error) {
           next(error, null)
@@ -23,13 +23,13 @@ class SellPieceService {
       page
     )
   }
-  findAllSellPieces (params, next) {
+  findAllSellPieces (params, sort, next) {
     let filter = this.getFilter(params)
     mongo.findAll(
       'sellPieces',
       {$and: filter},
       {},
-      {isPublishing: -1, udate: -1},
+      sort,
       (error, results) => {
         if (error) {
           next(error, null)
