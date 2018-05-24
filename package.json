@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "ブドウさん",
   "main": "app.js",
-  "author": "mrm-xiefan <f-xie@miraimon.com>",
-  "license": "MIT",
+  "author": "xiefan",
   "private": true,
   "scripts": {
     "start": "npm run dev",

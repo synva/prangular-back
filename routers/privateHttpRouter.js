@@ -127,6 +127,22 @@ router.get('/findSellPieces', (req, res) => {
     }
   }, page)
 })
+router.get('/findAllSellPieces', (req, res) => {
+  let filter = {}
+  filter.contactID = req.session.passport.user._id
+  let sort = {}
+  sort.udate = -1
+  logger.info('private findAllSellPieces:', JSON.stringify(filter))
+  logger.info('sort:', JSON.stringify(sort))
+
+  sellPieceService.findAllSellPieces(filter, sort, (error, sellPieces) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {sellPieces: sellPieces}})
+    }
+  })
+})
 router.post('/updateSellPiece', (req, res) => {
   logger.info('updateSellPiece:', req.body)
   sellPieceService.updateSellPiece(req.session.passport.user, req.body, (error, sellPiece) => {
@@ -217,6 +233,22 @@ router.get('/findRentPieces', (req, res) => {
     }
   }, page)
 })
+router.get('/findAllRentPieces', (req, res) => {
+  let filter = {}
+  filter.contactID = req.session.passport.user._id
+  let sort = {}
+  sort.udate = -1
+  logger.info('private findAllRentPieces:', JSON.stringify(filter))
+  logger.info('sort:', JSON.stringify(sort))
+
+  rentPieceService.findAllRentPieces(filter, sort, (error, rentPieces) => {
+    if (error) {
+      res.json({error: error, data: null})
+    } else {
+      res.json({error: null, data: {rentPieces: rentPieces}})
+    }
+  })
+})
 router.post('/updateRentPiece', (req, res) => {
   logger.info('updateRentPiece:', req.body)
   rentPieceService.updateRentPiece(req.session.passport.user, req.body, (error, rentPiece) => {
@@ -237,198 +269,6 @@ router.post('/deleteRentPiece', (req, res) => {
     }
   })
 })
-
-/**
- * buyRequest
- */
-// router.put('/insertBuyRequest', (req, res) => {
-//   logger.info('insertBuyRequest:', req.body)
-//   userService.getUser(req.session.passport.user, (error, user) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       buyRequestService.insertBuyRequest(user, req.body, (error, buyRequest) => {
-//         if (error) {
-//           res.json({error: error, data: null})
-//         } else {
-//           res.json({error: null, data: buyRequest})
-//         }
-//       })
-//     }
-//   })
-// })
-
-// router.get('/findBuyRequests', (req, res) => {
-//   const params = url.parse(req.url, true).query
-
-//   let filter = {}
-//   if (params.filter) {
-//     if (typeof params.filter === 'string' || params.filter instanceof String) {
-//       filter = JSON.parse(params.filter)
-//     } else {
-//       filter = params.filter
-//     }
-//   }
-
-//   let page = utils.parseInt(params.page)
-
-//   filter.contactID = req.session.passport.user._id
-//   logger.info('findBuyRequests:', filter)
-//   logger.info('page:', page)
-
-//   buyRequestService.findBuyRequests(filter, (error, buyRequests, count) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {buyRequests: buyRequests, count: count}})
-//     }
-//   }, page)
-// })
-
-// router.post('/updateBuyRequest', (req, res) => {
-//   logger.info('updateBuyRequest:', req.body)
-
-//   buyRequestService.updateBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {buyRequest: buyRequest}})
-//     }
-//   })
-// })
-
-// router.post('/publishBuyRequest', (req, res) => {
-//   logger.info('publishBuyRequest:', req.body)
-
-//   userService.getUser(req.session.passport.user, (error, user) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       buyRequestService.publishBuyRequest(user, req.body, (error, buyRequest) => {
-//         if (error) {
-//           res.json({error: error, data: null})
-//         } else {
-//           res.json({error: null, data: {buyRequest: buyRequest}})
-//         }
-//       })
-//     }
-//   })
-// })
-// router.post('/unPublishBuyRequest', (req, res) => {
-//   logger.info('unPublishBuyRequest:', req.body)
-
-//   buyRequestService.publishBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {buyRequest: buyRequest}})
-//     }
-//   })
-// })
-// router.post('/deleteBuyRequest', (req, res) => {
-//   logger.info('deleteBuyRequest:', req.body)
-//   buyRequestService.deleteBuyRequest(req.session.passport.user, req.body, (error, buyRequest) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {buyRequest: buyRequest}})
-//     }
-//   })
-// })
-
-/**
- * borrowRequest
- */
-// router.put('/insertBorrowRequest', (req, res) => {
-//   logger.info('insertBorrowRequest:', req.body)
-//   borrowRequestService.insertBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: borrowRequest})
-//     }
-//   })
-// })
-
-// router.get('/findBorrowRequests', (req, res) => {
-//   const params = url.parse(req.url, true).query
-
-//   let filter = {}
-//   if (params.filter) {
-//     if (typeof params.filter === 'string' || params.filter instanceof String) {
-//       filter = JSON.parse(params.filter)
-//     } else {
-//       filter = params.filter
-//     }
-//   }
-
-//   let page = utils.parseInt(params.page)
-
-//   filter.contactID = req.session.passport.user._id
-
-//   logger.info('findBorrowRequests:', params)
-//   logger.info('page:', page)
-
-//   borrowRequestService.findBorrowRequests(filter, (error, borrowRequests, count) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {borrowRequests: borrowRequests, count: count}})
-//     }
-//   }, page)
-// })
-// router.post('/updateBorrowRequest', (req, res) => {
-//   logger.info('updateBorrowRequest:', req.body)
-//   userService.getUser(req.session.passport.user, (error, user) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       borrowRequestService.updateBorrowRequest(user, req.body, (error, borrowRequest) => {
-//         if (error) {
-//           res.json({error: error, data: null})
-//         } else {
-//           res.json({error: null, data: {borrowRequest: borrowRequest}})
-//         }
-//       })
-//     }
-//   })
-// })
-// router.post('/publishBorrowRequest', (req, res) => {
-//   logger.info('publishBorrowRequest:', req.body)
-//   userService.getUser(req.session.passport.user, (error, user) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       borrowRequestService.publishBorrowRequest(user, req.body, (error, borrowRequest) => {
-//         if (error) {
-//           res.json({error: error, data: null})
-//         } else {
-//           res.json({error: null, data: {borrowRequest: borrowRequest}})
-//         }
-//       })
-//     }
-//   })
-// })
-// router.post('/unPublishBorrowRequest', (req, res) => {
-//   logger.info('unPublishBorrowRequest:', req.body)
-//   borrowRequestService.publishBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {borrowRequest: borrowRequest}})
-//     }
-//   })
-// })
-// router.post('/deleteBorrowRequest', (req, res) => {
-//   logger.info('deleteBorrowRequest:', req.body)
-//   borrowRequestService.deleteBorrowRequest(req.session.passport.user, req.body, (error, borrowRequest) => {
-//     if (error) {
-//       res.json({error: error, data: null})
-//     } else {
-//       res.json({error: null, data: {borrowRequest: borrowRequest}})
-//     }
-//   })
-// })
 
 /*
 * HomePage
