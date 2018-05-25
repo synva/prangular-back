@@ -123,6 +123,30 @@ class RentPieceService {
       }
     )
   }
+  insertRentPieces (user, rentPieces, next) {
+    let now = new Date()
+    now = now.valueOf()
+    rentPieces.forEach(rentPiece => {
+      rentPiece.cdate = now
+      rentPiece.cuser = user._id
+      rentPiece.contactID = user._id
+      rentPiece.udate = now
+      rentPiece.uuser = user._id
+    })
+    mongo.insert(
+      'rentPieces',
+      rentPieces,
+      {},
+      (error, results) => {
+        if (error) {
+          next(error, null)
+        } else {
+          let inserted = results
+          next(null, inserted)
+        }
+      }
+    )
+  }
   updateRentPiece (user, rentPiece, next) {
     let id = rentPiece._id
     delete rentPiece._id

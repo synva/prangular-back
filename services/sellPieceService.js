@@ -123,6 +123,30 @@ class SellPieceService {
       }
     )
   }
+  insertSellPieces (user, sellPieces, next) {
+    let now = new Date()
+    now = now.valueOf()
+    sellPieces.forEach(sellPiece => {
+      sellPiece.cdate = now
+      sellPiece.cuser = user._id
+      sellPiece.contactID = user._id
+      sellPiece.udate = now
+      sellPiece.uuser = user._id
+    })
+    mongo.insert(
+      'sellPieces',
+      sellPieces,
+      {},
+      (error, results) => {
+        if (error) {
+          next(error, null)
+        } else {
+          let inserted = results
+          next(null, inserted)
+        }
+      }
+    )
+  }
   updateSellPiece (user, sellPiece, next) {
     let id = sellPiece._id
     delete sellPiece._id

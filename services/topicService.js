@@ -37,12 +37,35 @@ class TopicService {
     now = now.valueOf()
     topic.cdate = now
     topic.cuser = user._id
-    topic.contactID = user._id
     topic.udate = now
     topic.uuser = user._id
     mongo.insert(
       'topics',
       topic,
+      {},
+      (error, result) => {
+        if (error) {
+          next(error, null)
+        } else {
+          let inserted = result.ops[0]
+          next(null, inserted)
+        }
+      }
+    )
+  }
+  insertTopics (user, topics, next) {
+    let now = new Date()
+    now = now.valueOf()
+    topics.forEach(topic => {
+      topic.cdate = now
+      topic.cuser = user._id
+      topic.contactID = user._id
+      topic.udate = now
+      topic.uuser = user._id
+    })
+    mongo.insert(
+      'topics',
+      topics,
       {},
       (error, result) => {
         if (error) {
