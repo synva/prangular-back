@@ -1,6 +1,6 @@
 {
   "apps" :[{
-    "name": "bd",
+    "name": "pa",
     "script": "app.js",
     "interpreter": "./node_modules/.bin/babel-node",
     "env": {
@@ -10,9 +10,5 @@
     "out_file"        : "/opt/log/budousan/budousan-back/out_pm2.log",
     "merge_logs"      : true,
     "log_date_format" : "YYYY-MM-DD HH:mm:ss"
-  },{
-    "name": "logbackup_bd",
-    "script": "./cron.js",
-    "cron_restart": "0 0 12 * * *"
   }]
 }

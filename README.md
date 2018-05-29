@@ -1,6 +1,6 @@
-# budousan - backend
+# prangular - backend
 
-> ブドウさん - バックエンド
+> prangular - バックエンド
 
 ## 1. install softwares
 
@@ -29,11 +29,11 @@ brew services start mongodb
 # make sure mongo is working.
 mongo
 # create user.
-use budousan
+use prangular
 db.createUser({
-  user: "...",
-  pwd: "...",
-  roles: [{role: "readWrite", db: "budousan"}]
+  user: "prangular",
+  pwd: "prangular.123",
+  roles: [{role: "readWrite", db: "prangular"}]
 })
 # exit mongo
 exit
@@ -58,7 +58,7 @@ sudo mongod --fork --dbpath /var/lib/mongodb --logpath /var/log/mongodb.log
 
 ``` bash
 cd /your/path/like/desktop
-git clone https://your-git-account@github.com/mrm-xiefan/budousan-back.git
+git clone https://your-git-account@github.com/synva/prangular-back.git
 ```
 
 ## 3. install dependencies
@@ -68,7 +68,7 @@ git clone https://your-git-account@github.com/mrm-xiefan/budousan-back.git
 ```
 
 ``` bash
-cd /your/path/like/desktop/budousan-back
+cd /your/path/like/desktop/prangular-back
 yarn install
 ```
 
@@ -77,7 +77,7 @@ yarn install
 ### if linux
 
 ``` bash
-cd /your/path/like/desktop/budousan-back
+cd /your/path/like/desktop/prangular-back
 npm run dev
 ```
 
@@ -86,7 +86,7 @@ npm run dev
 set `NODE_ENV` to enviroment, value should be "development".
 
 ``` bash
-cd /your/path/like/desktop/budousan-back
+cd /your/path/like/desktop/prangular-back
 npm run windev
 ```
 
@@ -96,10 +96,10 @@ once you change backend source code, you must reboot service to make it working.
 
 ## 6. deploy to production enviroment
 
-make sure dist folder that frontend created is here. (/your/path/like/desktop/budousan-back/dist)
+make sure dist folder that frontend created is here. (/your/path/like/desktop/prangular-back/dist)
 
 ``` bash
-cd /your/path/like/desktop/budousan-back
+cd /your/path/like/desktop/prangular-back
 # confirm pm2
 pm2 list
 # if bd is not exists

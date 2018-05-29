@@ -1,7 +1,8 @@
 {
   "port": 3000,
-  "cors": [],
-  "fixedSubDomain": "localhost:8001",
+  "cors": [
+    "http://localhost:8000"
+  ],
   "logger": {
     "appenders": {"system": {"type": "console"}},
     "categories": {"default": {"appenders": ["system"], "level": "all"}}
@@ -10,10 +11,10 @@
   "mongo": {
     "server": "localhost",
     "port": 27017,
-    "db": "budousan",
+    "db": "prangular",
     "limit": 12,
-    "user": "budousan",
-    "password": "budousan.123"
+    "user": "prangular",
+    "password": "prangular.123"
   },
   "session": {
     "mode": "mongo",
@@ -22,26 +23,26 @@
     "redisdb": 0,
     "cookiePath": "/session/",
     "cookieMaxAge": 1209600000,
-    "key": "budousan",
-    "secret": "budousan-secret"
+    "key": "prangular",
+    "secret": "just-a-sample"
   },
   "authentication": {
     "mode": "basic"
   },
   "storagy": {
-    "mode": "s3",
-    "bucket": "budousan-static-staging.wyxtech.com",
+    "mode": "local",
+    "bucket": "any-bucket",
     "region": "ap-northeast-1",
     "upload": "upload"
   },
   "smtp": {
-    "host": "smtp.kagoya.net",
+    "host": "smtp",
     "port": 587,
     "auth": {
-      "user": "wyxtech.budousan",
-      "pass": "budousan.123"
+      "user": "any-user",
+      "pass": "password"
     },
-    "from": "'ブドウさん運営チーム <budousan@wyxtech.com>'",
-    "to": "budousan@wyxtech.com"
+    "from": "'運営チーム <prangular@xxx.com>'",
+    "to": "prangular@xxx.com"
   }
 }

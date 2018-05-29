@@ -1,7 +1,7 @@
 {
-  "name": "budousan",
+  "name": "prangular",
   "version": "1.0.0",
-  "description": "ブドウさん",
+  "description": "angular-sample",
   "main": "app.js",
   "author": "xiefan",
   "private": true,

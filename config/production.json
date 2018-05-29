@@ -1,41 +1,18 @@
 {
   "port": 3000,
-  "cors": [],
-  "fixedSubDomain": false,
+  "cors": ["localhost:8000"],
   "logger": {
-    "appenders": {
-      "stdout": {
-        "type": "dateFile",
-        "filename": "/opt/log/budousan/budousan-back/out_log4js.log",
-        "pattern": "__yyyy-MM-dd",
-        "layout": {
-          "type": "pattern",
-          "pattern": "%d{yyyy-MM-dd hh:mm:ss}: %p: %m"
-        }
-      },
-      "error": {
-        "type": "dateFile",
-        "filename": "/opt/log/budousan/budousan-back/error_log4js.log",
-        "pattern": "__yyyy-MM-dd",
-        "layout": {
-          "type": "pattern",
-          "pattern": "%d{yyyy-MM-dd hh:mm:ss}: %p: %m"
-        }
-      },
-      "just-errors": { "type": "logLevelFilter", "appender": "error", "level": "error" }
-    },
-    "categories": {
-      "default": { "appenders": ["just-errors", "stdout"], "level": "info" }
-    }
+    "appenders": {"system": {"type": "console"}},
+    "categories": {"default": {"appenders": ["system"], "level": "all"}}
   },
   "image": ["JPG", "JPEG", "PNG", "TIF", "TIFF", "SVG"],
   "mongo": {
-    "server": "13.231.232.98",
-    "port": 55555,
-    "db": "budousan",
-    "limit": 24,
-    "user": "budousan",
-    "password": "budousan.123"
+    "server": "localhost",
+    "port": 27017,
+    "db": "prangular",
+    "limit": 12,
+    "user": "prangular",
+    "password": "prangular.123"
   },
   "session": {
     "mode": "mongo",
@@ -44,29 +21,26 @@
     "redisdb": 0,
     "cookiePath": "/session/",
     "cookieMaxAge": 1209600000,
-    "key": "budousan",
-    "secret": "budousan-secret"
+    "key": "prangular",
+    "secret": "just-a-sample"
   },
   "authentication": {
     "mode": "basic"
   },
   "storagy": {
-    "mode": "s3",
-    "bucket": "budousan-static.wyxtech.com",
+    "mode": "local",
+    "bucket": "any-bucket",
     "region": "ap-northeast-1",
     "upload": "upload"
   },
-  "cluster": {
-    "instances": 3
-  },
   "smtp": {
-    "host": "smtp.kagoya.net",
+    "host": "smtp",
     "port": 587,
     "auth": {
-      "user": "wyxtech.budousan",
-      "pass": "budousan.123"
+      "user": "any-user",
+      "pass": "password"
     },
-    "from": "'ブドウさん運営チーム <budousan@wyxtech.com>'",
-    "to": "budousan@wyxtech.com"
+    "from": "'運営チーム <prangular@xxx.com>'",
+    "to": "prangular@xxx.com"
   }
 }
