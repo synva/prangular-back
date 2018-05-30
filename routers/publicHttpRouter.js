@@ -22,6 +22,11 @@ router.get('/getData', (req, res) => {
 })
 router.post('/postData', (req, res) => {
   logger.info('postData:', JSON.stringify(req.body))
+
+  if (req.session && req.session.passport && req.session.passport.user) {
+    logger.debug('user:', req.session.passport.user._id)
+  }
+
   res.json({error: null, data: {col: 'test222'}})
 })
 router.put('/putData', (req, res) => {
